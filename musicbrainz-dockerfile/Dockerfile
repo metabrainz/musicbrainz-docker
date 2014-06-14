@@ -13,8 +13,9 @@ RUN cpanm --installdeps --notest .
 RUN cpanm Plack::Middleware::Debug::Base Catalyst::Plugin::Cache::HTTP Catalyst::Plugin::StackTrace Cache::Memcached::Fast JSON::Any Cache::Memory Digest::MD5::File Term::Size::Any
 
 ADD DBDefs.pm /musicbrainz-server/lib/
+ADD start.sh /start.sh
 
 EXPOSE 5000
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
-CMD ["plackup", "-Ilib", "-r"]
+ENTRYPOINT ["start.sh"]
