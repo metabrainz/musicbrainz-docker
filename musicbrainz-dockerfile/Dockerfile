@@ -11,9 +11,14 @@ RUN echo "eval $( perl -Mlocal::lib )" >> ~/.bashrc && . ~/.bashrc
 RUN cat /musicbrainz-server/Makefile.PL | grep ^requires > cpanfile
 RUN cpanm --installdeps --notest .
 RUN cpanm Plack::Middleware::Debug::Base Catalyst::Plugin::Cache::HTTP Catalyst::Plugin::StackTrace Cache::Memcached::Fast JSON::Any Cache::Memory Digest::MD5::File Term::Size::Any
+RUN apt-get install -y cron
 
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
+ADD scripts/crons.conf /crons.conf
+ADD scripts/createdb.sh /createdb.sh
+
+RUN crontab /crons.conf
 
 EXPOSE 5000
 VOLUME  ["/media/dbdump"]
