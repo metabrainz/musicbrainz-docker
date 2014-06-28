@@ -16,6 +16,7 @@ RUN apt-get install -y cron
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
 ADD scripts/crons.conf /crons.conf
+ADD scripts/replication.sh /replication.sh
 ADD scripts/createdb.sh /createdb.sh
 
 RUN crontab /crons.conf
@@ -23,4 +24,4 @@ RUN crontab /crons.conf
 EXPOSE 5000
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
-ENTRYPOINT ["/start.sh"]
+CMD ["/start.sh"]

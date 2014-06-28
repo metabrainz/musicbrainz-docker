@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -t musicbrainz-image .
+docker build -no-cache -t musicbrainz-image .
