@@ -24,16 +24,16 @@ if [[ -e /scripts/firstrun ]]; then
 	# Copy the data that we generated within the container to the empty DATA_DIR.
 	cp -R /var/lib/postgresql/9.3/main/* $DATA_DIR_MAIN
 	fi
-
-	chown -R postgres $DATA_DIR
-
+	echo "$(ls -al $DATA_DIR_MAIN)"
 	# Ensure we have the right permissions set on the DATA_DIR
-	# chmod -R 700 $DATA_DIR_MAIN
+	chown -R postgres.root $DATA_DIR_MAIN
+	chmod -R 700 $DATA_DIR_MAIN
 
 	rm /scripts/firstrun
 
 fi
 
+echo $(ls -al $DATA_DIR_MAIN)
 # Start PostgreSQL
 echo "Starting PostgreSQL..."
-su - postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /var/lib/postgresql/9.3/main -c config_file=/etc/postgresql/9.3/main/postgresql.conf -c data_directory=$DATA_DIR_MAIN"
+exec su - postgres -c "/usr/lib/postgresql/9.3/bin/postgres -D /var/lib/postgresql/9.3/main -c config_file=/etc/postgresql/9.3/main/postgresql.conf -c data_directory=$DATA_DIR_MAIN"
