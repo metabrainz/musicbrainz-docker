@@ -30,7 +30,7 @@ If this is a new instance and you need to create the database:
 
 * `sudo docker exec -ti musicbrainz bash`
 * `cd /`
-* `sudo ./createdb.sh`
+* `./createdb.sh`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
