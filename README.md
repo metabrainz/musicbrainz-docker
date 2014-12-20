@@ -43,7 +43,7 @@ The usual process to update the schema is:
 * Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run ./admin/replication/LoadReplicationChanges and see what it tells you).
 * In the running container Switch to the new code with git fetch origin followed by git checkout $NEW_SCHEMA_BRANCH and also update the Dockerfile to the new branch.
 * In the running container run ./upgrade.sh
-* Set DB_SCHEMA_SEQUENCE to $NEW_SCHEMA_NUM in this repo scripts/DBDefs.pm
+* Set DB_SCHEMA_SEQUENCE to $NEW_SCHEMA_NUM in this repo musicbrainz-dockerfile/DBDefs.pm
 * On the host machine stop and remove the musicbrainz container and image
 * On the host machine make sure the postgresql container is running
 * On the host machine run `sudo ./build.sh`
