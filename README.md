@@ -21,6 +21,13 @@ This repo contains everything needed to run a musicbrainz slave server with repl
 * modify the run.sh file to point to a data directory on the host machine where you want to store DB dumps (over 5 gigs)
 * `sudo ./build.sh`
 * `sudo ./start.sh`
+* 
+### Create Database
+If this is a new instance and you need to create the database:
+
+* `sudo docker exec -ti musicbrainz bash`
+* `cd /scripts`
+* `sudo ./createdb.sh`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
