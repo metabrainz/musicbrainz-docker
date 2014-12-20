@@ -27,7 +27,7 @@ This repo contains everything needed to run a musicbrainz slave server with repl
 If this is a new instance and you need to create the database:
 
 * `sudo docker exec -ti musicbrainz bash`
-* `cd /scripts`
+* `cd /`
 * `sudo ./createdb.sh`
 
 ### Handling Schema Updates
