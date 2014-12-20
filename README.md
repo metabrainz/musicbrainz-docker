@@ -46,7 +46,7 @@ The usual process to update the schema is:
 * Set DB_SCHEMA_SEQUENCE to $NEW_SCHEMA_NUM in this repo musicbrainz-dockerfile/DBDefs.pm
 * On the host machine stop and remove the musicbrainz container and image
 * On the host machine make sure the postgresql container is running
-* On the host machine run `sudo ./build.sh`
-* On the host machine run `sudo ./start.sh`
+* In musicbrainz-dockerfile run `sudo ./build.sh`
+* In musicbrainz-dockerfile run `sudo ./run.sh`
 
 That’s it!
