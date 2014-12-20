@@ -1,7 +1,7 @@
 musicbrainz docker container
 ==================
 
-This repo contains everything needed to run a musicbrainz slave server with replication.
+This repo contains everything needed to run a musicbrainz slave server with replication in a docker container.
 
 ### Installation
 
