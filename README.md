@@ -5,15 +5,15 @@ This repo contains everything needed to run a musicbrainz slave server with repl
 
 ### Installation
 
-* cd to postgresqldata-docker
+* cd to data-dockerfile
 * modify the start.sh file to point to a data directory on the host machine
 * `sudo ./build.sh`
 * `sudo ./start.sh`
-* cd to postgresql-docker
+* cd to postgres-dockerfile
 * modify the start.sh file to point to a data directory on the host machine
 * `sudo ./build.sh`
 * `sudo ./start.sh`
-* cd to musicbrainz-docker
+* cd to musicbrainz-dockerfile
 * modify the start.sh file to point to a data directory on the host machine
 * `sudo ./build.sh`
 * `sudo ./start.sh`
