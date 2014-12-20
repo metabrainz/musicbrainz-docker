@@ -21,7 +21,9 @@ This repo contains everything needed to run a musicbrainz slave server with repl
 * modify the run.sh file to point to a data directory on the host machine where you want to store DB dumps (over 5 gigs)
 * `sudo ./build.sh`
 * `sudo ./run.sh`
-* 
+ 
+###### Autostart
+* `sudo ./autostart.sh` 
 
 ### Create Database
 If this is a new instance and you need to create the database:
