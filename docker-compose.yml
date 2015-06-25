@@ -1,0 +1,23 @@
+postgresqldata:
+  build: data-dockerfile
+  restart: always
+  volumes:
+   - /datadump:/media/dbdump:rw
+
+postgresql:
+  build: postgres-dockerfile
+  restart: always
+  env_file:
+   - ./postgres-dockerfile/postgres.env
+  expose:
+   - "5432"
+
+musicbrainz:
+  build: musicbrainz-dockerfile
+  ports:
+   - "5000:5000"
+  volumes_from:
+   - postgresqldata
+  restart: always
+  links:
+   - postgresql:db
