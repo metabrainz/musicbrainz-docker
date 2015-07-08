@@ -2,41 +2,40 @@ musicbrainz docker container
 ==================
 
 This repo contains everything needed to run a musicbrainz slave server with replication in a docker container.
+You will need a little over 20 gigs of free space to run this with replication.
+
+### Configuration
+* Set the path where you want to store the downloaded data dumps in [docker-compose.yml](./docker-compose.yml).
+* If you already have data dumps in this path they can be loaded instead of downloading new dumps, see [Create Database](#create-database).
+* Set REPLICATION_ACCESS_TOKEN in the [DBDefs.pm file](musicbrainz-dockerfile/DBDefs.pm#L117) to the token you got from musicbrainz (instructions for generating a token are [here](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
 
 ### Installation
 
-###### Data Container
-* cd to data-dockerfile
-* modify the run.sh file to point to the directory on the host machine where you want to store the database
-* `sudo ./build.sh`
-* `sudo ./run.sh`
- 
-###### Postgresql Container
-* cd to postgres-dockerfile
-* `sudo ./build.sh`
-* `sudo ./run.sh`
- 
-###### Musicbrainz Server Container
-* cd to musicbrainz-dockerfile
-* modify the run.sh file to point to a data directory on the host machine where you want to store DB dumps (over 5 gigs)
-* `sudo ./build.sh`
-* `sudo ./run.sh`
- 
-###### Autostart
-* `sudo ./autostart.sh` 
+###### Install and Start
+* Make sure you have installed docker and docker-compose then:
+* `git clone this-repo`
+* `cd this-repo`
+* `sudo docker-compose up -d`
 
-### Create Database
-If this is a new instance and you need to create the database:
+### Create database
+Create the database, download the latest dumps and populate the database
 
-* `sudo docker exec -ti musicbrainz bash`
-* `cd /`
-* `./createdb.sh`
+* `sudo docker-compose run --rm  musicbrainz /createdb.sh -fetch`
+
+Create the database, and populate the database with existing dumps
+
+* `sudo docker-compose run --rm  musicbrainz /createdb.sh`
+
+### Recreate database
+you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
+* `sudo docker-compose run -ti --rm  musicbrainz /recreatedb.sh`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
-You can run bash in the running musicbrainz container like this:
 
-`sudo docker exec -ti musicbrainz bash`
+* Run the service and start bash:
+
+`sudo docker-compose run --rm  musicbrainz bash`
 
 The usual process to update the schema is:
 

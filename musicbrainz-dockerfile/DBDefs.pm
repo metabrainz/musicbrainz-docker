@@ -53,8 +53,8 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     READWRITE => {
         database    => "musicbrainz_db",
         schema          => "musicbrainz",
-        username    => "musicbrainz",
-        password        => "musicbrainz",
+        username    => "$ENV{DB_ENV_POSTGRES_USER}",
+        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
         host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
         port            => "$ENV{DB_PORT_5432_TCP_PORT}",
     },
@@ -71,16 +71,16 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     READONLY => {
         database    => "musicbrainz_db",
         schema          => "musicbrainz",
-        username    => "musicbrainz",
-        password        => "musicbrainz",
+        username    => "$ENV{DB_ENV_POSTGRES_USER}",
+        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
         host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
         port            => "$ENV{DB_PORT_5432_TCP_PORT}",
     },
     # How to connect for administrative access
     SYSTEM    => {
         database    => "template1",
-        username    => "musicbrainz",
-        password        => "musicbrainz",
+        username    => "$ENV{DB_ENV_POSTGRES_USER}",
+        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
         host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
         port            => "$ENV{DB_PORT_5432_TCP_PORT}",
     },
@@ -112,7 +112,7 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # If you plan to use the RT_SLAVE setting (replicated data from MusicBrainz' Live Data Feed)
 # you must sign in at https://metabrainz.org and generate an access token to access
 # the replication packets. Enter the access token below:
-# NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY! 
+# NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
 sub REPLICATION_ACCESS_TOKEN { "" }
 ################################################################################
