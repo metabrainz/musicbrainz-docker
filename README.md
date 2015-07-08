@@ -33,16 +33,14 @@ you will need to enter the postgres password that you set in [postgres.env](post
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
 
-* Run the service and start bash:
+###### The usual process to update the schema is:
 
-`sudo docker-compose run --rm musicbrainz bash`
-
-The usual process to update the schema is:
-
-* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker-compose run --rm musicbrainz ./admin/replication/LoadReplicationChanges`).
+* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 ./admin/replication/LoadReplicationChanges`).
 * Switch to the new code with:
-* `sudo docker-compose run --rm musicbrainz git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
-* `sudo docker-compose run --rm musicbrainz ./upgrade.sh`
+* Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
+* Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
+* Run the upgrade script: `./upgrade.sh`.
+* Exit bash `exit`.
 * Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](musicbrainz-dockerfile/DBDefs.pm#L95)
 * `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
 
