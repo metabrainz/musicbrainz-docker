@@ -19,5 +19,7 @@ musicbrainz:
   volumes_from:
    - postgresqldata
   restart: always
+  expose: 
+   - "5000"
   links:
    - postgresql:db
