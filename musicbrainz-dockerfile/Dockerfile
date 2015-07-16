@@ -14,7 +14,8 @@ RUN apt-get install -y \
     libicu-dev \
     liblocal-lib-perl \
     cpanminus \
-    cron
+    cron \
+    nginx
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
@@ -35,6 +36,9 @@ RUN cpanm --notest SARTAK/MooseX-Role-Parameterized-0.27.tar.gz \
     Digest::MD5::File \
     Term::Size::Any \
     LWP::Protocol::https \
+    FCGI \
+    FCGI::ProcManager \
+    Plack::Handler::FCGI \
     TURNSTEP/DBD-Pg-3.4.2.tar.gz
 
 RUN cd /musicbrainz-server/ && npm i && ./node_modules/.bin/gulp
@@ -45,10 +49,14 @@ ADD scripts/crons.conf /crons.conf
 ADD scripts/replication.sh /replication.sh
 ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
+ADD 001-musicbrainz /etc/nginx/sites-available/001-musicbrainz
 
+RUN ln -s /musicbrainz-server/admin/nginx/mbserver-rewrites.conf /etc/nginx/
+RUN ln -s /etc/nginx/sites-available/001-musicbrainz /etc/nginx/sites-enabled/
+RUN ln -s /musicbrainz-server/admin/nginx/nginx.conf /etc/nginx/
+RUN rm /etc/nginx/sites-enabled/default
 RUN crontab /crons.conf
 
-EXPOSE 5000
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
 CMD ["/start.sh"]
