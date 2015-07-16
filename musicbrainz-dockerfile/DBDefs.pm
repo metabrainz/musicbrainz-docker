@@ -326,19 +326,22 @@ sub DB_STAGING_SERVER { 0 }
 # sure it doesn't point at any production data you may have in your
 # redis server.
 
-# sub DATASTORE_REDIS_ARGS {
-#     my $self = shift;
-#     return {
-#         prefix => $self->MEMCACHED_NAMESPACE(),
-#         database => 0,
-#         test_database => 1,
-#         redis_new_args => {
-#             server => '127.0.0.1:6379',
-#             reconnect => 60,
-#             encoding => undef,
-#         }
-#     };
-# };
+sub DATASTORE_REDIS_ARGS {
+    my $self = shift;
+    return {
+        prefix => $self->MEMCACHED_NAMESPACE(),
+        database => 0,
+        test_database => 1,
+        redis_new_args => {
+            server => '127.0.0.1:6379',
+            reconnect => 60,
+            encoding => undef,
+            cnx_timeout => 0,
+            read_timeout => 0,
+            write_timeout => 0,
+        }
+    };
+};
 
 ################################################################################
 # Session cookies
@@ -431,12 +434,12 @@ sub DB_STAGING_SERVER { 0 }
 
 # sub USE_ETAGS { 1 }
 
-# sub CATALYST_DEBUG { 1 }
+sub CATALYST_DEBUG { 0 }
 
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
 # developing and debuging easier
-# sub DEVELOPMENT_SERVER { 1 }
+sub DEVELOPMENT_SERVER { 0 }
 
 # How long to wait before rechecking template files (undef uses the
 # Template::Toolkit default)
