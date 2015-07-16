@@ -51,6 +51,7 @@ ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
 ADD 001-musicbrainz /etc/nginx/sites-available/001-musicbrainz
 
+RUN rm /etc/nginx/nginx.conf
 RUN ln -s /musicbrainz-server/admin/nginx/mbserver-rewrites.conf /etc/nginx/
 RUN ln -s /etc/nginx/sites-available/001-musicbrainz /etc/nginx/sites-enabled/
 RUN ln -s /musicbrainz-server/admin/nginx/nginx.conf /etc/nginx/
