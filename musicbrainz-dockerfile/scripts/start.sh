@@ -4,4 +4,4 @@ env | grep '^DB_' | sed 's/^/export /' > /exports.txt
 cron -f &
 redis-server --daemonize yes
 nginx
-plackup -Ilib -s FCGI -E deployment --port 55901 --nproc 10 --pid fcgi.pid --keep-stderr=1
+start_server --port=55901 -- plackup -I lib -s Starlet -E deployment --nproc 10 --pid fcgi.pid
