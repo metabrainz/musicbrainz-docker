@@ -28,7 +28,7 @@ Create the database, and populate the database with existing dumps
 
 ### Recreate database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
-* `sudo docker-compose run -ti --rm musicbrainz /recreatedb.sh`
+* `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
