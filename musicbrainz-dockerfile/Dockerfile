@@ -1,9 +1,9 @@
-FROM ubuntu:latest
+FROM ubuntu:xenial
 MAINTAINER Jeff Sturgis <jeffsturgis@gmail.com>
-RUN (echo "deb http://archive.ubuntu.com/ubuntu  $(lsb_release -sc) main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/  $(lsb_release -sc)-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/  $(lsb_release -sc)-backports main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/  $(lsb_release -sc)-security main restricted universe multiverse" >> /etc/apt/sources.list)
+RUN (echo "deb http://archive.ubuntu.com/ubuntu xenial main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list)
 RUN apt-get update
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core postgresql-9.3
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core postgresql
 RUN apt-get install -y \
     memcached \
     redis-server \
@@ -19,16 +19,15 @@ RUN apt-get install -y \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2015-05-18-schema-change
+    git checkout v-2016-03-21
 
 RUN echo "eval $( perl -Mlocal::lib )" >> ~/.bashrc && . ~/.bashrc
-RUN curl -sL https://deb.nodesource.com/setup | sudo bash -
+RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
 
 RUN apt-get install -y nodejs
 RUN cat /musicbrainz-server/Makefile.PL | grep ^requires > cpanfile
 RUN cpanm --installdeps --notest .
-RUN cpanm --notest SARTAK/MooseX-Role-Parameterized-0.27.tar.gz \
-    Plack::Middleware::Debug::Base \
+RUN cpanm --notest Plack::Middleware::Debug::Base \
     Catalyst::Plugin::Cache::HTTP \
     Catalyst::Plugin::StackTrace \
     Cache::Memcached::Fast \
@@ -42,7 +41,7 @@ RUN cpanm --notest SARTAK/MooseX-Role-Parameterized-0.27.tar.gz \
     Server::Starter \
     TURNSTEP/DBD-Pg-3.4.2.tar.gz
 
-RUN cd /musicbrainz-server/ && npm i && ./node_modules/.bin/gulp
+RUN cd /musicbrainz-server/ && npm i
 
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
@@ -52,6 +51,7 @@ ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
 ADD 001-musicbrainz /etc/nginx/sites-available/001-musicbrainz
 
+RUN /musicbrainz-server/script/compile_resources.sh
 RUN rm /etc/nginx/nginx.conf
 RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /musicbrainz-server/admin/nginx/mbserver-rewrites.conf /etc/nginx/

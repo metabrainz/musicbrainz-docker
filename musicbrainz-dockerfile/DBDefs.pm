@@ -439,7 +439,7 @@ sub CATALYST_DEBUG { 0 }
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
 # developing and debuging easier
-sub DEVELOPMENT_SERVER { 0 }
+sub DEVELOPMENT_SERVER { 1 }
 
 # How long to wait before rechecking template files (undef uses the
 # Template::Toolkit default)
