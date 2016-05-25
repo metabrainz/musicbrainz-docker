@@ -2,7 +2,7 @@
 
 env | grep '^DB_' | sed 's/^/export /' > /exports.txt
 
-./musicbrainz-server/script/compile_resources.sh
+./script/compile_resources.sh
 
 cron -f &
 redis-server --daemonize yes
