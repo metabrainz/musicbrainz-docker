@@ -1,4 +1,5 @@
 musicbrainz docker container
+[![Build Status](https://travis-ci.org/jsturgis/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/jsturgis/musicbrainz-docker)
 ==================
 
 This repo contains everything needed to run a musicbrainz slave server with replication in a docker container.
