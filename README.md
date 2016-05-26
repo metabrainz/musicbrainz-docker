@@ -6,6 +6,11 @@ musicbrainz docker container
 This repo contains everything needed to run a musicbrainz slave server with replication in a docker container.
 You will need a little over 20 gigs of free space to run this with replication.
 
+### Versions
+* Current MB Branch: [v-2016-05-23-schema-change-v2](musicbrainz-dockerfile/Dockerfile#L22)
+* Current DB_SCHEMA_SEQUENCE: [23](musicbrainz-dockerfile/DBDefs.pm#L95)
+* Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
+
 ### Configuration
 * Set the path where you want to store the downloaded data dumps in [docker-compose.yml](./docker-compose.yml).
 * If you already have data dumps in this path they can be loaded instead of downloading new dumps, see [Create Database](#create-database).
