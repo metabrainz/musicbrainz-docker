@@ -19,7 +19,7 @@ RUN apt-get install -y \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2016-03-21
+    git checkout v-2016-05-23-schema-change-v2
 
 RUN echo "eval $( perl -Mlocal::lib )" >> ~/.bashrc && . ~/.bashrc
 RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
