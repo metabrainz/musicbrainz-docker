@@ -17,7 +17,11 @@ RUN apt-get update && \
 
 
 RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git
+WORKDIR /postgresql-musicbrainz-unaccent
+RUN make && make install
+WORKDIR /postgresql-musicbrainz-collate
+RUN make && make install
+WORKDIR /
 
-RUN cd postgresql-musicbrainz-unaccent && make && make install && cd ../postgresql-musicbrainz-collate && make && make install && cd ../
 
 RUN echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
