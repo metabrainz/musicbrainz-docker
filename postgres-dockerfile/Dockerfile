@@ -15,13 +15,15 @@ RUN apt-get update && \
     libicu-dev \
     postgresql-server-dev-9.5
 
+RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
+  git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
 
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git
-WORKDIR /postgresql-musicbrainz-unaccent
+WORKDIR /tmp/postgresql-musicbrainz-unaccent
 RUN make && make install
-WORKDIR /postgresql-musicbrainz-collate
+WORKDIR /tmp/postgresql-musicbrainz-collate
 RUN make && make install
 WORKDIR /
 
+RUN rm -R /tmp/*
 
 RUN echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
