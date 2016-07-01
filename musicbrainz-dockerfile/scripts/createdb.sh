@@ -14,7 +14,7 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
   rm -rf /media/dbdump/*
   wget -nd -nH -P /media/dbdump $FTPHOST/pub/musicbrainz/data/fullexport/LATEST
   LATEST=$(cat /media/dbdump/LATEST)
-  wget -r --no-parent -nd -nH -P /media/dbdump --reject "index.html*, mbdump-edit*, mbdump-documentation*" "ftp://ftp.musicbrainz.org/pub/musicbrainz/data/fullexport/$LATEST"
+  wget -r --no-parent -nd -nH -P /media/dbdump --reject "index.html*, mbdump-edit*, mbdump-documentation*" "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST"
   pushd /media/dbdump && md5sum -c MD5SUMS && popd
   /musicbrainz-server/admin/InitDb.pl --createdb --import /media/dbdump/mbdump*.tar.bz2 --echo
 elif [[ -a /media/dbdump/mbdump.tar.bz2 ]]; then
