@@ -10,7 +10,7 @@ postgresql:
   env_file:
    - ./postgres-dockerfile/postgres.env
   volumes:
-   - /var/lib/postgresql/data:/mnt/pgdata/pgdata
+   - /mnt/pgdata/pgdata:/var/lib/postgresql/data
   expose:
    - "5432"
 
