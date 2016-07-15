@@ -9,19 +9,21 @@ postgresql:
   restart: always
   env_file:
    - ./postgres-dockerfile/postgres.env
+  volumes:
+   - /var/lib/postgresql/data:/mnt/pgdata/pgdata
   expose:
    - "5432"
 
-musicbrainz:
-  build: musicbrainz-dockerfile
-  ports:
-   - "5000:5000"
-  volumes_from:
-   - postgresqldata
-  restart: always
-  environment: 
-   - MUSICBRAINZ_USE_PROXY=1
-  expose: 
-   - "5000"
-  links:
-   - postgresql:db
+#musicbrainz:
+#  build: musicbrainz-dockerfile
+#  ports:
+#   - "5000:5000"
+#  volumes_from:
+#   - postgresqldata
+#  restart: always
+#  environment: 
+#   - MUSICBRAINZ_USE_PROXY=1
+#  expose: 
+#   - "5000"
+#  links:
+#   - postgresql:db
