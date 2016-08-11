@@ -27,3 +27,8 @@ musicbrainz:
    - "5000"
   links:
    - postgresql:db
+
+indexer:
+  buid: indexer-dockerfile
+  volumes:
+   - /mnt/indexdata:/home/search/indexdata
