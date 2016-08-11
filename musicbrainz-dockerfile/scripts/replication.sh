@@ -1,2 +1,2 @@
 #!/bin/bash
-/bin/bash /musicbrainz-server/admin/replication/LoadReplicationChanges
+/musicbrainz-server/admin/replication/LoadReplicationChanges
