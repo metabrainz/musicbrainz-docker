@@ -27,10 +27,18 @@ musicbrainz:
    - "5000"
   links:
    - postgresql:db
+   - search:search
 
 indexer:
   build: indexer-dockerfile
   links:
    - postgresql:db
+  volumes:
+   - /mnt/indexdata:/home/search/indexdata
+
+search:
+  build: search-dockerfile
+  ports:
+   - "8080:8080"
   volumes:
    - /mnt/indexdata:/home/search/indexdata
