@@ -6,3 +6,4 @@ WORKDIR $JETTY_HOME
 COPY ./searchserver.war $JETTY_HOME/webapps/ROOT.war
 
 VOLUME ["/home/search/data"]
+RUN ln -s /home/search/data /home/search/indexdata

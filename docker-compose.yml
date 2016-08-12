@@ -38,7 +38,7 @@ indexer:
 
 search:
   build: search-dockerfile
-  ports:
-   - "8080:8080"
+  expose:
+   - "8080"
   volumes:
    - /mnt/data:/home/search/data
