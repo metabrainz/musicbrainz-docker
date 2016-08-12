@@ -34,11 +34,11 @@ indexer:
   links:
    - postgresql:db
   volumes:
-   - /mnt/indexdata:/home/search/indexdata
+   - /mnt/data:/home/search/data
 
 search:
   build: search-dockerfile
   ports:
    - "8080:8080"
   volumes:
-   - /mnt/indexdata:/home/search/indexdata
+   - /mnt/data:/home/search/data
