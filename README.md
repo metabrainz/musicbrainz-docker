@@ -33,6 +33,9 @@ Create the database, and populate the database with existing dumps
 
 * `sudo docker-compose run --rm musicbrainz /createdb.sh`
 
+### Build search indexes
+* `sudo docker-compose run --rm indexer /home/search/index.sh`
+
 ### Recreate database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
