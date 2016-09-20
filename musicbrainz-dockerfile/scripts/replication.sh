@@ -1,2 +1,3 @@
 #!/bin/bash
-/musicbrainz-server/admin/replication/LoadReplicationChanges
+. /exports.txt
+/bin/bash /musicbrainz-server/admin/cron/slave.sh
