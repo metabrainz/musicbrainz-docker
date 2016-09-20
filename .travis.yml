@@ -5,6 +5,8 @@ services:
 
 before_install:
   - docker-compose up -d
+  - docker-compose run --rm musicbrainz /createdb.sh -fetch 
+  - docker-compose run --rm indexer /home/search/index.sh 
 
 script:
   - ./test/test-musicbrainz-image.sh
