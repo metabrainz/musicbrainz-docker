@@ -1,4 +1,4 @@
-musicbrainz docker container
+musicbrainz slave server with search and replication
 ==================
 
 [![Build Status](https://travis-ci.org/jsturgis/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/jsturgis/musicbrainz-docker)
