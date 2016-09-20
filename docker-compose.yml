@@ -9,6 +9,8 @@ postgresql:
   restart: always
   env_file:
    - ./postgres-dockerfile/postgres.env
+  volumes:
+   - /mnt/pgdata/pgdata:/var/lib/postgresql/data
   expose:
    - "5432"
 
@@ -25,3 +27,18 @@ musicbrainz:
    - "5000"
   links:
    - postgresql:db
+   - search:search
+
+indexer:
+  build: indexer-dockerfile
+  links:
+   - postgresql:db
+  volumes:
+   - /mnt/data:/home/search/data
+
+search:
+  build: search-dockerfile
+  expose:
+   - "8080"
+  volumes:
+   - /mnt/data:/home/search/data
