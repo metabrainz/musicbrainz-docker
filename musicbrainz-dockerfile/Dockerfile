@@ -21,7 +21,7 @@ RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git m
     cd musicbrainz-server && \
     git checkout v-2016-05-23-schema-change-v2
 
-RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 
 RUN apt-get install -y nodejs
 RUN cat /musicbrainz-server/Makefile.PL | grep ^requires > cpanfile
