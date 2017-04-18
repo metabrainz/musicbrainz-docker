@@ -21,9 +21,9 @@ musicbrainz:
   volumes_from:
    - postgresqldata
   restart: always
-  environment: 
+  environment:
    - MUSICBRAINZ_USE_PROXY=1
-  expose: 
+  expose:
    - "5000"
   links:
    - postgresql:db

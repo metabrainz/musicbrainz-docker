@@ -1,10 +1,10 @@
-FROM ubuntu:xenial
+FROM metabrainz/base-image
 MAINTAINER Jeff Sturgis <jeffsturgis@gmail.com>
-RUN (echo "deb http://archive.ubuntu.com/ubuntu xenial main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list)
-RUN apt-get update
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git-core postgresql
-RUN apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y \
+    git-core \
+    postgresql \
     memcached \
     redis-server \
     build-essential \
@@ -14,8 +14,8 @@ RUN apt-get install -y \
     libicu-dev \
     liblocal-lib-perl \
     cpanminus \
-    cron \
-    nginx
+    nginx \
+    carton
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
@@ -40,8 +40,6 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
     Server::Starter \
     TURNSTEP/DBD-Pg-3.5.9_1.tar.gz
 
-RUN cd /musicbrainz-server/ && npm i
-
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
 ADD scripts/crons.conf /crons.conf
@@ -51,6 +49,10 @@ ADD scripts/recreatedb.sh /recreatedb.sh
 ADD scripts/set-token.sh /set-token.sh
 ADD 001-musicbrainz /etc/nginx/sites-available/001-musicbrainz
 
+RUN cd /musicbrainz-server/ && npm i \
+    && eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN rm /etc/nginx/nginx.conf
 RUN rm /etc/nginx/sites-enabled/default
 RUN ln -s /musicbrainz-server/admin/nginx/mbserver-rewrites.conf /etc/nginx/
