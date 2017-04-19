@@ -19,13 +19,13 @@ RUN apt-get install -y \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2016-05-23-schema-change-v2
+    git checkout v-2017-03-27
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 
 RUN apt-get install -y nodejs
-RUN cat /musicbrainz-server/Makefile.PL | grep ^requires > cpanfile
-RUN cpanm --installdeps --notest .
+
+RUN cd /musicbrainz-server/ && eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
 RUN cpanm --notest Plack::Middleware::Debug::Base \
     Catalyst::Plugin::Cache::HTTP \
     Catalyst::Plugin::StackTrace \
@@ -38,7 +38,7 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
     Plack::Handler::Starlet \
     Starlet::Server \
     Server::Starter \
-    TURNSTEP/DBD-Pg-3.4.2.tar.gz
+    TURNSTEP/DBD-Pg-3.5.9_1.tar.gz
 
 RUN cd /musicbrainz-server/ && npm i
 

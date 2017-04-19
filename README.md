@@ -7,7 +7,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 You will need a little over 20 gigs of free space to run this with replication.
 
 ### Versions
-* Current MB Branch: [v-2016-05-23-schema-change-v2](musicbrainz-dockerfile/Dockerfile#L22)
+* Current MB Branch: [v-2017-03-27](musicbrainz-dockerfile/Dockerfile#L22)
 * Current DB_SCHEMA_SEQUENCE: [23](musicbrainz-dockerfile/DBDefs.pm#L95)
 * Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
 

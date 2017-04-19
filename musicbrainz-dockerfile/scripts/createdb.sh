@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval $( perl -Mlocal::lib )
+
 FTP_HOST=ftp://ftp.musicbrainz.org
 FETCH_DUMPS=$1
 

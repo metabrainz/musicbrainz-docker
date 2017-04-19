@@ -52,16 +52,15 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect when we need read-write access to the database
     READWRITE => {
         database    => "musicbrainz_db",
-        schema          => "musicbrainz",
+        schema      => "musicbrainz",
         username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
-        host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
-        port            => "$ENV{DB_PORT_5432_TCP_PORT}",
+        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        host        => "db",
+        port        => "5432",
     },
     # How to connect to a test database
     TEST => {
         database    => "musicbrainz_test",
-        schema          => "musicbrainz",
         username    => "musicbrainz",
         password        => "musicbrainz",
 #       host            => "",
@@ -70,20 +69,30 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect for read-only access.  See "REPLICATION_TYPE" (below)
     READONLY => {
         database    => "musicbrainz_db",
-        schema          => "musicbrainz",
+        schema      => "musicbrainz",
         username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
-        host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
-        port            => "$ENV{DB_PORT_5432_TCP_PORT}",
+        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        host        => "db",
+        port        => "5432",
     },
     # How to connect for administrative access
     SYSTEM    => {
         database    => "template1",
         username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password        => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
-        host            => "$ENV{DB_PORT_5432_TCP_ADDR}",
-        port            => "$ENV{DB_PORT_5432_TCP_PORT}",
+        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        host        => "db",
+        port        => "5432",
     },
+    # How to connect when running maintenance scripts located under admin/.
+    # This defaults to READWRITE if left undefined, but should be configured if
+    # READWRITE points to a connection pooler that doesn't support session-based features.
+#   MAINTENANCE    => {
+#       database    => "musicbrainz_db",
+#       username    => "musicbrainz",
+#       password        => "musicbrainz",
+#       host            => "",
+#       port            => "5432",
+#   },
     # Fill out only if RAWDATA lives on a different host from the READWRITE server.
     # RAWDATA_SYSTEM => undef,
 );
@@ -115,6 +124,7 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
 sub REPLICATION_ACCESS_TOKEN { "" }
+
 ################################################################################
 # GPG Signature
 ################################################################################
@@ -181,12 +191,8 @@ sub LUCENE_SERVER             { "search:8080" }
 sub DB_STAGING_SERVER { 0 }
 
 # This description is shown in the banner when DB_STAGING_SERVER is enabled.
-# If left undefined the default value will be shown.
-# Several predefined constants can be used (set to e.g. shift->NAME_OF_CONSTANT
-# DB_STAGING_SERVER_DESCRIPTION_DEFAULT { l('This is a MusicBrainz development server.') }
-# DB_STAGING_SERVER_DESCRIPTION_BETA { l('This beta test server allows testing of new features with the live database.') }
-# Defaults to DB_STAGING_SERVER_DESCRIPTION_DEFAULT
-# sub DB_STAGING_SERVER_DESCRIPTION { "" }
+# If left empty the default value will be shown.
+# sub DB_STAGING_SERVER_DESCRIPTION { '' }
 
 # Only change this if running a non-sanitized database on a dev server,
 # e.g. http://test.musicbrainz.org.
@@ -225,56 +231,30 @@ sub DB_STAGING_SERVER { 0 }
 # Cache Settings
 ################################################################################
 
-# MEMCACHED_SERVERS allows configuration of global memcached servers, if more
-# close configuration is not required
-# sub MEMCACHED_SERVERS { return ['127.0.0.1:11211']; };
-
-# MEMCACHED_NAMESPACE allows configuration of a global memcached namespace, if
-# more close configuration is not required
-# sub MEMCACHED_NAMESPACE { return 'MB:'; };
-
 # PLUGIN_CACHE_OPTIONS are the options configured for Plugin::Cache.  $c->cache
 # is provided by Plugin::Cache, and is required for HTTP Digest authentication
 # in the webservice (Catalyst::Authentication::Credential::HTTP).
-#
-# Using Cache::Memory is good for a development environment, but is likely not
-# suited for production.  Use something like memcached in a production setup.
-#
-# If you want to use something such as Memcached, the settings here should be
-# the same as the settings you use for the session store.
-#
 # sub PLUGIN_CACHE_OPTIONS {
 #     my $self = shift;
 #     return {
-#         class => "Cache::Memcached::Fast",
-#         servers => $self->MEMCACHED_SERVERS(),
-#         namespace => $self->MEMCACHED_NAMESPACE(),
+#         class => 'MusicBrainz::Server::CacheWrapper::Redis',
+#         server => '127.0.0.1:6379',
+#         namespace => 'MB:Catalyst:',
 #     };
-# };
+# }
 
-# Use memcached and a small in-memory cache, see below if you
-# want to disable caching
-#
-# The caching options here relate to object caching - such as caching artists,
-# releases, etc in order to speed up queries. If you are using Memcached
-# to store sessions as well this should be a *different* memcached server.
+# The caching options here relate to object caching in Redis - such as for
+# artists, releases, etc. in order to speed up queries. See below if you want
+# to disable caching.
 # sub CACHE_MANAGER_OPTIONS {
 #     my $self = shift;
 #     my %CACHE_MANAGER_OPTIONS = (
 #         profiles => {
-#             memory => {
-#                 class => 'Cache::Memory',
-#                 wrapped => 1,
-#                 keys => [qw( area_type artist_type g c lng label_type mf place_type release_group_type release_group_secondary_type rs rp scr work_type )],
-#                 options => {
-#                     default_expires => '1 hour',
-#                 },
-#             },
 #             external => {
-#                 class => 'Cache::Memcached::Fast',
+#                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
 #                 options => {
-#                     servers => $self->MEMCACHED_SERVERS(),
-#                     namespace => $self->MEMCACHED_NAMESPACE()
+#                     server => '127.0.0.1:6379',
+#                     namespace => 'MB:',
 #                 },
 #             },
 #         },
@@ -284,35 +264,16 @@ sub DB_STAGING_SERVER { 0 }
 #     return \%CACHE_MANAGER_OPTIONS
 # }
 
-################################################################################
-# Rate-Limiting
-################################################################################
-
-# The "host:port" of the ratelimit server ($MB_SERVER/bin/ratelimit-server).
-# If undef, the rate-limit code always returns undef (as it does if there is
-# an error).
-# Just like the memcached server settings, there is NO SECURITY built into the
-# ratelimit protocol, so be careful about enabling it.
-# sub RATELIMIT_SERVER { undef }
-
-################################################################################
-# Minify settings
-################################################################################
-
-# The following two values determine how scripts and styles are minified. By
-# default, a dummy minifier is used:
-# sub MINIFY_DUMMY { shift; my %args = @_; return $args{input}; }
-# sub MINIFY_SCRIPTS { return \&MINIFY_DUMMY; }
-# sub MINIFY_STYLES { return \&MINIFY_DUMMY; }
-
-# If you wish to minify either javascript or css, uncomment the following lines
-# and install the neccesary CPAN packages.
-# sub MINIFY_SCRIPTS { use Javascript::Closure; return \&Javascript::Closure::minify }
-# sub MINIFY_STYLES { use CSS::Minifier; return \&CSS::Minifier::minify }
+# Sets the TTL for entities stored in Redis, in seconds. A value of 0
+# indicates that no expiration is set.
+# sub ENTITY_CACHE_TTL { 0 }
 
 ################################################################################
 # Sessions (advanced)
 ################################################################################
+
+# The session store holds user login sessions. Session::Store::MusicBrainz
+# uses DATASTORE_REDIS_ARGS to connect to and store sessions in Redis.
 
 # sub SESSION_STORE { "Session::Store::MusicBrainz" }
 # sub SESSION_STORE_ARGS { return {} }
@@ -329,19 +290,12 @@ sub DB_STAGING_SERVER { 0 }
 sub DATASTORE_REDIS_ARGS {
     my $self = shift;
     return {
-        prefix => $self->MEMCACHED_NAMESPACE(),
         database => 0,
+        namespace => 'MB:',
+        server => '127.0.0.1:6379',
         test_database => 1,
-        redis_new_args => {
-            server => '127.0.0.1:6379',
-            reconnect => 60,
-            encoding => undef,
-            cnx_timeout => 0,
-            read_timeout => 0,
-            write_timeout => 0,
-        }
     };
-};
+}
 
 ################################################################################
 # Session cookies
@@ -371,21 +325,6 @@ sub DATASTORE_REDIS_ARGS {
 # This server is temporarily in read-only mode
 # for database maintainance.
 # EOF
-
-# Development server feature.
-# Used to display which git branch is currently running along with information
-# about the last commit
-# sub GIT_BRANCH
-# {
-#   my $self = shift;
-#   if ($self->DB_STAGING_SERVER) {
-#     my $branch = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d'`;
-#     $branch =~ s/\* (.+)/$1/;
-#     my $sha = `git log -1 --format=format:"%h"`;
-#     my $msg = `git log -1 --format=format:"Last commit by %an on %ad%n%s" --date=short`;
-#     return $branch, $sha, $msg;
-#   }
-# }
 
 # How long an annotation is considered as being locked.
 # sub ANNOTATION_LOCK_TIME { 60*15 }
@@ -439,7 +378,7 @@ sub CATALYST_DEBUG { 0 }
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
 # developing and debuging easier
-sub DEVELOPMENT_SERVER { 1 }
+sub DEVELOPMENT_SERVER { 0 }
 
 # How long to wait before rechecking template files (undef uses the
 # Template::Toolkit default)
@@ -454,11 +393,10 @@ sub DEVELOPMENT_SERVER { 1 }
 # (note: will still only use languages in MB_LANGUAGES)
 # sub LANGUAGE_FALLBACK_TO_BROWSER{ 1 }
 
-# Private, please do not change
-# sub _RUNNING_TESTS { 0 }
-
-# Set this to an email address and the server will email any bugs to you
-# sub EMAIL_BUGS { undef }
+# Bugs can be sent to a Sentry instance (https://sentry.io) via these settings.
+# The DSNs can be found on the project configuration page.
+# sub SENTRY_DSN { undef }
+# sub SENTRY_DSN_PUBLIC { undef }
 
 # Configure which html validator should be used.  If you run tests
 # often, you should probably run a local copy of the validator.  See
@@ -476,16 +414,6 @@ sub DEVELOPMENT_SERVER { 1 }
 
 # Log if a request in / (not /ws) takes more than x seconds
 # sub PROFILE_SITE { 0 }
-
-# If you want the FastCGI processes to restart, configure this
-# sub AUTO_RESTART {
-##    return {
-##        active => 1,
-##        check_each => 10,
-##        max_bits => 134217728,
-##        min_handled_requests => 100
-##    }
-# }
 
 # The maximum amount of time a process can be serving a single request. This
 # function takes a Catalyst::Request as input, and should return the amount of time
