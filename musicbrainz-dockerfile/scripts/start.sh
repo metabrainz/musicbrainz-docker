@@ -4,8 +4,6 @@ eval $( perl -Mlocal::lib )
 
 env | grep '^DB_' | sed 's/^/export /' > /exports.txt
 
-./script/compile_resources.sh
-
 cron -f &
 redis-server --daemonize yes
 nginx
