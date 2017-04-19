@@ -14,8 +14,7 @@ RUN apt-get update && \
     libicu-dev \
     liblocal-lib-perl \
     cpanminus \
-    nginx \
-    carton
+    nginx
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
