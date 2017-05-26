@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2017-03-27
+    git checkout v-2017-05-15-schema-change
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 
