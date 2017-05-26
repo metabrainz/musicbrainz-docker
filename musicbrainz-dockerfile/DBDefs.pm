@@ -51,7 +51,7 @@ sub MB_SERVER_ROOT    { "/musicbrainz-server" }
 MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect when we need read-write access to the database
     READWRITE => {
-        database    => "musicbrainz_db",
+        database    => "musicbrainz",
         schema      => "musicbrainz",
         username    => "$ENV{DB_ENV_POSTGRES_USER}",
         password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
