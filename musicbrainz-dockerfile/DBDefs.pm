@@ -68,7 +68,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     },
     # How to connect for read-only access.  See "REPLICATION_TYPE" (below)
     READONLY => {
-        database    => "musicbrainz_db",
+        database    => "musicbrainz",
         schema      => "musicbrainz",
         username    => "$ENV{DB_ENV_POSTGRES_USER}",
         password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
@@ -123,8 +123,8 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-sub REPLICATION_ACCESS_TOKEN { "" }
 
+sub REPLICATION_ACCESS_TOKEN { "vBanUIaYpFn6U7LwAaa8WYzCmaMCY7MvieqsqvU6" }
 ################################################################################
 # GPG Signature
 ################################################################################
@@ -152,7 +152,7 @@ sub REPLICATION_ACCESS_TOKEN { "" }
 # Additionally you should set the environment variable
 # MUSICBRAINZ_USE_PROXY=1 when using a reverse proxy to make the server
 # aware of it when generating things like the canonical url in catalyst.
-sub WEB_SERVER                { "localhost:5000" }
+sub WEB_SERVER                { "mb:5000" }
 # Relevant only if SSL redirects are enabled
 # sub WEB_SERVER_SSL            { "localhost" }
 sub LUCENE_SERVER             { "search:8080" }

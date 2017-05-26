@@ -29,7 +29,8 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
     Catalyst::Plugin::Cache::HTTP \
     Catalyst::Plugin::StackTrace \
     Cache::Memcached::Fast \
-    JSON::Any Cache::Memory \
+    JSON::Any \
+    Cache::Memory \
     Digest::MD5::File \
     Term::Size::Any \
     LWP::Protocol::https \
