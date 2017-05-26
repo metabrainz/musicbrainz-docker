@@ -124,7 +124,7 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
 
-sub REPLICATION_ACCESS_TOKEN { "vBanUIaYpFn6U7LwAaa8WYzCmaMCY7MvieqsqvU6" }
+sub REPLICATION_ACCESS_TOKEN { "" }
 ################################################################################
 # GPG Signature
 ################################################################################
