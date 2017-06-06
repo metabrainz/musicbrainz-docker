@@ -25,7 +25,7 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
 RUN cd /musicbrainz-server/ && eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
-RUN cpanm --notest Plack::Middleware::Debug::Base \
+RUN eval $( perl -Mlocal::lib) && cpanm --notest Plack::Middleware::Debug::Base \
     Catalyst::Plugin::Cache::HTTP \
     Catalyst::Plugin::StackTrace \
     Cache::Memcached::Fast \
