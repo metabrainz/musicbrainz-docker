@@ -42,6 +42,7 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
 
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
+ADD scripts/start_mb_renderer.sh /start_mb_renderer.sh
 ADD scripts/crons.conf /crons.conf
 ADD scripts/replication.sh /replication.sh
 ADD scripts/createdb.sh /createdb.sh

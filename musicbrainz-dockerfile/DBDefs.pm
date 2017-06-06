@@ -33,6 +33,9 @@ use MusicBrainz::Server::DatabaseConnectionFactory;
 # Commented-out lines should generally have sane defaults; anything that's uncommented
 # probably needs personal attention.
 
+# Disable auto forking it is handled by superdaemon
+sub FORK_RENDERER { 0 }
+
 ################################################################################
 # Directories
 ################################################################################
