@@ -46,7 +46,7 @@ you will need to enter the postgres password that you set in [postgres.env](post
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
 
-###### The usual process to update the schema is:
+The usual process to update the schema is:
 
 * Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 ./admin/replication/LoadReplicationChanges`).
 * Switch to the new code with:
