@@ -10,7 +10,10 @@ if [[ $2 != "" ]]; then
     FTP_HOST=$2
 fi
 
-mkdir $TMP_DIR || true
+# create tmp dir
+if [ ! -d "$TMP_DIR" ]; then
+  mkdir $TMP_DIR
+fi
 
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
   echo "fetching data dumps"
