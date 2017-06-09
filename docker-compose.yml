@@ -1,6 +1,5 @@
 postgresqldata:
   build: data-dockerfile
-  restart: always
   volumes:
    - /datadump:/media/dbdump:rw
 
