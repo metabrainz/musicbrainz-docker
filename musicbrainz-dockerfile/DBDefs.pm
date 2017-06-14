@@ -56,8 +56,8 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     READWRITE => {
         database    => "musicbrainz",
         schema      => "musicbrainz",
-        username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        username    => "$ENV{POSTGRES_USER}",
+        password    => "$ENV{POSTGRES_PASSWORD}",
         host        => "db",
         port        => "5432",
     },
@@ -73,16 +73,16 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     READONLY => {
         database    => "musicbrainz",
         schema      => "musicbrainz",
-        username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        username    => "$ENV{POSTGRES_USER}",
+        password    => "$ENV{POSTGRES_PASSWORD}",
         host        => "db",
         port        => "5432",
     },
     # How to connect for administrative access
     SYSTEM    => {
         database    => "template1",
-        username    => "$ENV{DB_ENV_POSTGRES_USER}",
-        password    => "$ENV{DB_ENV_POSTGRES_PASSWORD}",
+        username    => "$ENV{POSTGRES_USER}",
+        password    => "$ENV{POSTGRES_PASSWORD}",
         host        => "db",
         port        => "5432",
     },
