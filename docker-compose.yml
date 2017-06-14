@@ -1,44 +1,37 @@
-postgresqldata:
-  build: data-dockerfile
-  restart: always
-  volumes:
-   - /datadump:/media/dbdump:rw
+version: '2'
+services:
+  db:
+    build: postgres-dockerfile
+    restart: always
+    env_file:
+      - ./postgres-dockerfile/postgres.env
+    volumes:
+      - /mnt/pgdata/pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
 
-postgresql:
-  build: postgres-dockerfile
-  restart: always
-  env_file:
-   - ./postgres-dockerfile/postgres.env
-  volumes:
-   - /mnt/pgdata/pgdata:/var/lib/postgresql/data
-  expose:
-   - "5432"
+  musicbrainz:
+    build: musicbrainz-dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - /datadump:/media/dbdump
+    restart: always
+    env_file:
+      - ./postgres-dockerfile/postgres.env
+    environment:
+      - MUSICBRAINZ_USE_PROXY=1
+    expose:
+      - "5000"
+    depends_on:
+      - db
+      - search
 
-musicbrainz:
-  build: musicbrainz-dockerfile
-  ports:
-   - "5000:5000"
-  volumes_from:
-   - postgresqldata
-  restart: always
-  environment:
-   - MUSICBRAINZ_USE_PROXY=1
-  expose:
-   - "5000"
-  links:
-   - postgresql:db
-   - search:search
-
-indexer:
-  build: indexer-dockerfile
-  links:
-   - postgresql:db
-  volumes:
-   - /mnt/data:/home/search/data
-
-search:
-  build: search-dockerfile
-  expose:
-   - "8080"
-  volumes:
-   - /mnt/data:/home/search/data
+  search:
+    build: search-dockerfile
+    restart: always
+    expose:
+      - "8080"
+    volumes:
+      - /mnt/data:/home/search/data
+      - /mnt/data:/home/search/indexdata

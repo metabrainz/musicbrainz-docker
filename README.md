@@ -8,7 +8,7 @@ You will need a little over 20 gigs of free space to run this with replication.
 
 ### Versions
 * Current MB Branch: [v-2017-05-15-schema-change](musicbrainz-dockerfile/Dockerfile#L21)
-* Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L104)
+* Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L107)
 * Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
 
 ### Configuration
@@ -46,7 +46,7 @@ you will need to enter the postgres password that you set in [postgres.env](post
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
 
-###### The usual process to update the schema is:
+The usual process to update the schema is:
 
 * Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 ./admin/replication/LoadReplicationChanges`).
 * Switch to the new code with:
