@@ -48,7 +48,7 @@ When there is a schema change you will need to follow the directions posted by t
 
 ###### The usual process to update the schema is:
 
-* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 ./admin/replication/LoadReplicationChanges`).
+* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 /replication.sh`).
 * Switch to the new code with:
 * Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
 * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
