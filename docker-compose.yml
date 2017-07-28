@@ -9,6 +9,8 @@ services:
       - /mnt/pgdata/pgdata:/var/lib/postgresql/data
     expose:
       - "5432"
+    port:
+      - "5432:5432"
 
   musicbrainz:
     build: musicbrainz-dockerfile
