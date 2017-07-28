@@ -29,8 +29,8 @@ services:
 
   indexer:
     build: indexer-dockerfile
-    links:
-      - postgresql:db
+    depends_on:
+      - db
     volumes:
       - /mnt/data:/home/search/data
 
