@@ -37,7 +37,7 @@ Create the database, and populate the database with existing dumps
 ### Build search indexes
 In order to use the search functions of the web site/API you will need to build search indexes.
 
-* `sudo docker build --tag indexer ./indexer-dockerfile && sudo docker run -e DB=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' musicbrainzdocker_db_1) --rm indexer /home/search/index.sh`
+* `sudo docker-compose run --rm indexer /home/search/index.sh`
 
 ### If you need to recreate the database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
