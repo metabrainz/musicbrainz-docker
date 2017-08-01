@@ -17,12 +17,15 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
 
   apt-get install -y wget
   rm -rf /media/dbdump/*
-  echo "Get LATEST file"
   wget -nd -nH -P /media/dbdump $FTP_HOST/pub/musicbrainz/data/fullexport/LATEST
   LATEST=$(cat /media/dbdump/LATEST)
-  echo "latest -$LATEST-"
-  echo "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST"
-  wget -r --no-parent -nd -nH -P /media/dbdump --reject "index.html*, mbdump-edit*, mbdump-documentation*" "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/MD5SUMS"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump.tar.bz2"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump-cdstubs.tar.bz2"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump-cover-art-archive.tar.bz2"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump-derived.tar.bz2"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump-stats.tar.bz2"
+  wget -P /media/dbdump "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST/mbdump-wikidocs.tar.bz2"
   pushd /media/dbdump && md5sum -c MD5SUMS && popd
 fi
 
