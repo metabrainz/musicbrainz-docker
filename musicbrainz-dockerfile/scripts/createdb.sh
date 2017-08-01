@@ -17,8 +17,11 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
 
   apt-get install -y wget
   rm -rf /media/dbdump/*
+  echo "Get LATEST file"
   wget -nd -nH -P /media/dbdump $FTP_HOST/pub/musicbrainz/data/fullexport/LATEST
   LATEST=$(cat /media/dbdump/LATEST)
+  echo "latest -$LATEST-"
+  echo "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST"
   wget -r --no-parent -nd -nH -P /media/dbdump --reject "index.html*, mbdump-edit*, mbdump-documentation*" "$FTP_HOST/pub/musicbrainz/data/fullexport/$LATEST"
   pushd /media/dbdump && md5sum -c MD5SUMS && popd
 fi
