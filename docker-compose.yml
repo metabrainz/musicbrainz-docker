@@ -42,3 +42,13 @@ services:
     volumes:
       - /mnt/data:/home/search/data
       - /mnt/data:/home/search/indexdata
+
+  redis:
+    image: redis:3.2.1
+    expose:
+      - "6379"
+
+  nginx:
+    image: nginx:1.13.3
+    expose:
+      - "80"

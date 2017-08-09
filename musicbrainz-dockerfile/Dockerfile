@@ -1,6 +1,10 @@
 FROM metabrainz/base-image
 MAINTAINER Jeff Sturgis <jeffsturgis@gmail.com>
 
+ENV DOCKERIZE_VERSION v0.2.0
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
 RUN apt-get update && \
     apt-get install -y \
     git-core \
@@ -63,4 +67,6 @@ RUN crontab /crons.conf
 
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
-CMD ["/start.sh"]
+CMD dockerize -wait tcp://db:5432 -timeout 60s \
+    -wait tcp://redis:6379 -timeout 60s \
+    /start.sh
