@@ -21,15 +21,12 @@ services:
       - ./postgres-dockerfile/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
-    expose:
-      - "5000"
     depends_on:
       - db
       - search
 
   indexer:
     build: indexer-dockerfile
-    restart: unless-stopped
     depends_on:
       - db
     volumes:
