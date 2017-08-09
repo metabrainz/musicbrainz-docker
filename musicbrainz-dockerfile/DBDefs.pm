@@ -295,7 +295,7 @@ sub DATASTORE_REDIS_ARGS {
     return {
         database => 0,
         namespace => 'MB:',
-        server => '127.0.0.1:6379',
+        server => 'redis:6379',
         test_database => 1,
     };
 }
