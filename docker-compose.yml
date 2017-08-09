@@ -2,7 +2,7 @@ version: '2'
 services:
   db:
     build: postgres-dockerfile
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     volumes:
@@ -16,7 +16,7 @@ services:
       - "5000:5000"
     volumes:
       - /datadump:/media/dbdump
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     environment:
@@ -29,6 +29,7 @@ services:
 
   indexer:
     build: indexer-dockerfile
+    restart: unless-stopped
     depends_on:
       - db
     volumes:
@@ -36,7 +37,7 @@ services:
 
   search:
     build: search-dockerfile
-    restart: always
+    restart: unless-stopped
     expose:
       - "8080"
     volumes:
@@ -45,10 +46,6 @@ services:
 
   redis:
     image: redis:3.2.1
+    restart: unless-stopped
     expose:
       - "6379"
-
-  nginx:
-    image: nginx:1.13.3
-    expose:
-      - "80"
