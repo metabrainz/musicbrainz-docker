@@ -24,6 +24,6 @@ WORKDIR /tmp/postgresql-musicbrainz-collate
 RUN make && make install
 WORKDIR /
 
-RUN rm -R /tmp/*
+COPY set-config.sh /docker-entrypoint-initdb.d
 
-RUN echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
+RUN rm -R /tmp/*
