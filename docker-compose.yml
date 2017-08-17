@@ -1,6 +1,11 @@
 version: '2'
+
 volumes:
   pgdata:
+    driver: local
+  indexdata:
+    driver: local
+  dbdump:
     driver: local
 
 services:
@@ -19,7 +24,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./data/dbdump:/media/dbdump
+      - dbdump:/media/dbdump
     restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
@@ -28,13 +33,14 @@ services:
     depends_on:
       - db
       - search
+      - redis
 
   indexer:
     build: indexer-dockerfile
     depends_on:
       - db
     volumes:
-      - /mnt/data:/home/search/data
+      - indexdata:/home/search/indexdata
 
   search:
     build: search-dockerfile
@@ -42,8 +48,7 @@ services:
     expose:
       - "8080"
     volumes:
-      - /mnt/data:/home/search/data
-      - /mnt/data:/home/search/indexdata
+      - indexdata:/home/search/indexdata
 
   redis:
     image: redis:3.2.1
