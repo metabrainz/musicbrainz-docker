@@ -2,8 +2,6 @@
 
 eval $( perl -Mlocal::lib )
 
-env | grep '^DB_' | sed 's/^/export /' > /exports.txt
-
 cron -f &
 nginx
 /start_mb_renderer.pl
