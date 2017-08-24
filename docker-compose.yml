@@ -2,7 +2,7 @@ version: '2'
 services:
   db:
     build: postgres-dockerfile
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     volumes:
@@ -16,13 +16,11 @@ services:
       - "5000:5000"
     volumes:
       - /datadump:/media/dbdump
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
-    expose:
-      - "5000"
     depends_on:
       - db
       - search
@@ -36,9 +34,15 @@ services:
 
   search:
     build: search-dockerfile
-    restart: always
+    restart: unless-stopped
     expose:
       - "8080"
     volumes:
       - /mnt/data:/home/search/data
       - /mnt/data:/home/search/indexdata
+
+  redis:
+    image: redis:3.2.1
+    restart: unless-stopped
+    expose:
+      - "6379"
