@@ -155,7 +155,7 @@ sub REPLICATION_ACCESS_TOKEN { "" }
 # Additionally you should set the environment variable
 # MUSICBRAINZ_USE_PROXY=1 when using a reverse proxy to make the server
 # aware of it when generating things like the canonical url in catalyst.
-sub WEB_SERVER                { "mb:5000" }
+sub WEB_SERVER                { "localhost:5000" }
 # Relevant only if SSL redirects are enabled
 # sub WEB_SERVER_SSL            { "localhost" }
 sub LUCENE_SERVER             { "search:8080" }
@@ -237,39 +237,39 @@ sub DB_STAGING_SERVER { 0 }
 # PLUGIN_CACHE_OPTIONS are the options configured for Plugin::Cache.  $c->cache
 # is provided by Plugin::Cache, and is required for HTTP Digest authentication
 # in the webservice (Catalyst::Authentication::Credential::HTTP).
-# sub PLUGIN_CACHE_OPTIONS {
-#     my $self = shift;
-#     return {
-#         class => 'MusicBrainz::Server::CacheWrapper::Redis',
-#         server => '127.0.0.1:6379',
-#         namespace => 'MB:Catalyst:',
-#     };
-# }
+sub PLUGIN_CACHE_OPTIONS {
+    my $self = shift;
+    return {
+        class => 'MusicBrainz::Server::CacheWrapper::Redis',
+        server => 'redis:6379',
+        namespace => 'MB:Catalyst:',
+    };
+}
 
 # The caching options here relate to object caching in Redis - such as for
 # artists, releases, etc. in order to speed up queries. See below if you want
 # to disable caching.
-# sub CACHE_MANAGER_OPTIONS {
-#     my $self = shift;
-#     my %CACHE_MANAGER_OPTIONS = (
-#         profiles => {
-#             external => {
-#                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
-#                 options => {
-#                     server => '127.0.0.1:6379',
-#                     namespace => 'MB:',
-#                 },
-#             },
-#         },
-#         default_profile => 'external',
-#     );
-#
-#     return \%CACHE_MANAGER_OPTIONS
-# }
+sub CACHE_MANAGER_OPTIONS {
+    my $self = shift;
+    my %CACHE_MANAGER_OPTIONS = (
+        profiles => {
+            external => {
+                class => 'MusicBrainz::Server::CacheWrapper::Redis',
+                options => {
+                    server => 'redis:6379',
+                    namespace => 'MB:',
+                },
+            },
+        },
+        default_profile => 'external',
+    );
+
+    return \%CACHE_MANAGER_OPTIONS
+}
 
 # Sets the TTL for entities stored in Redis, in seconds. A value of 0
 # indicates that no expiration is set.
-# sub ENTITY_CACHE_TTL { 0 }
+sub ENTITY_CACHE_TTL { 3600 }
 
 ################################################################################
 # Sessions (advanced)
@@ -295,7 +295,7 @@ sub DATASTORE_REDIS_ARGS {
     return {
         database => 0,
         namespace => 'MB:',
-        server => '127.0.0.1:6379',
+        server => 'redis:6379',
         test_database => 1,
     };
 }

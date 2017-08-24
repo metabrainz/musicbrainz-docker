@@ -1,12 +1,21 @@
 version: '2'
+
+volumes:
+  pgdata:
+    driver: local
+  indexdata:
+    driver: local
+  dbdump:
+    driver: local
+
 services:
   db:
     build: postgres-dockerfile
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     volumes:
-      - /mnt/pgdata/pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     expose:
       - "5432"
 
@@ -15,30 +24,34 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - /datadump:/media/dbdump
-    restart: always
+      - dbdump:/media/dbdump
+    restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
-    expose:
-      - "5000"
     depends_on:
       - db
       - search
+      - redis
 
   indexer:
     build: indexer-dockerfile
     depends_on:
       - db
     volumes:
-      - /mnt/data:/home/search/data
+      - indexdata:/home/search/indexdata
 
   search:
     build: search-dockerfile
-    restart: always
+    restart: unless-stopped
     expose:
       - "8080"
     volumes:
-      - /mnt/data:/home/search/data
-      - /mnt/data:/home/search/indexdata
+      - indexdata:/home/search/indexdata
+
+  redis:
+    image: redis:3.2.1
+    restart: unless-stopped
+    expose:
+      - "6379"
