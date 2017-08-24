@@ -10,7 +10,6 @@ RUN apt-get update && \
     git-core \
     postgresql \
     memcached \
-    redis-server \
     build-essential \
     libxml2-dev libpq-dev \
     libexpat1-dev \
