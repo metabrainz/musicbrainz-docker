@@ -2,7 +2,7 @@
 
 eval $( perl -Mlocal::lib )
 
-FTP_HOST=ftp.eu.metabrainz.org
+FTP_HOST=ftp://ftp.eu.metabrainz.org
 FETCH_DUMPS=$1
 TMP_DIR=/media/dbdump/tmp
 
