@@ -32,6 +32,7 @@ fi
 if [[ -a /media/dbdump/mbdump.tar.bz2 ]]; then
   echo "found existing dumps"
 
+  mkdir -p $TMP_DIR
   /musicbrainz-server/admin/InitDb.pl --import /media/dbdump/mbdump*.tar.bz2 --tmp-dir $TMP_DIR --echo
 else
   echo "no dumps found or dumps are incomplete"
