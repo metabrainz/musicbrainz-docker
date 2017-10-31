@@ -10,8 +10,6 @@ if [[ $2 != "" ]]; then
     FTP_HOST=$2
 fi
 
-mkdir $TMP_DIR || true
-
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
   echo "fetching data dumps"
 
@@ -32,8 +30,8 @@ fi
 if [[ -a /media/dbdump/mbdump.tar.bz2 ]]; then
   echo "found existing dumps"
 
-  /musicbrainz-server/admin/InitDb.pl --import /media/dbdump/mbdump*.tar.bz2 --tmp-dir $TMP_DIR --echo
+  mkdir $TMP_DIR || true
+  /musicbrainz-server/admin/InitDb.pl --createdb --echo --import -- --skip-editor --tmp-dir $TMP_DIR /media/dbdump/mbdump*.tar.bz2
 else
   echo "no dumps found or dumps are incomplete"
-  /musicbrainz-server/admin/InitDb.pl --createdb --echo
 fi
