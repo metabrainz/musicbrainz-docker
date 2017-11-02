@@ -1,5 +1,5 @@
 FROM metabrainz/base-image
-MAINTAINER Jeff Sturgis <jeffsturgis@gmail.com>
+LABEL maintainer=jeffsturgis@gmail.com
 
 ENV DOCKERIZE_VERSION v0.2.0
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
@@ -16,16 +16,14 @@ RUN apt-get update && \
     libdb-dev \
     libicu-dev \
     liblocal-lib-perl \
-    cpanminus \
-    nginx
+    cpanminus
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2017-05-15-schema-change
+    git checkout v-2017-10-31
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-
-RUN apt-get install -y nodejs
+RUN curl -sLO https://deb.nodesource.com/node_7.x/pool/main/n/nodejs/nodejs_7.9.0-1nodesource1~xenial1_amd64.deb && \
+    dpkg -i nodejs_7.9.0-1nodesource1~xenial1_amd64.deb
 
 RUN cd /musicbrainz-server/ && eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
 RUN eval $( perl -Mlocal::lib) && cpanm --notest Plack::Middleware::Debug::Base \
@@ -51,17 +49,11 @@ ADD scripts/replication.sh /replication.sh
 ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
 ADD scripts/set-token.sh /set-token.sh
-ADD 001-musicbrainz /etc/nginx/sites-available/001-musicbrainz
 
-RUN cd /musicbrainz-server/ && npm i \
+RUN cd /musicbrainz-server/ && npm install --only=production \
     && eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN rm /etc/nginx/nginx.conf
-RUN rm /etc/nginx/sites-enabled/default
-RUN ln -s /musicbrainz-server/admin/nginx/mbserver-rewrites.conf /etc/nginx/
-RUN ln -s /etc/nginx/sites-available/001-musicbrainz /etc/nginx/sites-enabled/
-RUN ln -s /musicbrainz-server/admin/nginx/nginx.conf /etc/nginx/
 RUN crontab /crons.conf
 
 VOLUME  ["/media/dbdump"]
