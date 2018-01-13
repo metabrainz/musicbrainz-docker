@@ -48,6 +48,8 @@ To view the replication log file you can run this command
 ### If you need to recreate the database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
+or to recreate and fetch new data dumps
+* `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.

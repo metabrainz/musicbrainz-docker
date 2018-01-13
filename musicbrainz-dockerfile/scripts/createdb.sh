@@ -31,7 +31,11 @@ if [[ -a /media/dbdump/mbdump.tar.bz2 ]]; then
   echo "found existing dumps"
 
   mkdir -p $TMP_DIR
-  /musicbrainz-server/admin/InitDb.pl --createdb --echo --import -- --skip-editor --tmp-dir $TMP_DIR /media/dbdump/mbdump*.tar.bz2
+
+  # if the import fails because the DB does not exist yet such as when the DB
+  # has been dropped, InitDb will be called again with the create flag
+  /musicbrainz-server/admin/InitDb.pl --echo --import -- --skip-editor --tmp-dir $TMP_DIR /media/dbdump/mbdump*.tar.bz2 ||
+  /musicbrainz-server/admin/InitDb.pl --create --echo --import -- --skip-editor --tmp-dir $TMP_DIR /media/dbdump/mbdump*.tar.bz2
 else
   echo "no dumps found or dumps are incomplete"
 fi
