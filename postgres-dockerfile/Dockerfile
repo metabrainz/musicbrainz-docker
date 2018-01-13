@@ -1,5 +1,5 @@
 FROM postgres:9.5
-MAINTAINER jeffsturgis@gmail.com
+LABEL Author="jeffsturgis@gmail.com"
 
 ARG DEBIAN_FRONTEND="noninteractive"
 
