@@ -20,7 +20,7 @@ RUN apt-get update && \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2018-01-10
+    git checkout v-2018-01-24
 
 RUN curl -sLO https://deb.nodesource.com/node_7.x/pool/main/n/nodejs/nodejs_7.9.0-1nodesource1~xenial1_amd64.deb && \
     dpkg -i nodejs_7.9.0-1nodesource1~xenial1_amd64.deb
