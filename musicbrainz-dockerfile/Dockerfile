@@ -21,7 +21,7 @@ RUN apt-get update && \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2018-01-24
+    git checkout v-2018-06-30
 
 RUN cd tmp && \
     curl -sLO https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_8.11.3-1nodesource1_amd64.deb && \
