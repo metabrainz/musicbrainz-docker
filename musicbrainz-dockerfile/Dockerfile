@@ -16,14 +16,16 @@ RUN apt-get update && \
     libdb-dev \
     libicu-dev \
     liblocal-lib-perl \
+    python-minimal \
     cpanminus
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
     git checkout v-2018-01-24
 
-RUN curl -sLO https://deb.nodesource.com/node_7.x/pool/main/n/nodejs/nodejs_7.9.0-1nodesource1~xenial1_amd64.deb && \
-    dpkg -i nodejs_7.9.0-1nodesource1~xenial1_amd64.deb
+RUN cd tmp && \
+    curl -sLO https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_8.11.3-1nodesource1_amd64.deb && \
+    dpkg -i nodejs_8.11.3-1nodesource1_amd64.deb
 
 RUN cd /musicbrainz-server/ && eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
 RUN eval $( perl -Mlocal::lib) && cpanm --notest Plack::Middleware::Debug::Base \
