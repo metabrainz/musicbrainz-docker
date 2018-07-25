@@ -7,4 +7,4 @@ RUN curl -o /home/search/index.jar ftp://ftp.eu.metabrainz.org/pub/musicbrainz/s
 
 COPY index.sh /home/search
 
-VOLUME ["/home/search/data"]
+VOLUME ["/home/search/indexdata"]
