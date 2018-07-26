@@ -11,10 +11,6 @@ You will need a little over 50 gigs of free space to run this with replication.
 * Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L107)
 * Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
 
-### Configuration
-* Set the path where you want to store the downloaded data dumps in [docker-compose.yml](./docker-compose.yml).
-* If you already have data dumps in this path they can be loaded instead of downloading new dumps, see [Create Database](#create-database).
-
 ### Installation
 
 ###### Install and Start
