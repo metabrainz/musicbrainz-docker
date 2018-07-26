@@ -5,18 +5,18 @@ ARG DEBIAN_FRONTEND="noninteractive"
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update && \
-  apt-get -y -q install \
-    git-core \
-    build-essential \
-    libxml2-dev \
-    libpq-dev \
-    libexpat1-dev \
-    libdb-dev \
-    libicu-dev \
-    postgresql-server-dev-9.5
+    apt-get -y -q install \
+        build-essential \
+        git-core \
+        libdb-dev \
+        libexpat1-dev \
+        libicu-dev \
+        libpq-dev \
+        libxml2-dev \
+        postgresql-server-dev-9.5
 
 RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
-  git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
+    git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
 
 WORKDIR /tmp/postgresql-musicbrainz-unaccent
 RUN make && make install
