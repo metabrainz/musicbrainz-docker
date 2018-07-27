@@ -15,9 +15,10 @@ You will need a little over 50 gigs of free space to run this with replication.
 
 ###### Install and Start
 * Make sure you have installed docker and docker-compose then:
-* `git clone this-repo`
-* `cd this-repo`
+* `git clone https://github.com/metabrainz/musicbrainz-docker.git`
+* `cd musicbrainz-docker`
 * `sudo docker-compose up -d`
+* or to expose the db and redis ports: `sudo docker-compose -f docker-compose.yml -f docker-compose.public.yml up -d`
 * Set the token you got from musicbrainz (instructions for generating a token are [here](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
 * `sudo docker exec musicbrainzdocker_musicbrainz_1 /set-token.sh <replication token>`
 
