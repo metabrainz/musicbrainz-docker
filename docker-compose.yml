@@ -51,7 +51,7 @@ services:
       - indexdata:/home/search/indexdata
 
   redis:
-    image: redis:3
+    image: redis:3-alpine
     restart: unless-stopped
     expose:
       - "6379"
