@@ -23,7 +23,7 @@ RUN apt-get update && \
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2018-06-30
+    git checkout v-2018-08-14
 
 RUN cd musicbrainz-server && \
     cp docker/yarn_pubkey.txt /tmp && \
