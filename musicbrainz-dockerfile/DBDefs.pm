@@ -33,9 +33,6 @@ use MusicBrainz::Server::DatabaseConnectionFactory;
 # Commented-out lines should generally have sane defaults; anything that's uncommented
 # probably needs personal attention.
 
-# Disable auto forking it is handled by superdaemon
-sub FORK_RENDERER { 0 }
-
 ################################################################################
 # Directories
 ################################################################################
@@ -54,8 +51,7 @@ sub MB_SERVER_ROOT    { "/musicbrainz-server" }
 MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect when we need read-write access to the database
     READWRITE => {
-        database    => "musicbrainz",
-        schema      => "musicbrainz",
+        database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
         host        => "db",
@@ -69,10 +65,19 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
 #       host            => "",
 #       port            => "",
     },
+    # How to connect to a Selenium test database. This database is created
+    # (and dropped) automatically by t/selenium.js, and uses the TEST
+    # database above as a template.
+    SELENIUM => {
+        database    => 'musicbrainz_selenium',
+        schema      => 'musicbrainz',
+        username    => 'musicbrainz',
+#       host        => "",
+#       port        => "",
+    },
     # How to connect for read-only access.  See "REPLICATION_TYPE" (below)
     READONLY => {
-        database    => "musicbrainz",
-        schema      => "musicbrainz",
+        database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
         host        => "db",
@@ -126,8 +131,8 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-
 sub REPLICATION_ACCESS_TOKEN { "" }
+
 ################################################################################
 # GPG Signature
 ################################################################################
@@ -369,9 +374,6 @@ sub DATASTORE_REDIS_ARGS {
 # sub COVER_ART_ARCHIVE_UPLOAD_PREFIXER { shift; sprintf("//%s.s3.us.archive.org/", shift) };
 # sub COVER_ART_ARCHIVE_DOWNLOAD_PREFIX { "//coverartarchive.org" };
 
-# Add a Google Analytics tracking code to enable Google Analytics tracking.
-# sub GOOGLE_ANALYTICS_CODE { '' }
-
 # Disallow OAuth2 requests over plain HTTP
 # sub OAUTH2_ENFORCE_TLS { my $self = shift; !$self->DB_STAGING_SERVER }
 
@@ -407,6 +409,9 @@ sub DEVELOPMENT_SERVER { 0 }
 # http://about.validator.nu/#src for instructions.
 # sub HTML_VALIDATOR { 'http://validator.w3.org/nu/?out=json' }
 # local use example: sub HTML_VALIDATOR { 'http://localhost:8888?out=json' }
+
+# Disable auto forking it is handled by superdaemon
+sub FORK_RENDERER { 0 }
 
 ################################################################################
 # Profiling
