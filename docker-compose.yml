@@ -1,6 +1,8 @@
 version: '3'
 
 volumes:
+  mqdata:
+    driver: local
   pgdata:
     driver: local
   indexdata:
@@ -58,6 +60,14 @@ services:
       - "8983"
     volumes:
       - solrdata:/opt/solr/server/solr/data
+
+  mq:
+    image: rabbitmq:3.6.5-management
+    restart: unless-stopped
+    volumes:
+      - mqdata:/var/lib/rabbitmq
+    expose:
+      - "5672"
 
   redis:
     image: redis:3-alpine
