@@ -5,6 +5,8 @@ volumes:
     driver: local
   indexdata:
     driver: local
+  solrdata:
+    driver: local
   dbdump:
     driver: local
 
@@ -50,12 +52,12 @@ services:
       - indexdata:/home/search/indexdata
 
   search:
-    build: search-dockerfile
+    build: solr-dockerfile
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8983:8983"
     volumes:
-      - indexdata:/home/search/indexdata
+      - solrdata:/opt/solr/server/solr/data
 
   redis:
     image: redis:3-alpine

@@ -163,8 +163,8 @@ sub REPLICATION_ACCESS_TOKEN { "" }
 sub WEB_SERVER                { "localhost:5000" }
 # Relevant only if SSL redirects are enabled
 # sub WEB_SERVER_SSL            { "localhost" }
-sub SEARCH_SERVER             { "search:8080" }
-sub SEARCH_ENGINE             { "LUCENE" }
+sub SEARCH_SERVER             { "search:8983/solr" }
+sub SEARCH_ENGINE             { "SOLR" }
 # Used, for example, to have emails sent from the beta server list the
 # main server
 # sub WEB_SERVER_USED_IN_EMAIL  { my $self = shift; $self->WEB_SERVER }
