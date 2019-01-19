@@ -62,7 +62,7 @@ services:
       - solrdata:/opt/solr/server/solr/data
 
   mq:
-    image: rabbitmq:3.6.5-management
+    build: rabbitmq-dockerfile
     restart: unless-stopped
     volumes:
       - mqdata:/var/lib/rabbitmq
