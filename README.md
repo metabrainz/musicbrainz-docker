@@ -45,7 +45,9 @@ For development, to load sample data instead of full dump, use the flag `-sample
 ### Build search indexes
 In order to use the search functions of the web site/API you will need to build search indexes.
 
-* `sudo docker-compose run --rm indexer /home/search/index.sh`
+* `sudo docker-compose run --rm indexer python -m sir reindex`
+
+Depending on your machine, this can take quite a long time (not as long as the old indexer took though).
 
 ### Replication
 Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
