@@ -5,8 +5,6 @@ volumes:
     driver: local
   pgdata:
     driver: local
-  indexdata:
-    driver: local
   solrdata:
     driver: local
   dbdump:
@@ -47,11 +45,12 @@ services:
       - redis
 
   indexer:
-    build: indexer-dockerfile
+    build: sir-dockerfile
+    env_file:
+      - ./postgres-dockerfile/postgres.env
     depends_on:
       - db
-    volumes:
-      - indexdata:/home/search/indexdata
+      - search
 
   search:
     build: solr-dockerfile
