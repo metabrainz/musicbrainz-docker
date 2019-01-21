@@ -54,8 +54,8 @@ services:
   search:
     build: solr-dockerfile
     restart: unless-stopped
-    ports:
-      - "8983:8983"
+    expose:
+      - "8983"
     volumes:
       - solrdata:/opt/solr/server/solr/data
 
