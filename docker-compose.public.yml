@@ -4,6 +4,9 @@ services:
   db:
     ports:
       - "5432:5432"
+  search:
+    ports:
+      - "8983:8983"
   redis:
     ports:
       - "6379:6379"
