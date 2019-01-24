@@ -13,8 +13,8 @@ services:
     build:
       context: postgres-dockerfile
       args:
-        - POSTGRES_VERSION=9.5
-    image: musicbrainz-docker_db:9.5
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
+    image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
     restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
