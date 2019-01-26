@@ -21,7 +21,7 @@ RUN apt-get update && \
         postgresql \
         python-minimal
 
-RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
+RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
     git checkout v-2019-01-22
 
