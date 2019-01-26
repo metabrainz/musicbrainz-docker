@@ -41,6 +41,7 @@ services:
       - MUSICBRAINZ_USE_PROXY=1
     depends_on:
       - db
+      - mq
       - search
       - redis
 
@@ -50,6 +51,7 @@ services:
       - ./postgres-dockerfile/postgres.env
     depends_on:
       - db
+      - mq
       - search
 
   search:

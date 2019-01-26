@@ -83,5 +83,6 @@ RUN crontab /crons.conf
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
 CMD dockerize -wait tcp://db:5432 -timeout 60s \
+        -wait tcp://mq:5672 -timeout 60s \
         -wait tcp://redis:6379 -timeout 60s \
         /start.sh
