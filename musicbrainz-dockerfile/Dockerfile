@@ -69,6 +69,7 @@ ADD scripts/replication.sh /replication.sh
 ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
 ADD scripts/set-token.sh /set-token.sh
+ADD scripts/indexer-triggers.sh /indexer-triggers.sh
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
