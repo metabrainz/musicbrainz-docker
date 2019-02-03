@@ -74,6 +74,9 @@ ADD scripts/indexer-triggers.sh /indexer-triggers.sh
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
+
+ENV DEVELOPMENT_MUSICBRAINZ_DOCKER 0
+
 RUN cd /musicbrainz-server/ && yarn install --production && \
     eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
 
