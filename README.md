@@ -40,7 +40,10 @@ Create the database, and populate the database with existing dumps
 
 * `sudo docker-compose run --rm musicbrainz /createdb.sh`
 
-For development, to load sample data instead of full dump, use the flag `-sample`
+#### Development setup
+
+For development, load sample data instead of full dump by adding the flag `-sample` to the above commands.
+Then use `docker-compose.musicbrainz-development.yml` override file to enable standalone mode.
 
 ### Build search indexes
 In order to use the search functions of the web site/API you will need to build search indexes.
