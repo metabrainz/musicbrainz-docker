@@ -62,14 +62,7 @@ RUN eval $( perl -Mlocal::lib) && cpanm --notest \
         TURNSTEP/DBD-Pg-3.7.4.tar.gz
 
 COPY DBDefs.pm /musicbrainz-server/lib/
-COPY scripts/start.sh /start.sh
-COPY scripts/start_mb_renderer.pl /start_mb_renderer.pl
-COPY scripts/crons.conf /crons.conf
-COPY scripts/replication.sh /replication.sh
-COPY scripts/createdb.sh /createdb.sh
-COPY scripts/recreatedb.sh /recreatedb.sh
-COPY scripts/set-token.sh /set-token.sh
-COPY scripts/indexer-triggers.sh /indexer-triggers.sh
+COPY scripts/* /
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
