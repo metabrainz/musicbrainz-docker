@@ -10,6 +10,7 @@ RUN apt-get update && \
     apt-get install -y \
         cpanminus \
         build-essential \
+        gettext \
         git-core \
         libdb-dev \
         libexpat1-dev \
