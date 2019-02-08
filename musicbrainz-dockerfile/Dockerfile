@@ -10,6 +10,7 @@ RUN apt-get update && \
     apt-get install -y \
         cpanminus \
         build-essential \
+        gettext \
         git-core \
         libdb-dev \
         libexpat1-dev \
@@ -21,9 +22,9 @@ RUN apt-get update && \
         postgresql \
         python-minimal
 
-RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
+RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2018-08-14
+    git checkout v-2019-01-22
 
 RUN cd musicbrainz-server && \
     cp docker/yarn_pubkey.txt /tmp && \

@@ -393,7 +393,7 @@ sub DEVELOPMENT_SERVER { 0 }
 # Please activate the officially approved languages here. Not every .po
 # file is active because we might have fully translated languages which
 # are not yet properly supported, like right-to-left languages
-# sub MB_LANGUAGES {qw()}
+sub MB_LANGUAGES { qw( de fr nl en ) }
 
 # Should the site fall back to browser settings when trying to set a language
 # (note: will still only use languages in MB_LANGUAGES)
