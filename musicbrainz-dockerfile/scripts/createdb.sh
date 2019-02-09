@@ -63,7 +63,6 @@ esac
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
     echo "fetching data dumps"
 
-    apt-get install -y wget
     rm -rf /media/dbdump/*
     wget -nd -nH -P /media/dbdump $FTP_MB/data/$IMPORT/LATEST
     LATEST=$(cat /media/dbdump/LATEST)
