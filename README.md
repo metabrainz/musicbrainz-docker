@@ -9,7 +9,8 @@ You will need a little over 50 gigs of free space to run this with replication.
 ### Versions
 * Current MB Branch: [v-2019-01-22](musicbrainz-dockerfile/Dockerfile#L30)
 * Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L107)
-* Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
+* Postgres Version: [9.5](postgres-dockerfile/docker-compose.yml)
+  (can be changed by setting the environement variable `POSTGRES_VERSION`)
 
 ### Installation
 
