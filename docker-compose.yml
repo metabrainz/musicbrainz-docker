@@ -24,7 +24,10 @@ services:
       - "5432"
 
   musicbrainz:
-    build: musicbrainz-dockerfile
+    build:
+      context: musicbrainz-dockerfile
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     ports:
       - "5000:5000"
     volumes:
