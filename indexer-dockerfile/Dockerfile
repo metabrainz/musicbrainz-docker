@@ -1,4 +1,4 @@
-FROM airdock/oracle-jdk:jdk-8u74
+FROM airdock/oraclejdk:1.8
 
 LABEL Author="Robert Kaye <rob@metabrainz.org>"
 
