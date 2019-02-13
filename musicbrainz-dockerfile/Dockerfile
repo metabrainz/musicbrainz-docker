@@ -27,9 +27,7 @@ RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-s
     git checkout v-2019-01-22
 
 RUN cd musicbrainz-server && \
-    cp docker/yarn_pubkey.txt /tmp && \
-    cd /tmp && \
-    apt-key add yarn_pubkey.txt && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
     curl -sLO https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_8.11.3-1nodesource1_amd64.deb && \
