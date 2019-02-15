@@ -10,7 +10,11 @@ volumes:
 
 services:
   db:
-    build: postgres-dockerfile
+    build:
+      context: postgres-dockerfile
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
+    image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
     restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
@@ -20,7 +24,10 @@ services:
       - "5432"
 
   musicbrainz:
-    build: musicbrainz-dockerfile
+    build:
+      context: musicbrainz-dockerfile
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     ports:
       - "5000:5000"
     volumes:

@@ -1,7 +1,10 @@
-FROM postgres:9.5
+ARG POSTGRES_VERSION=9.5
+FROM postgres:${POSTGRES_VERSION}
 LABEL Author="jeffsturgis@gmail.com"
 
 ARG DEBIAN_FRONTEND="noninteractive"
+# Has to be redeclared due to being in a different build stage
+ARG POSTGRES_VERSION
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update && \
@@ -13,7 +16,7 @@ RUN apt-get update && \
         libicu-dev \
         libpq-dev \
         libxml2-dev \
-        postgresql-server-dev-9.5
+        postgresql-server-dev-${POSTGRES_VERSION}
 
 RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
     git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
