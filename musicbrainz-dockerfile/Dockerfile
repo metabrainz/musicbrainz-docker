@@ -70,6 +70,9 @@ ADD scripts/createdb.sh /createdb.sh
 ADD scripts/recreatedb.sh /recreatedb.sh
 ADD scripts/set-token.sh /set-token.sh
 
+# Postgres user/password would be solely needed to compile tests
+ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
+ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 RUN cd /musicbrainz-server/ && yarn install --production && \
     eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
 
