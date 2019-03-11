@@ -21,9 +21,11 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         liblocal-lib-perl \
         libpq-dev \
         libxml2-dev \
+        libssl-dev \
         memcached \
         postgresql-${POSTGRES_VERSION} \
-        python-minimal
+        python-minimal \
+        zlib1g-dev
 
 RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
