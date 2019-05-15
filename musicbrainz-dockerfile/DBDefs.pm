@@ -248,7 +248,7 @@ sub PLUGIN_CACHE_OPTIONS {
     return {
         class => 'MusicBrainz::Server::CacheWrapper::Redis',
         server => 'redis:6379',
-        namespace => 'MB:Catalyst:',
+        namespace => $self->CACHE_NAMESPACE . 'Catalyst:',
     };
 }
 
@@ -263,7 +263,7 @@ sub CACHE_MANAGER_OPTIONS {
                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
                 options => {
                     server => 'redis:6379',
-                    namespace => 'MB:',
+                    namespace => $self->CACHE_NAMESPACE,
                 },
             },
         },
@@ -300,7 +300,7 @@ sub DATASTORE_REDIS_ARGS {
     my $self = shift;
     return {
         database => 0,
-        namespace => 'MB:',
+        namespace => $self->CACHE_NAMESPACE,
         server => 'redis:6379',
         test_database => 1,
     };
@@ -409,6 +409,10 @@ sub MB_LANGUAGES { qw( de fr nl en ) }
 # http://about.validator.nu/#src for instructions.
 # sub HTML_VALIDATOR { 'http://validator.w3.org/nu/?out=json' }
 # local use example: sub HTML_VALIDATOR { 'http://localhost:8888?out=json' }
+
+# Set to 1 if you're a developer and plan to run tests locally. Never
+# enable in production.
+# sub USE_SET_DATABASE_HEADER { 0 }
 
 # Disable auto forking it is handled by superdaemon
 sub FORK_RENDERER { 0 }
