@@ -56,8 +56,8 @@ case "$1" in
 
     docker-compose exec indexer python -m sir triggers
 
-    docker cp musicbrainzdocker_indexer_1:/code/sql "$LOCAL_TRIGGERS_DIR"
-    docker cp "$LOCAL_TRIGGERS_DIR" musicbrainzdocker_musicbrainz_1:"$REMOTE_TRIGGERS_DIR"
+    docker cp musicbrainz-docker_indexer_1:/code/sql "$LOCAL_TRIGGERS_DIR"
+    docker cp "$LOCAL_TRIGGERS_DIR" musicbrainz-docker_musicbrainz_1:"$REMOTE_TRIGGERS_DIR"
 
     docker-compose exec musicbrainz /indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
 

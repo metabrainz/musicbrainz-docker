@@ -7,6 +7,7 @@ Check out the branch [`master`](https://github.com/metabrainz/musicbrainz-docker
 [![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=mbvm-38-dev)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
 This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
+It requires **Docker Compose 1.21.1** or higher. <sup>[1](#note-dashed-name)</sup>
 You will need a little over 50 gigs of free space to run this with replication.
 
 ### Versions
@@ -27,9 +28,7 @@ You will need a little over 50 gigs of free space to run this with replication.
 * `sudo docker-compose up -d`
 * or to expose the db, mq, redis and search ports: `sudo docker-compose -f docker-compose.yml -f docker-compose.public.yml up -d`
 * Set the token you got from musicbrainz (instructions for generating a token are [here](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
-* `sudo docker exec musicbrainzdocker_musicbrainz_1 /set-token.sh <replication token>`
-  (or `sudo docker exec musicbrainz-docker_musicbrainz_1 /set-token.sh <replication token>` if `docker-compose --version` is higher than `1.20.1`)
-
+* `sudo docker exec musicbrainz-docker_musicbrainz_1 /set-token.sh <replication token>`
 
 ### Create database
 Create the database, download the latest dumps and populate the database
@@ -96,11 +95,9 @@ When there is a schema change you will need to follow the directions posted by t
 ###### The usual process to update the schema is:
 
 * Ensure you’ve replicated up to the most recent replication packet available with the old schema.
-  (If you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 /replication.sh`.)
-  (Or `sudo docker exec musicbrainz-docker_musicbrainz_1 /replication.sh` if `docker-compose --version` is higher than `1.20.1`.)
+  (If you’re not sure, run `sudo docker exec musicbrainz-docker_musicbrainz_1 /replication.sh`.)
 * Switch to the new code with:
-* Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
-  (Or `sudo docker exec -ti musicbrainz-docker_musicbrainz_1 bash` if `docker-compose --version` is higher than `1.20.1`.)
+* Run bash in the container: `sudo docker exec -ti musicbrainz-docker_musicbrainz_1 bash`.
   * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
   * Run the upgrade script: `eval $( perl -Mlocal::lib ) && ./upgrade.sh`.
   * Exit bash `exit`.
@@ -108,3 +105,14 @@ When there is a schema change you will need to follow the directions posted by t
 * `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
 
 If anything doesn't work create an issue and submit a pull request.
+
+
+### Notes
+
+1. <a name="note-dashed-name">:warning:</a> Docker Compose versions prior to
+   [1.21.0-rc1](https://github.com/docker/compose/releases/tag/1.21.0-rc1)
+   do strip dash (`-`) character out of container/image/volume name, e.g.
+   `musicbrainzdocker_pgdata` instead of `musicbrainz-docker_pgdata`.
+   This affects most of the above commands and even some scripts.
+   Install ([doc](https://docs.docker.com/compose/install/)) a recent version if
+   your system provides an early version, check compatibility with Docker Engine.
