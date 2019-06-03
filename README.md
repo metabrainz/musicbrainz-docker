@@ -60,7 +60,7 @@ When there is a schema change you will need to follow the directions posted by t
 * Switch to the new code with:
 * Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
 * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
-* Run the upgrade script: `./upgrade.sh`.
+* Run the upgrade script: `eval $( perl -Mlocal::lib ) && ./upgrade.sh`.
 * Exit bash `exit`.
 * Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](musicbrainz-dockerfile/DBDefs.pm#L112)
 * `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
