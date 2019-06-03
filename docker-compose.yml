@@ -1,13 +1,5 @@
 version: '3'
 
-volumes:
-  pgdata:
-    driver: local
-  indexdata:
-    driver: local
-  dbdump:
-    driver: local
-
 services:
   db:
     build:
@@ -19,7 +11,7 @@ services:
     env_file:
       - ./postgres-dockerfile/postgres.env
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - /srv/dev-disk-by-label-server/brainz/pgdata:/var/lib/postgresql/data
     expose:
       - "5432"
 
@@ -31,7 +23,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - dbdump:/media/dbdump
+      - /export/media/pub/ftp.eu.metabrainz.org/pub/musicbrainz/data/fullexport/20190529-001627:/media/dbdump
     restart: unless-stopped
     env_file:
       - ./postgres-dockerfile/postgres.env
@@ -47,15 +39,15 @@ services:
     depends_on:
       - db
     volumes:
-      - indexdata:/home/search/indexdata
+      - /srv/dev-disk-by-label-server/brainz/indexdata:/home/search/indexdata
 
   search:
     build: search-dockerfile
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8081:8081"
     volumes:
-      - indexdata:/home/search/indexdata
+      - /srv/dev-disk-by-label-server/brainz/indexdata:/home/search/indexdata
 
   redis:
     image: redis:3-alpine
