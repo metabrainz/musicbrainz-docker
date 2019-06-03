@@ -22,6 +22,8 @@ You will need a little over 50 gigs of free space to run this with replication.
 * or to expose the db and redis ports: `sudo docker-compose -f docker-compose.yml -f docker-compose.public.yml up -d`
 * Set the token you got from musicbrainz (instructions for generating a token are [here](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
 * `sudo docker exec musicbrainzdocker_musicbrainz_1 /set-token.sh <replication token>`
+  (or `sudo docker exec musicbrainz-docker_musicbrainz_1 /set-token.sh <replication token>` if `docker-compose --version` is higher than `1.20.1`)
+
 
 ### Create database
 Create the database, download the latest dumps and populate the database
@@ -56,9 +58,12 @@ When there is a schema change you will need to follow the directions posted by t
 
 ###### The usual process to update the schema is:
 
-* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 /replication.sh`).
+* Ensure you’ve replicated up to the most recent replication packet available with the old schema.
+  (If you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 /replication.sh`.)
+  (Or `sudo docker exec musicbrainz-docker_musicbrainz_1 /replication.sh` if `docker-compose --version` is higher than `1.20.1`.)
 * Switch to the new code with:
 * Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
+  (Or `sudo docker exec -ti musicbrainz-docker_musicbrainz_1 bash` if `docker-compose --version` is higher than `1.20.1`.)
   * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
   * Run the upgrade script: `eval $( perl -Mlocal::lib ) && ./upgrade.sh`.
   * Exit bash `exit`.
