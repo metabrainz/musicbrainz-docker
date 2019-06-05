@@ -49,6 +49,29 @@ In order to use the search functions of the web site/API you will need to build 
 
 Depending on your machine, this can take quite a long time (not as long as the old indexer took though).
 
+#### Live indexing
+To keep the search indexes in sync with the database, you can set up live indexation as follows:
+
+1. Configure exchanges and queues on `mq` for `indexer` with:
+
+   `sudo docker-compose run --rm indexer python -m sir amqp_setup`
+
+2. Load and configure AMQP extension in `db` for `indexer` with:
+
+   `sudo sir-dockerfile/amqp-extension.sh`
+
+3. Install triggers in `db` for `indexer` with:
+
+   `sudo sir-dockerfile/triggers.sh install`
+
+Then you will be able to live index database for search as follows:
+
+  `sudo docker-compose exec indexer python -m sir amqp_watch`
+
+Or using `docker-compose.live-indexing.yml` override file:
+
+   `sudo docker-compose -f docker-compose.yml -f docker-compose.live-indexing.yml up -d`
+
 ### Replication
 Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
 
