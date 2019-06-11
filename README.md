@@ -44,8 +44,11 @@ In order to use the search functions of the web site/API you will need to build 
 ### Replication
 Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
 
-To view the replication log file you can run this command
+You can view the replication log file while it is running with
 * `sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log`
+
+You can view the replication log file once it is done with
+* `sudo docker-compose exec musicbrainz /usr/bin/tail slave.log.1`
 
 ### If you need to recreate the database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
