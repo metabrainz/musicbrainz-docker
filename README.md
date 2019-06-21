@@ -52,11 +52,15 @@ In order to use the search functions of the web site/API you will need to build 
 Depending on your machine, this can take quite a long time (not as long as the old indexer took though).
 
 #### Live indexing
-To keep the search indexes in sync with the database, you can set up live indexation as follows:
+To keep the search indexes in sync with the database, you can set up live indexing as follows:
+
+0. Start services without live indexing with:
+
+   `sudo docker-compose up -d`
 
 1. Configure exchanges and queues on `mq` for `indexer` with:
 
-   `sudo docker-compose run --rm indexer python -m sir amqp_setup`
+   `sudo docker-compose exec indexer python -m sir amqp_setup`
 
 2. Load and configure AMQP extension in `db` for `indexer` with:
 
