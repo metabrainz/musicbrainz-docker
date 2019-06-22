@@ -31,7 +31,7 @@ services:
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     ports:
-      - "5000:5000"
+      - "${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
     volumes:
       - dbdump:/media/dbdump
     restart: unless-stopped
@@ -39,6 +39,8 @@ services:
       - ./postgres-dockerfile/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
+      - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}
+      - MUSICBRAINZ_WEB_SERVER_PORT=${MUSICBRAINZ_WEB_SERVER_PORT:-5000}
     depends_on:
       - db
       - mq
