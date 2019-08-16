@@ -9,7 +9,7 @@ if [ $# -ne 0 ]; then
 fi
 
 MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
-LOCAL_SQL_FILE=sir-dockerfile/amqp-extension.sql
+LOCAL_SQL_FILE="$(dirname "${BASH_SOURCE[0]}")/.create-amqp-extension.sql"
 REMOTE_SQL_FILE=/tmp/CreateExtensionAMQP.sql
 
 cd "$MB_DOCKER_ROOT"

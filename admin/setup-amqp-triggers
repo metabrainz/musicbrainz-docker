@@ -19,7 +19,7 @@ if [ $# -ne 1 ]; then
 fi
 
 MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
-LOCAL_TRIGGERS_DIR=$(dirname "${BASH_SOURCE[0]}")/sql
+LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
 REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
 
 cd "$MB_DOCKER_ROOT"
