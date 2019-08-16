@@ -29,7 +29,7 @@ You will need a little over 100 gigs of free disk space to run this with replica
 
   Or to expose the db, mq, redis and search ports:
 
-  `sudo docker-compose -f docker-compose.yml -f docker-compose.public.yml up -d`
+  `sudo docker-compose -f docker-compose.yml -f compose/public.yml up -d`
 * Set the token you got from musicbrainz (see [instructions for generating a token](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
 
   `sudo docker-compose exec musicbrainz /set-token.sh <replication token>`
@@ -46,7 +46,7 @@ Create the database, and populate the database with existing dumps
 #### Development setup
 
 For development, load sample data instead of full dump by adding the flag `-sample` to the above commands.
-Then use `docker-compose.musicbrainz-development.yml` override file to enable standalone mode.
+Then use `compose/musicbrainz-development.yml` override file to enable standalone mode.
 
 ### Build search indexes
 In order to use the search functions of the web site/API you will need to build search indexes.
@@ -78,9 +78,9 @@ Then you will be able to live index database for search as follows:
 
   `sudo docker-compose exec indexer python -m sir amqp_watch`
 
-Or using `docker-compose.live-indexing.yml` override file:
+Or using `compose/live-indexing.yml` override file:
 
-   `sudo docker-compose -f docker-compose.yml -f docker-compose.live-indexing.yml up -d`
+   `sudo docker-compose -f docker-compose.yml -f compose/live-indexing.yml up -d`
 
 ### Replication
 Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
