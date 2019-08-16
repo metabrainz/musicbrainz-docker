@@ -68,11 +68,11 @@ To keep the search indexes in sync with the database, you can set up live indexi
 
 2. Load and configure AMQP extension in `db` for `indexer` with:
 
-   `sudo sir-dockerfile/amqp-extension.sh`
+   `sudo admin/create-amqp-extension`
 
 3. Install triggers in `db` for `indexer` with:
 
-   `sudo sir-dockerfile/triggers.sh install`
+   `sudo admin/setup-amqp-triggers install`
 
 Then you will be able to live index database for search as follows:
 
