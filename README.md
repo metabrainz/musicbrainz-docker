@@ -8,7 +8,8 @@ Check out the branch [`master`](https://github.com/metabrainz/musicbrainz-docker
 
 This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
 It requires **Docker Compose 1.21.1** or higher.
-You will need a little over 50 gigs of free space to run this with replication.
+You will need a little over 100 gigs of free disk space to run this with replication.
+(If you create a VM to install in, provision additional disk space for your system.)
 
 ### Versions
 * Current MB Branch: [v-2019-08-08](musicbrainz-dockerfile/Dockerfile#L32)
