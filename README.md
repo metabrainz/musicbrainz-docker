@@ -112,4 +112,9 @@ When there is a schema change you will need to follow the directions posted by t
 * Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](musicbrainz-dockerfile/DBDefs.pm#L112)
 * `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
 
-If anything doesn't work create an issue and submit a pull request.
+If anything doesn't work please create an issue with environment info:
+```bash
+echo musicbrainz-docker version: `git describe --always --broken --dirty --tags` && \
+docker-compose version && \
+docker version
+```
