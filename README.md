@@ -1,7 +1,10 @@
 musicbrainz slave server with search and replication
 ==================
 
-[![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/metabrainz/musicbrainz-docker)
+This is a **development version** featuring Solr-based search.
+Check out the branch [`master`](https://github.com/metabrainz/musicbrainz-docker/tree/master) for Lucene-based search.
+
+[![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=mbvm-38-dev)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
 This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
 You will need a little over 50 gigs of free space to run this with replication.
