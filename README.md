@@ -11,6 +11,9 @@ You will need a little over 50 gigs of free space to run this with replication.
 * Current DB_SCHEMA_SEQUENCE: [25](musicbrainz-dockerfile/DBDefs.pm#L112)
 * Postgres Version: [9.5](docker-compose.yml)
   (can be changed by setting the environement variable `POSTGRES_VERSION`)
+* Lucene-based MusicBrainz search server/indexer `f297b72`/`a63d655`
+  (to be replaced with the Solr-based MusicBrainz search server/indexer,
+   check out the development branch [`mbvm-38-dev`](https://github.com/metabrainz/musicbrainz-docker/tree/mbvm-38-dev))
 
 ### Installation
 
