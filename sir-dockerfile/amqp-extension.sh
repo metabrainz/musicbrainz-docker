@@ -31,8 +31,9 @@ echo "Installing indexer AMQP extension into PostgreSQL ..."
 
 docker-compose exec indexer python -m sir extension
 
-docker cp musicbrainz-docker_indexer_1:/code/sql/CreateExtension.sql "$LOCAL_SQL_FILE"
-docker cp "$LOCAL_SQL_FILE" musicbrainz-docker_db_1:"$REMOTE_SQL_FILE"
+indexer_container_id="$(docker-compose ps -q indexer)"
+docker cp "$indexer_container_id":/code/sql/CreateExtension.sql "$LOCAL_SQL_FILE"
+docker cp "$LOCAL_SQL_FILE" $indexer_container_id":"$REMOTE_SQL_FILE"
 
 docker-compose exec db psql -U musicbrainz -d musicbrainz_db -f "$REMOTE_SQL_FILE"
 
