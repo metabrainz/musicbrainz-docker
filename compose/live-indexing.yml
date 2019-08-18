@@ -1,5 +1,7 @@
 version: '3'
 
+# Description: Enable live indexing of updated entries for search
+
 services:
   indexer:
     entrypoint:
