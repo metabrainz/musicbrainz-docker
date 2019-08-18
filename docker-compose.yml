@@ -1,5 +1,7 @@
 version: '3'
 
+# Description: Default compose file, with host port for musicbrainz
+
 volumes:
   mqdata:
     driver: local

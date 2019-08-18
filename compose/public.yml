@@ -1,5 +1,7 @@
 version: '3'
 
+# Description: Expose all service ports to the host.
+
 services:
   db:
     ports:

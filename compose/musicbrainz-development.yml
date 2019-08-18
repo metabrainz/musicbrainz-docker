@@ -1,5 +1,7 @@
 version: '3'
 
+# Description: Standalone server for MusicBrainz development purpose
+
 services:
   musicbrainz:
     environment:
