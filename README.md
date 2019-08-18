@@ -12,12 +12,12 @@ You will need a little over 100 gigs of free disk space to run this with replica
 (If you create a VM to install in, provision additional disk space for your system.)
 
 ### Versions
-* Current MB Branch: [v-2019-08-08](musicbrainz-dockerfile/Dockerfile#L32)
-* Current DB_SCHEMA_SEQUENCE: [25](musicbrainz-dockerfile/DBDefs.pm#L112)
+* Current MB Branch: [v-2019-08-08](build/musicbrainz/Dockerfile#L32)
+* Current DB_SCHEMA_SEQUENCE: [25](build/musicbrainz/DBDefs.pm#L112)
 * Postgres Version: [9.5](docker-compose.yml)
   (can be changed by setting the environement variable `POSTGRES_VERSION`)
-* MB Solr search server: [3.1.1](solr-dockerfile/Dockerfile#L1)
-* Search Index Rebuilder: [1.0.2](sir-dockerfile/Dockerfile#L31)
+* MB Solr search server: [3.1.1](build/solr/Dockerfile#L1)
+* Search Index Rebuilder: [1.0.2](build/sir/Dockerfile#L31)
 
 ### Installation
 
@@ -83,7 +83,7 @@ Or using `compose/live-indexing.yml` override file:
    `sudo docker-compose -f docker-compose.yml -f compose/live-indexing.yml up -d`
 
 ### Replication
-Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
+Replication is run as a cronjob, you can update the [crons.conf](build/musicbrainz/scripts/crons.conf) file to change when replication will be run.
 
 You can view the replication log file while it is running with
 * `sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log`
@@ -109,7 +109,7 @@ When there is a schema change you will need to follow the directions posted by t
   * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
   * Run the upgrade script: `eval $( perl -Mlocal::lib ) && ./upgrade.sh`.
   * Exit bash `exit`.
-* Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](musicbrainz-dockerfile/DBDefs.pm#L112)
+* Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](build/musicbrainz/DBDefs.pm#L112)
 * `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
 
 If anything doesn't work please create an issue with environment info:
