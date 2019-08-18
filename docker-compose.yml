@@ -13,7 +13,7 @@ volumes:
 services:
   db:
     build:
-      context: postgres-dockerfile
+      context: build/postgres
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
@@ -27,7 +27,7 @@ services:
 
   musicbrainz:
     build:
-      context: musicbrainz-dockerfile
+      context: build/musicbrainz
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     ports:
@@ -48,7 +48,7 @@ services:
       - redis
 
   indexer:
-    build: sir-dockerfile
+    build: build/sir
     env_file:
       - ./postgres-dockerfile/postgres.env
     depends_on:
@@ -57,7 +57,7 @@ services:
       - search
 
   search:
-    build: solr-dockerfile
+    build: build/solr
     restart: unless-stopped
     expose:
       - "8983"
@@ -65,7 +65,7 @@ services:
       - solrdata:/opt/solr/server/solr/data
 
   mq:
-    build: rabbitmq-dockerfile
+    build: build/rabbitmq
     restart: unless-stopped
     volumes:
       - mqdata:/var/lib/rabbitmq
