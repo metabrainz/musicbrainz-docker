@@ -154,22 +154,15 @@ for core in json_status:
 
 # Compare number of indexed docs with number of existing docs, by core
 
+sep="|"
 for core in "${ascending_cores[@]}"
 do
   if [ ${counts[$core]} -eq ${indexed_docs[$core]} ]
   then
-    echo "$core" "OK" "${indexed_docs[$core]}" "/${counts[$core]}"
+    echo "$core${sep}OK$sep${indexed_docs[$core]}$sep/${counts[$core]}"
   else
-    echo "$core" "--" "${indexed_docs[$core]}" "/${counts[$core]}"
+    echo "$core${sep}--$sep${indexed_docs[$core]}$sep/${counts[$core]}"
   fi
-done | (
-  if column --version &>/dev/null
-  then
-    column --table \
-           --table-columns CORE,STATUS,INDEX,DB --table-right INDEX
-  else
-    (echo CORE STATUS INDEX DB; cat) | column -t
-  fi
-)
+done | (echo CORE${sep}STATUS${sep}INDEX${sep}DB; cat) | column -t -s "$sep"
 
 # vi: set et sts=2 sw=2 ts=2 :
