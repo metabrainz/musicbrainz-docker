@@ -92,7 +92,7 @@ You can view the replication log file once it is done with
 * `sudo docker-compose exec musicbrainz /usr/bin/tail slave.log.1`
 
 ### If you need to recreate the database
-you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
+you will need to enter the postgres password that you set in [postgres.env](default/postgres.env).
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
 or to recreate and fetch new data dumps
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`

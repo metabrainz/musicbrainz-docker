@@ -21,7 +21,7 @@ services:
     image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
     restart: unless-stopped
     env_file:
-      - ./postgres-dockerfile/postgres.env
+      - ./default/postgres.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     expose:
@@ -38,7 +38,7 @@ services:
       - dbdump:/media/dbdump
     restart: unless-stopped
     env_file:
-      - ./postgres-dockerfile/postgres.env
+      - ./default/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
       - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}
@@ -52,7 +52,7 @@ services:
   indexer:
     build: build/sir
     env_file:
-      - ./postgres-dockerfile/postgres.env
+      - ./default/postgres.env
     depends_on:
       - db
       - mq
