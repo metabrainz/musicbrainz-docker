@@ -2,42 +2,57 @@
 
 set -e -u
 
-if [ $# -ne 0 ]; then
-  echo "$0: too many arguments"
-  echo "Usage: $0"
-  exit 1
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME
+
+Create 'amqp' extension (with broker) in the database.
+EOH
+)
+
+Commands:
+if [ $# -ne 0 ]
+then
+  echo >&2 "$SCRIPT_NAME: too many arguments"
+  echo >&2 "$HELP"
+  exit 64
 fi
 
-MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
 LOCAL_SQL_FILE="$(dirname "${BASH_SOURCE[0]}")/.create-amqp-extension.sql"
 REMOTE_SQL_FILE=/tmp/CreateExtensionAMQP.sql
 
-cd "$MB_DOCKER_ROOT"
-
-if ! docker-compose ps indexer | grep -qw 'Up'; then
-  echo "$0: cannot install: 'indexer' is not a running docker-compose service"
-  exit 1
+if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: 'indexer' is not a running Docker Compose service"
+  exit 69
 fi
 
-if [ -e "$LOCAL_SQL_FILE" ]; then
-  echo "$0: cannot install: File '$LOCAL_SQL_FILE' exists"
+if [ -e "$LOCAL_SQL_FILE" ]
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_SQL_FILE' exists"
+  exit 70
 fi
 
-if docker-compose exec db test -e "$REMOTE_SQL_FILE"; then
-  echo "$0: cannot install: File '$REMOTE_SQL_FILE' exists in 'db' docker-compose service"
+if $DOCKER_COMPOSE_CMD exec db test -e "$REMOTE_SQL_FILE"
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_SQL_FILE' exists in 'db' Docker Compose service"
+  exit 70
 fi
 
 echo "Installing indexer AMQP extension into PostgreSQL ..."
 
-docker-compose exec indexer python -m sir extension
+$DOCKER_COMPOSE_CMD exec indexer python -m sir extension
 
-indexer_container_id="$(docker-compose ps -q indexer)"
-docker cp "$indexer_container_id":/code/sql/CreateExtension.sql "$LOCAL_SQL_FILE"
-docker cp "$LOCAL_SQL_FILE" $indexer_container_id":"$REMOTE_SQL_FILE"
+indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+$DOCKER_CMD cp "$indexer_container_id:/code/sql/CreateExtension.sql" "$LOCAL_SQL_FILE"
+$DOCKER_CMD cp "$LOCAL_SQL_FILE" "$indexer_container_id:$REMOTE_SQL_FILE"
 
-docker-compose exec db psql -U musicbrainz -d musicbrainz_db -f "$REMOTE_SQL_FILE"
+$DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -f "$REMOTE_SQL_FILE"
 
-docker-compose exec db rm -f "$REMOTE_SQL_FILE"
+$DOCKER_COMPOSE_CMD exec db rm -f "$REMOTE_SQL_FILE"
 rm -f "$LOCAL_SQL_FILE"
 
-echo "Done."
+echo "Successfully created amqp extension in the database."
+
+# vi: set et sts=2 sw=2 ts=2 :

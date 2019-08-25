@@ -2,7 +2,8 @@
 
 set -e -u
 
-SCRIPT_NAME=$(basename "$0")
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME <command> [<args>]
 
@@ -17,12 +18,11 @@ Commands:
 Examples:
   $SCRIPT_NAME with docker-compose.yml:compose/host-port-musicbrainz.yml
   $SCRIPT_NAME with default host-port-musicbrainz
+
+Notes:
+  Use '$DOCKER_COMPOSE_CMD config' to see the resulting compose file.
 EOH
 )
-
-MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
-
-cd "$MB_DOCKER_ROOT"
 
 if [ $# -eq 0 ]
 then
@@ -37,7 +37,7 @@ declare -A handle_file=()
 declare -A file_description=()
 
 function scan_files {
-  # Find docker compose files
+  # Find Docker Compose files
   shopt -s globstar nullglob
   file_path=(
     docker-compose.yml
@@ -160,6 +160,7 @@ case "$1" in
     touch .env
     sed -i '/^COMPOSE_FILE=/d' .env
     echo "COMPOSE_FILE="$(IFS=:; echo "${compose_files[*]}") >> .env
+    echo "Successfully set COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
     exit
     ;;
   *             )

@@ -2,7 +2,8 @@
 
 set -e -u
 
-SCRIPT_NAME=$(basename "$0")
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME all
    or: $SCRIPT_NAME CORE...
@@ -10,13 +11,10 @@ Usage: $SCRIPT_NAME all
 For each of MusicBrainz Solr cores/collections,
 delete all indexed documents from Solr server.
 
-Note: docker-compose service 'search' must be up
+Notes:
+  The Docker Compose service 'search' must be up.
 EOH
 )
-
-MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
-
-cd "$MB_DOCKER_ROOT"
 
 # Parse arguments
 
@@ -58,14 +56,14 @@ else
   done
 fi
 
-# Check that required docker-compose services are up
+# Check that required Docker Compose services are up
 
-service_containers="$(docker-compose ps search 2>/dev/null)"
+service_containers="$($DOCKER_COMPOSE_CMD ps search 2>/dev/null)"
 if ! echo "$service_containers" | grep -qw 'Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot delete indexed documents: " \
-           "the docker-compose service 'search' is not up"
-  echo >&2 "Try 'docker-compose up -d' from '$MB_DOCKER_ROOT'"
+           "the Docker Compose service 'search' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d' from '$MB_DOCKER_ROOT'"
   exit 69
 fi
 
@@ -74,9 +72,14 @@ fi
 for core in "${cores[@]}"
 do
   echo -n "Posting deletion query for '$core'... "
-  docker-compose exec search post -c "${core/$'\r'/}" \
+  $DOCKER_COMPOSE_CMD exec search post -c "${core/$'\r'/}" \
     -d '<delete><query>*:*</query></delete>' >/dev/null
   echo "Done"
 done
+
+if [ "${1:-shift}" = 'all' ]
+then
+  echo "Successfully posted deletion queries for all collections."
+fi
 
 # vi: set et sts=2 sw=2 ts=2 :
