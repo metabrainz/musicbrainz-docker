@@ -2,7 +2,8 @@
 
 set -e -u
 
-SCRIPT_NAME=$(basename "$0")
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME all
    or: $SCRIPT_NAME CORE...
@@ -11,13 +12,10 @@ For each of MusicBrainz Solr cores/collections,
 compare the count of existing documents in PostgreSQL,
 with the count of indexed documents in Solr.
 
-Note: docker-compose services 'db' and 'indexer' must be up
+Notes:
+  The Docker Compose services 'db' and 'indexer' must be up.
 EOH
 )
-
-MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)
-
-cd "$MB_DOCKER_ROOT"
 
 # Build PostgreSQL queries to count existing documents by core
 
@@ -93,23 +91,23 @@ else
   done
 fi
 
-# Check that required docker-compose services are up
+# Check that required Docker Compose services are up
 
-service_containers="$(docker-compose ps db 2>/dev/null)"
+service_containers="$($DOCKER_COMPOSE_CMD ps db 2>/dev/null)"
 if ! echo "$service_containers" | grep -qw 'Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot count existing documents: " \
-           "the docker-compose service 'db' is not up"
-  echo >&2 "Try 'docker-compose up -d' from '$MB_DOCKER_ROOT'"
+           "the Docker Compose service 'db' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d' from '$MB_DOCKER_ROOT'"
   exit 69
 fi
 
-service_containers="$(docker-compose ps indexer 2>/dev/null)"
+service_containers="$($DOCKER_COMPOSE_CMD ps indexer 2>/dev/null)"
 if ! echo "$service_containers" | grep -qw 'Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot count indexed documents: " \
-           "the docker-compose service 'indexer' is not up"
-  echo >&2 "Try 'docker-compose up -d' from '$MB_DOCKER_ROOT'"
+           "the Docker Compose service 'indexer' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d' from '$MB_DOCKER_ROOT'"
   exit 69
 fi
 
@@ -121,7 +119,7 @@ POSTGRES_USER=musicbrainz
 POSTGRES_DATABASE=musicbrainz_db
 for core in "${cores[@]}"
 do
-  counts["$core"]=$(docker-compose exec db \
+  counts["$core"]=$($DOCKER_COMPOSE_CMD exec db \
     psql -U $POSTGRES_USER -d $POSTGRES_DATABASE \
          -c "COPY(${queries[$core]}) TO STDOUT" | tr -d '\r')
 done
@@ -144,7 +142,7 @@ do
   core=${line% *}
   docs=${line#* }
   indexed_docs["$core"]="${docs/$'\r'/}"
-done < <(docker-compose exec indexer bash -c "
+done < <($DOCKER_COMPOSE_CMD exec indexer bash -c "
 wget -q -O - http://search:8983/v2/cores | python2 -c '
 import sys, json;
 json_status = json.load(sys.stdin)[\"status\"];
