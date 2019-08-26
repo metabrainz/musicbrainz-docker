@@ -10,17 +10,26 @@ Usage: $SCRIPT_NAME <command> [<args>]
 Commands:
   list          List available compose files with handle, path and description
   show          Show COMPOSE_FILE from both .env file and environment variable
-  with <compose file list>
-                Set compose file list in .env file
-                List should be either colon-separated or space-separated.
-                Compose file should be refered to by either handle or path.
+
+  with  <compose file list>     Set or update compose file list in .env file
+  add   <compose file list>     Add listed files to COMPOSE_FILE in .env file
+  rm    <compose file list>     Remove files from COMPOSE_FILE in .env file
+
+        List should be either colon-separated or space-separated.
+        Compose file should be refered to by either handle or path.
 
 Examples:
-  $SCRIPT_NAME with docker-compose.yml:compose/host-port-musicbrainz.yml
-  $SCRIPT_NAME with default host-port-musicbrainz
+  $SCRIPT_NAME set docker-compose.yml:compose/open-ports.yml
+
+  allows to publish ports of all services on the host, just like:
+
+  $SCRIPT_NAME with default live-indexing
+  $SCRIPT_NAME add open-ports
+  $SCRIPT_NAME rm live-indexing
 
 Notes:
   Use '$DOCKER_COMPOSE_CMD config' to see the resulting compose file.
+  Use '$DOCKER_COMPOSE_CMD up -d' to apply configuration changes.
 EOH
 )
 
@@ -72,6 +81,14 @@ function scan_files {
   done
 }
 
+function parse_env {
+  sed -n "/^COMPOSE_FILE=/{
+    s/^COMPOSE_FILE=//
+    s/ *#.*$//
+    s/['\"]//g
+    p}" "$MB_DOCKER_ROOT/.env" | tail -1
+}
+
 function print_file_list {
   sep="|"
   (
@@ -106,11 +123,7 @@ case "$1" in
       && grep -q '^COMPOSE_FILE=' "$MB_DOCKER_ROOT/.env"
     then
       echo "COMPOSE_FILE is defined by '$MB_DOCKER_ROOT/.env' file."
-      COMPOSE_FILE=$(sed -n "/^COMPOSE_FILE=/{
-        s/^COMPOSE_FILE=//
-        s/ *#.*$//
-        s/['\"]//g
-        p}" "$MB_DOCKER_ROOT/.env" | tail -1)
+      COMPOSE_FILE=$(parse_env)
     else
       echo "COMPOSE_FILE is not defined, default file is used."
     fi
@@ -130,7 +143,8 @@ case "$1" in
     print_file_list "${compose_files[@]}"
     exit
     ;;
-  with          )
+  with |add |rm )
+    command=$1
     shift
     if [ $# -eq 0 ]
     then
@@ -139,15 +153,35 @@ case "$1" in
       exit 64
     fi
     scan_files
+
     declare -a compose_files
+    if [ $command != 'with' ]
+    then
+      if [ -f "$MB_DOCKER_ROOT/.env" ] \
+        && grep -q '^COMPOSE_FILE=' "$MB_DOCKER_ROOT/.env"
+      then
+        IFS=':' read -r -a compose_files <<< "$(parse_env)"
+      else
+        compose_files=( docker-compose.yml )
+      fi
+    fi
+
     while [ $# -gt 0 ]
     do
       if [ "${file_handle[$1]-}" ]
       then
-        compose_files+=( "$1" )
+        compose_files=( ${compose_files[@]/$1} )
+        if [ $command != 'rm' ]
+        then
+          compose_files+=( "$1" )
+        fi
       elif [ "${handle_file[$1]-}" ]
       then
-        compose_files+=( "${handle_file[$1]}" )
+        compose_files=( ${compose_files[@]/${handle_file[$1]}} )
+        if [ $command != 'rm' ]
+        then
+          compose_files+=( "${handle_file[$1]}" )
+        fi
       else
         echo >&2 "$SCRIPT_NAME: unknown file/handle: '$1'"
         echo >&2 "Try '$SCRIPT_NAME help' for usage."
@@ -160,7 +194,7 @@ case "$1" in
     touch .env
     sed -i '/^COMPOSE_FILE=/d' .env
     echo "COMPOSE_FILE="$(IFS=:; echo "${compose_files[*]}") >> .env
-    echo "Successfully set COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
+    echo "Successfully set/updated COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
     exit
     ;;
   *             )
