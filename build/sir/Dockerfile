@@ -37,7 +37,7 @@ RUN git clone https://github.com/metabrainz/sir.git /code && \
     git checkout "v${SIR_VERSION}" && \
     pip install -r requirements.txt
 
-COPY config.ini /code/
+RUN rm -f /code/config.ini
 
 WORKDIR /code
 

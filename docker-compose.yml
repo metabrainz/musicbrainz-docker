@@ -53,6 +53,8 @@ services:
     build: build/sir
     env_file:
       - ./default/postgres.env
+    volumes:
+      - ./default/indexer.ini:/code/config.ini
     depends_on:
       - db
       - mq
