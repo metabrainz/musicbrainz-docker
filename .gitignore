@@ -4,3 +4,6 @@
 
 # Directory created and managed by the script admin/setup-amqp-triggers
 /admin/.setup-amqp-triggers-sql/
+
+# Directory designated to store local compose overrides and related files
+/local/
