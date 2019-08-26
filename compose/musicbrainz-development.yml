@@ -1,6 +1,6 @@
 version: '3'
 
-# Description: Standalone server for MusicBrainz development purpose
+# Description: Run MusicBrainz Server in standalone mode for development purpose
 
 services:
   musicbrainz:

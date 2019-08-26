@@ -19,13 +19,13 @@ Commands:
         Compose file should be refered to by either handle or path.
 
 Examples:
-  $SCRIPT_NAME set docker-compose.yml:compose/open-ports.yml
+  $SCRIPT_NAME set docker-compose.yml:compose/publishing-all-ports.yml
 
   allows to publish ports of all services on the host, just like:
 
-  $SCRIPT_NAME with default live-indexing
-  $SCRIPT_NAME add open-ports
-  $SCRIPT_NAME rm live-indexing
+  $SCRIPT_NAME with default live-indexing-search
+  $SCRIPT_NAME add publishing-all-ports
+  $SCRIPT_NAME rm live-indexing-search
 
 Notes:
   Use '$DOCKER_COMPOSE_CMD config' to see the resulting compose file.
