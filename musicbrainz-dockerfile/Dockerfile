@@ -59,7 +59,7 @@ RUN eval $( perl -Mlocal::lib) && cpanm --notest \
         Starlet \
         Starlet::Server \
         Term::Size::Any \
-        TURNSTEP/DBD-Pg-3.7.4.tar.gz
+        TURNSTEP/DBD-Pg-3.9.1.tar.gz
 
 COPY DBDefs.pm /musicbrainz-server/lib/
 COPY scripts/* /
