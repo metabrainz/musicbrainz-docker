@@ -1,0 +1,8 @@
+version: '3'
+
+# Description: Enable MusicBrainz replication as a cron job
+
+services:
+  musicbrainz:
+    volumes:
+      - ./default/replication.cron:/crons.conf

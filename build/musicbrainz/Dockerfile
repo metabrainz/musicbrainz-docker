@@ -79,7 +79,6 @@ RUN cd /musicbrainz-server/ && yarn install --production && \
     eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN crontab /crons.conf
 
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server

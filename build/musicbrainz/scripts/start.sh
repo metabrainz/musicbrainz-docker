@@ -9,6 +9,11 @@ then
   /musicbrainz-server/script/compile_resources.sh
 fi
 
-cron -f &
+if [ -f /crons.conf -a -s /crons.conf ]
+then
+  crontab /crons.conf
+  cron -f &
+fi
+
 /start_mb_renderer.pl
 start_server --port=5000 -- plackup -I lib -s Starlet -E deployment --nproc 10 --pid fcgi.pid
