@@ -1,6 +1,6 @@
 version: '3'
 
-# Description: Enable live indexing of updated entries for search
+# Description: Make sir watches queue for reindex messages
 
 services:
   indexer:
