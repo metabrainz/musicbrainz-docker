@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 
 # Description: Publish all service ports on the host
 

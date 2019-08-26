@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set -e -u
+
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME [option]
+
+Read token and write it to local/secrets/metabrainz_access_token.
+
+Option:
+  -f, --force   Overwrite existing token if any.
+
+Environment variable:
+  METABRAINZ_ACCESS_TOKEN_PATH
+    This environment variable allows to specify another path to write to.
+EOH
+)
+
+# Parse arguments
+
+declare -i overwrite=0
+
+if [ $# -eq 1 ]
+then
+  case "$1" in
+    -f|--force)
+      overwrite=1
+      shift
+      ;;
+    -h|--help|help)
+      echo "$HELP"
+      exit
+      ;;
+    *)
+      echo >&2 "$SCRIPT_NAME: unrecognized argument: '$1'"
+      echo >&2 "Try '$SCRIPT_NAME --help' for usage."
+      exit 64
+      ;;
+  esac
+fi
+
+if [ $# -ne 0 ]
+then
+  echo >&2 "$SCRIPT_NAME: too many arguments"
+  echo >&2 "Try '$SCRIPT_NAME --help' for usage."
+  exit 64
+fi
+
+declare token=''
+while [ -z "$token" ]
+do
+  read -n 40 -p 'Please enter your MetaBrainz access token (will not be echoed)...' -r -s token
+  echo
+  if [ ${#token} -ne 40 ]
+  then
+    echo Token should be 40 characters long, you entered only ${#token}.
+    token=''
+  fi
+done
+echo 'Thank you!'
+
+declare -r token_default_path="$MB_DOCKER_ROOT/local/secrets/metabrainz_access_token"
+declare -r TOKEN_PATH="${METABRAINZ_ACCESS_TOKEN_PATH:-$token_default_path}"
+
+if [ -f "$TOKEN_PATH" -a "$overwrite" -ne 1 ]
+then
+  echo >&2 "$SCRIPT_NAME: token file already exists at: '$TOKEN_PATH'"
+  echo >&2 "Try '$SCRIPT_NAME --help' for usage."
+  exit 73
+fi
+
+mkdir -p "$(dirname "$TOKEN_PATH")"
+touch "$TOKEN_PATH"
+chmod 600 "$TOKEN_PATH"
+echo "$token" > "$TOKEN_PATH"
+
+echo "Successfully wrote token in '$TOKEN_PATH'."
+
+# vi: set et sts=2 sw=2 ts=2 :
