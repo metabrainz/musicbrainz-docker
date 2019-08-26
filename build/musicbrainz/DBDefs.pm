@@ -131,7 +131,13 @@ sub REPLICATION_TYPE { shift->DEVELOPMENT_SERVER() ? RT_STANDALONE : RT_SLAVE }
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-sub REPLICATION_ACCESS_TOKEN { "" }
+sub REPLICATION_ACCESS_TOKEN {
+    my $file = '/run/secrets/metabrainz_access_token';
+    open(my $fh, '<', $file) or return '';
+    read($fh, my $token, 40) or $token = '';
+    close $fh;
+    return $token;
+}
 
 ################################################################################
 # GPG Signature
