@@ -1,5 +1,4 @@
-musicbrainz slave server with search and replication
-==================
+# MusicBrainz slave server with search and replication
 
 This is a **development version** featuring Solr-based search.
 Check out the branch [`master`](https://github.com/metabrainz/musicbrainz-docker/tree/master) for Lucene-based search.
@@ -7,11 +6,61 @@ Check out the branch [`master`](https://github.com/metabrainz/musicbrainz-docker
 [![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=mbvm-38-dev)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
 This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
-It requires **Docker Compose 1.21.1** or higher.
-You will need a little over 100 gigs of free disk space to run this with replication.
-(If you create a VM to install in, provision additional disk space for your system.)
 
-### Versions
+## Table of contents
+
+<!-- toc -->
+
+- [Prerequisites](#prerequisites)
+  * [Recommended hardware/VM](#recommended-hardwarevm)
+  * [Required software](#required-software)
+  * [External documentation](#external-documentation)
+- [Components version](#components-version)
+- [Installation](#installation)
+  * [Build Docker images](#build-docker-images)
+  * [Create database](#create-database)
+  * [Start website](#start-website)
+  * [Build search indexes](#build-search-indexes)
+  * [Enable live indexing](#enable-live-indexing)
+  * [Enable replication](#enable-replication)
+- [Advanced configuration](#advanced-configuration)
+  * [Local changes](#local-changes)
+  * [Docker environment variables](#docker-environment-variables)
+  * [Docker Compose overrides](#docker-compose-overrides)
+- [Development setup](#development-setup)
+- [Helper scripts](#helper-scripts)
+  * [Recreate database](#recreate-database)
+- [Update (after v1.0.0)](#update-after-v100)
+- [Issues](#issues)
+
+<!-- tocstop -->
+
+## Prerequisites
+
+### Recommended hardware/VM
+
+* CPU: 16 threads (or 2 without indexed search)
+* RAM: 16 GB (or 4 without indexed search)
+* Disk Space: 100 GB (or 50 without indexed search)
+            + system disk usage
+### Required software
+
+* Docker Compose 1.21.1 (or higher), see [how to install Docker Compose](https://docs.docker.com/compose/install/)
+* Git
+* GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
+* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw,
+  if you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall.
+
+### External documentation
+
+* Introduction: [Getting started with Docker](https://docs.docker.com/get-started/)
+  and [Overview of Docker Compose](https://docs.docker.com/compose/)
+* Command-line: [<code>docker</code> CLI reference](https://docs.docker.com/engine/reference/commandline/docker/)
+  and [<code>docker-compose</code> CLI reference](https://docs.docker.com/compose/reference/overview/)
+* Configuration: [Compose file version 3 reference](https://docs.docker.com/compose/compose-file/)
+
+## Components version
+
 * Current MB Branch: [v-2019-08-08](build/musicbrainz/Dockerfile#L32)
 * Current DB_SCHEMA_SEQUENCE: [25](build/musicbrainz/DBDefs.pm#L112)
 * Postgres Version: [9.5](docker-compose.yml)
@@ -19,102 +68,300 @@ You will need a little over 100 gigs of free disk space to run this with replica
 * MB Solr search server: [3.1.1](build/solr/Dockerfile#L1)
 * Search Index Rebuilder: [1.0.2](build/sir/Dockerfile#L31)
 
-### Installation
+## Installation
 
-###### Install and Start
-* Make sure you have installed docker and docker-compose then:
-* `git clone https://github.com/metabrainz/musicbrainz-docker.git`
-* `cd musicbrainz-docker`
-* `sudo docker-compose up -d`
+This section is about installing MusicBrainz slave server (mirror)
+with locally indexed search and automatically replicated data.
 
-  Or to expose the db, mq, redis and search ports:
+Download this repository and change current working directory with:
 
-  `sudo docker-compose -f docker-compose.yml -f compose/public.yml up -d`
-* Set the token you got from musicbrainz (see [instructions for generating a token](http://blog.musicbrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/)).
+```bash
+git clone https://github.com/metabrainz/musicbrainz-docker.git
+cd musicbrainz-docker
+```
 
-  `sudo docker-compose exec musicbrainz /set-token.sh <replication token>`
+### Build Docker images
+
+Docker images for composed services should be built once using:
+
+```bash
+sudo docker-compose build
+```
 
 ### Create database
-Create the database, download the latest dumps and populate the database
 
-* `sudo docker-compose run --rm musicbrainz /createdb.sh -fetch`
+Download latest full data dumps and create the database with:
 
-Create the database, and populate the database with existing dumps
+```bash
+sudo docker-compose run --rm musicbrainz /createdb.sh -fetch
+```
 
-* `sudo docker-compose run --rm musicbrainz /createdb.sh`
+<!-- TODO: document available FTP servers -->
+<!-- TODO: document how to load local dumps -->
 
-#### Development setup
+### Start website
 
-For development, load sample data instead of full dump by adding the flag `-sample` to the above commands.
-Then use `compose/musicbrainz-development.yml` override file to enable standalone mode.
+Make the local website available at <http://localhost:5000> with:
+
+```bash
+sudo docker-compose up -d
+```
+
+At this point the local website will show data loaded from the dumps
+only. For indexed search and replication, keep going!
 
 ### Build search indexes
-In order to use the search functions of the web site/API you will need to build search indexes.
 
-* `sudo docker-compose run --rm indexer python -m sir reindex`
+```bash
+sudo docker-compose exec indexer python -m sir reindex
+```
 
-Depending on your machine, this can take quite a long time (not as long as the old indexer took though).
+This step is known to take 4½ hours with 16 CPU threads and 16 GB RAM.
 
-#### Live indexing
-To keep the search indexes in sync with the database, you can set up live indexing as follows:
+At this point indexed search works on the local website/webservice.
+For replication, keep going!
 
-0. Start services without live indexing with:
+### Enable live indexing
 
-   `sudo docker-compose up -d`
+It is needed to automatically update search indexes during replication.
 
-1. Configure exchanges and queues on `mq` for `indexer` with:
+First, make indexer goes through [AMQP Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup) with:
 
-   `sudo docker-compose exec indexer python -m sir amqp_setup`
+```bash
+sudo docker-compose exec indexer python -m sir amqp_setup
+admin/create-amqp-extension
+admin/setup-amqp-triggers install
+```
 
-2. Load and configure AMQP extension in `db` for `indexer` with:
+Then, make indexer watch reindex messages with:
 
-   `sudo admin/create-amqp-extension`
+```bash
+admin/configure add live-indexing-search
+sudo docker-compose up -d
+```
 
-3. Install triggers in `db` for `indexer` with:
+### Enable replication
 
-   `sudo admin/setup-amqp-triggers install`
+#### Set replication token
 
-Then you will be able to live index database for search as follows:
+First, copy your MetaBrainz access token
+(see [instructions for generating a token](http://blog.metabrainz.org/2015/05/19/schema-change-release-2015-05-18-including-upgrade-instructions/))
+and paste when prompted to by the following command:
 
-  `sudo docker-compose exec indexer python -m sir amqp_watch`
+```bash
+admin/set-replication-token
+```
 
-Or using `compose/live-indexing.yml` override file:
+The token will be written to the file [`local`](local/)`/secrets/metabrainz_access_token`.
 
-   `sudo docker-compose -f docker-compose.yml -f compose/live-indexing.yml up -d`
+Then, grant access to the token for replication with:
 
-### Replication
-Replication is run as a cronjob, you can update the [crons.conf](build/musicbrainz/scripts/crons.conf) file to change when replication will be run.
+```bash
+admin/configure add replication-token
+docker-compose up -d
+```
 
-You can view the replication log file while it is running with
-* `sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log`
+#### Run replication once
 
-You can view the replication log file once it is done with
-* `sudo docker-compose exec musicbrainz /usr/bin/tail slave.log.1`
+Run replication script once to catch up with latest database updates:
 
-### If you need to recreate the database
-you will need to enter the postgres password that you set in [postgres.env](default/postgres.env).
+```bash
+sudo docker-compose exec musicbrainz /replication.sh &
+sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log
+```
+
+<!-- TODO: estimate replication time per missing day -->
+
+#### Schedule replication
+
+Enable replication as a cron job of `root` user in `musicbrainz`
+service container with:
+
+```bash
+admin/configure add replication-cron
+sudo docker-compose up -d
+```
+
+See the [`crontab`](default/replication.cron) used by default.
+To change it, see [advanced configuration](#advanced-configuration).
+
+You can view the replication log file while it is running with:
+
+```bash
+sudo docker-compose exec musicbrainz tail --follow slave.log
+```
+
+You can view the replication log file after it is done with:
+
+```bash
+sudo docker-compose exec musicbrainz tail slave.log.1
+```
+
+## Advanced configuration
+
+### Local changes
+
+You should **preferably not** locally change any file being tracked by git.
+Check your working tree is clean with:
+
+```bash
+git status
+```
+
+Git is set to ignore the followings you are encouraged to write to:
+
+* `.env` file,
+* any new file under [`local`](local/) directory.
+
+### Docker environment variables
+
+There are many ways to set [environment variables in Docker Compose](https://docs.docker.com/compose/environment-variables/),
+the most convenient here is probably to edit the hidden file `.env`.
+
+You can then check values to be passed to containers using:
+
+```bash
+sudo docker-compose config
+```
+
+Finally, make Compose picks up configuration changes with:
+
+```bash
+sudo docker-compose up -d
+```
+#### Customize web server host:port
+
+By default, the web server listens at <http://localhost:5000>
+
+This can be changed using the two Docker environment variables
+`MUSICBRAINZ_WEB_SERVER_HOST` and `MUSICBRAINZ_WEB_SERVER_PORT`.
+
+### Docker Compose overrides
+
+In Docker Compose, it is possible to override the base configuration using
+[multiple Compose files](https://docs.docker.com/compose/extends/#multiple-compose-files).
+
+Some overrides are available under [`compose`](compose/) directory.
+Feel free to write your own overrides under [`local`](local/) directory.
+
+The helper script [`admin/configure`](admin/configure) is able to:
+* **list** available compose files, with a descriptive summary
+* **show** the value of `COMPOSE_FILE` variable in Docker environment
+* set/update `COMPOSE_FILE` in `.env` file **with** a list of compose files
+* set/update `COMPOSE_FILE` in `.env` file with **add**ed or
+  **r**e**m**oved compose files
+
+Try <code>admin/configure help</code> for more information.
+
+#### Publish ports of all services
+
+To publish ports of services `db`, `mq`, `redis` and `search`
+(additionally to `musicbrainz`) on the host, simply run:
+
+```bash
+admin/configure add publishing-all-ports
+sudo docker-compose up -d
+```
+
+#### Customize replication schedule
+
+Create a new crontab file under [`local`](local/) directory
+(or outside of the current working directory).
+
+Then, copy [`replication-cron.yml`](compose/replication-cron.yml) to
+[`local/`](local/), and edit this new compose file to replace
+`default/replication.cron` with the path to that new crontab file.
+
+Finally, use `admin/configure` script to use this new compose file
+instead of `replication-cron.yml`, and makes Compose picks up changes.
+
+## Development setup
+
+Run the below commands instead of following the regular [installation](#installation):
+
+```bash
+git clone https://github.com/metabrainz/musicbrainz-docker.git
+cd musicbrainz-docker
+sudo docker-compose build
+sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
+admin/configure add musicbrainz-development
+sudo docker-compose up -d
+```
+
+The two differences are:
+1. sample data dump is downloaded instead of full data dumps,
+2. MusicBrainz Server runs in standalone mode instead of slave mode.
+
+[Build search indexes](#build-search-indexes) and
+[Enable live indexing](#enable-live-indexing) are the same.
+
+Replication is not applicable to development setup.
+
+## Helper scripts
+
+There are two directories with helper scripts:
+
+* [`admin/`](admin/) contains helper scripts to be run from the host.
+  For more information, try:
+
+  ```bash
+  admin/check-search-indexes --help
+  admin/delete-search-indexes --help
+  ```
+
+  See [Docker Compose overrides](#docker-compose-overrides) for more
+  information about `admin/configure`.
+  See [Enable live indexing](#enable-live-indexing) for more
+  information about `admin/create-amqp-extension` and
+  `admin/setup-amqp-triggers`.
+
+<!-- TODO: add help option to admin/create-amqp-extension -->
+<!-- TODO: add help option to admin/setup-amqp-triggers -->
+
+* [`build/musicbrainz/scripts/`](build/musicbrainz/scripts/) contains
+  helper scripts to be run from the container attached to the service
+  `musicbrainz`. Most of these scripts are not for direct use, but
+  [createdb.sh](#create-database) and below-documented
+  [recreatedb.sh](#recreate-database).
+
+<!-- TODO: add help option to build/*/scripts/* -->
+
+### Recreate database
+
+If you need to recreate the database, you will need to enter the
+postgres password set in [postgres.env](default/postgres.env):
+
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
-or to recreate and fetch new data dumps
+
+or to fetch new data dumps before recreating the database:
+
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
 
-### Handling Schema Updates
-When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.
+## Update (after v1.0.0)
 
-###### The usual process to update the schema is:
+Check your working tree is clean with:
 
-* Ensure you’ve replicated up to the most recent replication packet available with the old schema.
-  (If you’re not sure, run `sudo docker-compose exec musicbrainz /replication.sh`.)
-* Switch to the new code with:
-* Run bash in the container: `sudo docker-compose exec musicbrainz bash`.
-  * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.
-  * Run the upgrade script: `eval $( perl -Mlocal::lib ) && ./upgrade.sh`.
-  * Exit bash `exit`.
-* Set DB_SCHEMA_SEQUENCE to the NEW_SCHEMA_NUM in the [DBDefs.pm file](build/musicbrainz/DBDefs.pm#L112)
-* `sudo docker-compose stop musicbrainz` then `sudo docker-compose build musicbrainz` then `sudo docker-compose up -d --no-deps musicbrainz`
-
-If anything doesn't work please create an issue with environment info:
 ```bash
-echo musicbrainz-docker version: `git describe --always --broken --dirty --tags` && \
-docker-compose version && \
-docker version
+git status
+```
+
+List newer versions that have been released since then:
+
+```bash
+git fetch --prune origin
+git log --oneline --simplify-by-decoration origin/master..master
+```
+
+Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for update instructions.
+
+<!-- TODO: complete schema change instructions (by release v1.0.0) -->
+
+## Issues
+
+If anything doesn't work please create an issue with versions info:
+
+```bash
+echo MusicBrainz Docker: `git describe --always --broken --dirty --tags` && \
+echo Docker Compose: docker-compose version --short && \
+docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
 ```
