@@ -155,11 +155,11 @@ for core in json_status:
 sep="|"
 for core in "${ascending_cores[@]}"
 do
-  if [ ${counts[$core]} -eq ${indexed_docs[$core]} ]
+  if [ ${counts[$core]} -eq ${indexed_docs[$core]:-0} ]
   then
-    echo "$core${sep}OK$sep${indexed_docs[$core]}$sep/${counts[$core]}"
+    echo "$core${sep}OK$sep${indexed_docs[$core]:-0}$sep/${counts[$core]}"
   else
-    echo "$core${sep}--$sep${indexed_docs[$core]}$sep/${counts[$core]}"
+    echo "$core${sep}--$sep${indexed_docs[$core]:-0}$sep/${counts[$core]}"
   fi
 done | (echo CORE${sep}STATUS${sep}INDEX${sep}DB; cat) | column -t -s "$sep"
 
