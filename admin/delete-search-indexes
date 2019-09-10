@@ -28,7 +28,7 @@ fi
 declare -A all_cores=(
   [annotation]=1 [area]=1 [artist]=1 [cdstub]=1 [editor]=1 [event]=1
   [instrument]=1 [label]=1 [place]=1 [recording]=1 [release]=1
-  [release_group]=1 [series]=1 [tag]=1 [url]=1 [work]=1
+  [release-group]=1 [series]=1 [tag]=1 [url]=1 [work]=1
 )
 
 declare -a cores
