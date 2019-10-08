@@ -11,7 +11,6 @@ Create 'amqp' extension (with broker) in the database.
 EOH
 )
 
-Commands:
 if [ $# -ne 0 ]
 then
   echo >&2 "$SCRIPT_NAME: too many arguments"
