@@ -62,7 +62,9 @@ case "$1" in
 
     indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
     $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
-    $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$indexer_container_id":"$REMOTE_TRIGGERS_DIR"
+
+    musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+    $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
 
     $DOCKER_COMPOSE_CMD exec musicbrainz /indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
 
