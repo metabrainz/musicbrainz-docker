@@ -45,7 +45,9 @@ $DOCKER_COMPOSE_CMD exec indexer python -m sir extension
 
 indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
 $DOCKER_CMD cp "$indexer_container_id:/code/sql/CreateExtension.sql" "$LOCAL_SQL_FILE"
-$DOCKER_CMD cp "$LOCAL_SQL_FILE" "$indexer_container_id:$REMOTE_SQL_FILE"
+
+db_container_id="$($DOCKER_COMPOSE_CMD ps -q db)"
+$DOCKER_CMD cp "$LOCAL_SQL_FILE" "$db_container_id:$REMOTE_SQL_FILE"
 
 $DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -f "$REMOTE_SQL_FILE"
 
