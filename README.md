@@ -158,7 +158,7 @@ Then, grant access to the token for replication with:
 
 ```bash
 admin/configure add replication-token
-docker-compose up -d
+sudo docker-compose up -d
 ```
 
 #### Run replication once
