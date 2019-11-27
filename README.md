@@ -362,6 +362,6 @@ If anything doesn't work please create an issue with versions info:
 
 ```bash
 echo MusicBrainz Docker: `git describe --always --broken --dirty --tags` && \
-echo Docker Compose: docker-compose version --short && \
+echo Docker Compose: `docker-compose version --short` && \
 docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
 ```
