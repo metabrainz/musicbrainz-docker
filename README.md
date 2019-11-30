@@ -76,7 +76,7 @@ with locally indexed search and automatically replicated data.
 Download this repository and change current working directory with:
 
 ```bash
-git clone https://github.com/metabrainz/musicbrainz-docker.git
+git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 ```
 
