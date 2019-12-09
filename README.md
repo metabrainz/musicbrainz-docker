@@ -27,7 +27,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
   * [Local changes](#local-changes)
   * [Docker environment variables](#docker-environment-variables)
   * [Docker Compose overrides](#docker-compose-overrides)
-- [Development setup](#development-setup)
+- [Test setup](#test-setup)
 - [Helper scripts](#helper-scripts)
   * [Recreate database](#recreate-database)
 - [Update (after v1.0.0)](#update-after-v100)
@@ -287,16 +287,18 @@ admin/configure add publishing-all-ports
 sudo docker-compose up -d
 ```
 
-## Development setup
+## Test setup
 
-Run the below commands instead of following the regular [installation](#installation):
+If you just need a small server with sample data to test your own SQL
+queries and/or MusicBrainz Web Service calls, you can run the below
+commands instead of following the above [installation](#installation):
 
 ```bash
 git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 sudo docker-compose build
 sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
-admin/configure add musicbrainz-development
+admin/configure add musicbrainz-standalone
 sudo docker-compose up -d
 ```
 
@@ -307,7 +309,7 @@ The two differences are:
 [Build search indexes](#build-search-indexes) and
 [Enable live indexing](#enable-live-indexing) are the same.
 
-Replication is not applicable to development setup.
+Replication is not applicable to test setup.
 
 ## Helper scripts
 

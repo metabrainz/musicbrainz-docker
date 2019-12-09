@@ -124,7 +124,10 @@ sub DB_SCHEMA_SEQUENCE { 25 }
 #               choose RT_SLAVE, as well as the usual READWRITE.
 # * RT_STANDALONE - This server neither generates nor uses replication
 #               packets.  Changes to the database are allowed.
-sub REPLICATION_TYPE { shift->DEVELOPMENT_SERVER() ? RT_STANDALONE : RT_SLAVE }
+sub REPLICATION_TYPE { $ENV{MUSICBRAINZ_STANDALONE_SERVER} == 1
+    ? RT_STANDALONE
+    : RT_SLAVE
+}
 
 # If you plan to use the RT_SLAVE setting (replicated data from MusicBrainz' Live Data Feed)
 # you must sign in at https://metabrainz.org and generate an access token to access
@@ -390,7 +393,7 @@ sub CATALYST_DEBUG { shift->DEVELOPMENT_SERVER() ? 1 : 0 }
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
 # developing and debuging easier
-sub DEVELOPMENT_SERVER { $ENV{DEVELOPMENT_MUSICBRAINZ_DOCKER} == 1 ? 1 : 0 }
+sub DEVELOPMENT_SERVER { $ENV{MUSICBRAINZ_DEVELOPMENT_SERVER} == 1 ? 1 : 0 }
 
 # How long to wait before rechecking template files (undef uses the
 # Template::Toolkit default)
