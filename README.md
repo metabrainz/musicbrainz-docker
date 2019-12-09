@@ -182,8 +182,8 @@ admin/configure add replication-cron
 sudo docker-compose up -d
 ```
 
-See the [`crontab`](default/replication.cron) used by default.
-To change it, see [advanced configuration](#advanced-configuration).
+By default, it replicates data every day at 3 am UTC.
+To change that, see [advanced configuration](#advanced-configuration).
 
 You can view the replication log file while it is running with:
 
@@ -236,6 +236,18 @@ By default, the web server listens at <http://localhost:5000>
 This can be changed using the two Docker environment variables
 `MUSICBRAINZ_WEB_SERVER_HOST` and `MUSICBRAINZ_WEB_SERVER_PORT`.
 
+#### Customize replication schedule
+
+By default, there is no crontab file in `musicbrainz` service container.
+
+If you followed the steps to [schedule replication](#schedule-replication),
+then the crontab file used by `musicbrainz` service is bound to
+[`default/replication.cron`](default/replication.cron).
+
+This can be changed by creating a custom crontab file under
+[`local/`](local/) directory, and finally setting the Docker
+environment variable `MUSICBRAINZ_CRONTAB_PATH` to its path.
+
 ### Docker Compose overrides
 
 In Docker Compose, it is possible to override the base configuration using
@@ -262,18 +274,6 @@ To publish ports of services `db`, `mq`, `redis` and `search`
 admin/configure add publishing-all-ports
 sudo docker-compose up -d
 ```
-
-#### Customize replication schedule
-
-Create a new crontab file under [`local`](local/) directory
-(or outside of the current working directory).
-
-Then, copy [`replication-cron.yml`](compose/replication-cron.yml) to
-[`local/`](local/), and edit this new compose file to replace
-`default/replication.cron` with the path to that new crontab file.
-
-Finally, use `admin/configure` script to use this new compose file
-instead of `replication-cron.yml`, and makes Compose picks up changes.
 
 ## Development setup
 

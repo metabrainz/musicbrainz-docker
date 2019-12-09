@@ -5,4 +5,4 @@ version: '3.1'
 services:
   musicbrainz:
     volumes:
-      - ./default/replication.cron:/crons.conf
+      - ${MUSICBRAINZ_CRONTAB_PATH:-./default/replication.cron}:/crons.conf
