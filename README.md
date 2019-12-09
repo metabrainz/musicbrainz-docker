@@ -28,6 +28,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
   * [Docker environment variables](#docker-environment-variables)
   * [Docker Compose overrides](#docker-compose-overrides)
 - [Test setup](#test-setup)
+- [Development setup](#development-setup)
 - [Helper scripts](#helper-scripts)
   * [Recreate database](#recreate-database)
 - [Update (after v1.0.0)](#update-after-v100)
@@ -296,9 +297,9 @@ commands instead of following the above [installation](#installation):
 ```bash
 git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
+admin/configure add musicbrainz-standalone
 sudo docker-compose build
 sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
-admin/configure add musicbrainz-standalone
 sudo docker-compose up -d
 ```
 
@@ -310,6 +311,39 @@ The two differences are:
 [Enable live indexing](#enable-live-indexing) are the same.
 
 Replication is not applicable to test setup.
+
+## Development setup
+
+For local development of MusicBrainz Server, you can run the below
+commands instead of following the above [installation](#installation):
+
+```bash
+git clone --recursive https://github.com/metabrainz/musicbrainz-server.git
+MUSICBRAINZ_SERVER_LOCAL_ROOT=$PWD/musicbrainz-server
+git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
+cd musicbrainz-docker
+echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
+admin/configure add musicbrainz-dev
+sudo docker-compose up -d
+sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
+```
+
+The four differences are:
+1. sample data dump is downloaded instead of full data dumps,
+2. MusicBrainz Server runs in standalone mode instead of slave mode,
+3. development mode is enabled (Catalyst debug, ...),
+4. MusicBrainz Server code is in `musicbrainz-server/` directory.
+
+After changing code in `musicbrainz-server/`, it can be run as follows:
+
+```bash
+sudo docker-compose restart musicbrainz
+```
+
+[Build search indexes](#build-search-indexes) and
+[Enable live indexing](#enable-live-indexing) are the same.
+
+Replication is not applicable to development setup.
 
 ## Helper scripts
 

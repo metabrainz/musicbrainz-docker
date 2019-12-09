@@ -1,0 +1,13 @@
+version: '3.1'
+
+# Description: Build and run local development copy of MusicBrainz Server
+
+services:
+  musicbrainz:
+    build:
+      context: build/musicbrainz-dev
+    volumes:
+      - ${MUSICBRAINZ_SERVER_LOCAL_ROOT:?Missing path of musicbrainz-server working copy}:/musicbrainz-server
+    environment:
+      - PERL_CPANM_HOME=${MUSICBRAINZ_PERL_CPANM_HOME:-/musicbrainz-server/.cpanm}
+      - MUSICBRAINZ_PERL_LOCAL_LIB=${MUSICBRAINZ_PERL_LOCAL_LIB:-/musicbrainz-server/perl_modules}
