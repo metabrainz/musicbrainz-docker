@@ -182,6 +182,9 @@ case "$1" in
         then
           compose_files+=( "${handle_file[$1]}" )
         fi
+      elif [ $command = 'rm' ]
+      then
+        echo "Ignore obsolete/missing '$1'"
       else
         echo >&2 "$SCRIPT_NAME: unknown file/handle: '$1'"
         echo >&2 "Try '$SCRIPT_NAME help' for usage."
