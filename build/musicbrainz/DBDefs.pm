@@ -383,6 +383,16 @@ sub DATASTORE_REDIS_ARGS {
 # sub COVER_ART_ARCHIVE_UPLOAD_PREFIXER { shift; sprintf("//%s.s3.us.archive.org/", shift) };
 # sub COVER_ART_ARCHIVE_DOWNLOAD_PREFIX { "//coverartarchive.org" };
 
+# mapbox private access token must be set to display area/place map
+# sub MAPBOX_MAP_ID { 'mapbox.streets' }
+sub MAPBOX_ACCESS_TOKEN {
+    my $file = '/run/secrets/mapbox_access_token';
+    open(my $fh, '<', $file) or return '';
+    chomp(my $token = <$fh> || '');
+    close $fh;
+    return $token;
+}
+
 # Disallow OAuth2 requests over plain HTTP
 # sub OAUTH2_ENFORCE_TLS { my $self = shift; !$self->DB_STAGING_SERVER }
 
