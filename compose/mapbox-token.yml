@@ -1,0 +1,12 @@
+version: '3.1'
+
+# Description: Grant access to Mapbox access token for area/place maps display
+
+services:
+  musicbrainz:
+    secrets:
+      - mapbox_access_token
+
+secrets:
+  mapbox_access_token:
+    file: ${MAPBOX_ACCESS_TOKEN_PATH:-local/secrets/mapbox_access_token}
