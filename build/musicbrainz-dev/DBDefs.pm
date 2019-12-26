@@ -84,6 +84,18 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         host        => "db",
         port        => "5432",
     },
+    # How to connect for read-only access to the production database in standby mode.
+    # This is for use by musicbrainz.org maintainers only, just ignore it otherwise.
+    # It can be used when an SSH tunnel is opened by running from Docker host:
+    #     ssh -L 172.17.0.1:65401:localhost:<PS_PORT> <PS_HOST> -N
+    # where <PS_PORT> and <PS_HOST_> are the production standby port and host, resp.
+    PROD_STANDBY => {
+        database    => "musicbrainz_db",
+        username    => "musicbrainz_ro",  # Standby is read-only anyway
+        password    => "",
+        host        => "172.17.0.1", # Gateway of Docker bridge network
+        port        => "65401",      # Port to be exposed by SSH tunnel
+    },
     # How to connect for administrative access
     SYSTEM    => {
         database    => "template1",
