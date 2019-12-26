@@ -5,18 +5,21 @@ eval $( perl -Mlocal::lib )
 FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
 IMPORT="fullexport"
 FETCH_DUMPS=""
+WGET_OPTIONS=""
 
 read -d '' -r HELP <<HELP
-Usage: $0 [-sample] [-fetch] [MUSICBRAINZ_FTP_URL]
+Usage: $0 [-wget-opts <options list>] [-sample] [-fetch] [MUSICBRAINZ_FTP_URL]
 
 Options:
   -fetch      Fetch latest dump from MusicBrainz FTP
   -sample     Load sample data instead of full data
+  -wget-opts  Pass additional space-separated options list (should be
+              a single argument, escape spaces if necessary) to wget
 
 Default MusicBrainz FTP URL: $FTP_MB
 HELP
 
-if [ $# -gt 3 ]; then
+if [ $# -gt 4 ]; then
     echo "$0: too many arguments"
     echo "$HELP"
     exit 1
@@ -24,6 +27,10 @@ fi
 
 while [ $# -gt 0 ]; do
     case "$1" in
+        -wget-opts )
+            shift
+            WGET_OPTIONS=$1
+            ;;
         -sample )
             IMPORT="sample"
             ;;
@@ -64,16 +71,16 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
     echo "fetching data dumps"
 
     rm -rf /media/dbdump/*
-    wget -nd -nH -P /media/dbdump $FTP_MB/data/$IMPORT/LATEST
+    wget $WGET_OPTIONS -nd -nH -P /media/dbdump $FTP_MB/data/$IMPORT/LATEST
     LATEST=$(cat /media/dbdump/LATEST)
     if [[ $IMPORT == "fullexport" ]]; then
         for F in MD5SUMS ${DUMP_FILES[@]}; do
-            wget -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
+            wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
         done
         pushd /media/dbdump && md5sum -c MD5SUMS && popd
     elif [[ $IMPORT == "sample" ]]; then
         for F in ${DUMP_FILES[@]}; do
-            wget -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
+            wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
         done
     fi
 fi
