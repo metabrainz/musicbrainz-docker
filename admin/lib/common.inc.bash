@@ -19,6 +19,9 @@ then
   elif groups | grep -Pqw 'docker|root'
   then
     DOCKER_CMD='docker'
+  elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
+  then
+    DOCKER_CMD='docker'
   else
     echo >&2 "$SCRIPT_NAME: cannot set docker command: please either"
     echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
@@ -33,6 +36,9 @@ then
   then
     DOCKER_COMPOSE_CMD='sudo docker-compose'
   elif groups | grep -Pqw 'docker|root'
+  then
+    DOCKER_COMPOSE_CMD='docker-compose'
+  elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
   then
     DOCKER_COMPOSE_CMD='docker-compose'
   else
