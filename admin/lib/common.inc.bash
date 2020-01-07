@@ -1,5 +1,12 @@
 SCRIPT_NAME=$(basename "$0")
 
+if ((BASH_VERSINFO[0] < 4))
+then
+  echo >&2 "$SCRIPT_NAME: at least version 4 of bash is required"
+  echo >&2 "Make sure this version of bash comes first in \$PATH"
+  exit 69
+fi
+
 MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" && pwd)
 
 cd "$MB_DOCKER_ROOT"
