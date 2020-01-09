@@ -248,6 +248,15 @@ This can be changed by creating a custom crontab file under
 [`local/`](local/) directory, and finally setting the Docker
 environment variable `MUSICBRAINZ_CRONTAB_PATH` to its path.
 
+#### Customize search indexer configuration
+
+By default, the configuration file used by `indexer` service is bound
+to [`default/indexer.ini`](default/indexer.ini).
+
+This can be changed by creating a custom configuration file under
+[`local/`](local/) directory, and finally setting the Docker
+environment variable `SIR_CONFIG_PATH` to its path.
+
 ### Docker Compose overrides
 
 In Docker Compose, it is possible to override the base configuration using

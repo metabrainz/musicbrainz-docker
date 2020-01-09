@@ -54,7 +54,7 @@ services:
     env_file:
       - ./default/postgres.env
     volumes:
-      - ./default/indexer.ini:/code/config.ini
+      - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
       - db
       - mq
