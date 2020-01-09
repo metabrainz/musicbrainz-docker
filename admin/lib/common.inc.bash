@@ -19,7 +19,7 @@ then
   elif groups | grep -Eqw 'docker|root'
   then
     DOCKER_CMD='docker'
-  elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
+  elif type sw_vers &>/dev/null && [ "$(sw_vers -productName)" = "Mac OS X" ]
   then
     DOCKER_CMD='docker'
   else
@@ -38,7 +38,7 @@ then
   elif groups | grep -Eqw 'docker|root'
   then
     DOCKER_COMPOSE_CMD='docker-compose'
-  elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
+  elif type sw_vers &>/dev/null && [ "$(sw_vers -productName)" = "Mac OS X" ]
   then
     DOCKER_COMPOSE_CMD='docker-compose'
   else
