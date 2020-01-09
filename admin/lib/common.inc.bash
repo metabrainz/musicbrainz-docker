@@ -13,10 +13,10 @@ cd "$MB_DOCKER_ROOT"
 
 if [ -z ${DOCKER_CMD:+smt} ]
 then
-  if groups | grep -Pqw 'sudo|wheel'
+  if groups | grep -Eqw 'sudo|wheel'
   then
     DOCKER_CMD='sudo docker'
-  elif groups | grep -Pqw 'docker|root'
+  elif groups | grep -Eqw 'docker|root'
   then
     DOCKER_CMD='docker'
   elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
@@ -32,10 +32,10 @@ fi
 
 if [ -z ${DOCKER_COMPOSE_CMD:+smt} ]
 then
-  if groups | grep -Pqw 'sudo|wheel'
+  if groups | grep -Eqw 'sudo|wheel'
   then
     DOCKER_COMPOSE_CMD='sudo docker-compose'
-  elif groups | grep -Pqw 'docker|root'
+  elif groups | grep -Eqw 'docker|root'
   then
     DOCKER_COMPOSE_CMD='docker-compose'
   elif type sw_vers && [ "$(sw_vers -productName)" = "Mac OS X" ]
