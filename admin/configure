@@ -75,18 +75,20 @@ function scan_files {
   # Get description from files
   for file in "${file_path[@]}"
   do
-    file_description["$file"]="$(sed -n '/^#\+ *Description:/{
-      s/^#\+ *Description: *//p
-      q}' "$file")"
+    file_description["$file"]="$(sed -n -E '/^#+ *Description:/{
+      s/^#+ *Description: *//p;
+      q;
+    }' "$file")"
   done
 }
 
 function parse_env {
   sed -n "/^COMPOSE_FILE=/{
-    s/^COMPOSE_FILE=//
-    s/ *#.*$//
-    s/['\"]//g
-    p}" "$MB_DOCKER_ROOT/.env" | tail -1
+    s/^COMPOSE_FILE=//;
+    s/ *#.*$//;
+    s/['\"]//g;
+    p;
+  }" "$MB_DOCKER_ROOT/.env" | tail -1
 }
 
 function print_file_list {
@@ -195,7 +197,7 @@ case "$1" in
 
     # Write to .env
     touch .env
-    sed -i '/^COMPOSE_FILE=/d' .env
+    sed -i.bak -e '/^COMPOSE_FILE=/d' .env && rm -f .env.bak
     echo "COMPOSE_FILE="$(IFS=:; echo "${compose_files[*]}") >> .env
     echo "Successfully set/updated COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
     exit
