@@ -16,6 +16,7 @@ RUN apt-get update && \
         libicu-dev \
         libpq-dev \
         libxml2-dev \
+        pkg-config \
         postgresql-server-dev-${POSTGRES_VERSION}
 
 RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
