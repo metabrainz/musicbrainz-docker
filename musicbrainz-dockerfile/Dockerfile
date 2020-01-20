@@ -23,6 +23,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         libxml2-dev \
         libssl-dev \
         memcached \
+        pkg-config \
         postgresql-${POSTGRES_VERSION} \
         python-minimal \
         zlib1g-dev
