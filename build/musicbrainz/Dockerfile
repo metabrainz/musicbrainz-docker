@@ -30,7 +30,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2019-11-25
+    git checkout v-2020-01-20
 
 RUN cd musicbrainz-server && \
     cp docker/yarn_pubkey.txt /tmp && \
