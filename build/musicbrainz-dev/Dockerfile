@@ -26,6 +26,16 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         gettext \
         g++ \
         git \
+        language-pack-de \
+        language-pack-el \
+        language-pack-es \
+        language-pack-et \
+        language-pack-fi \
+        language-pack-fr \
+        language-pack-it \
+        language-pack-ja \
+        language-pack-nl \
+        language-pack-sq \
         # Needed for Cache in DB_File
         libdb-dev \
         libexpat1-dev \
