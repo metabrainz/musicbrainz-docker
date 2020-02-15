@@ -34,14 +34,14 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 
 WORKDIR /musicbrainz-server
 
-ARG NODE_VERSION=8.11.3
+ARG NODE_VERSION=10.19.0
 RUN cp docker/yarn_pubkey.txt /tmp && \
     cd /tmp && \
     apt-key add yarn_pubkey.txt && \
     apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
-    curl -sLO https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
+    curl -sLO https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
     dpkg -i nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
     apt remove -y cmdtest && \
     apt-get install -y yarn && \
