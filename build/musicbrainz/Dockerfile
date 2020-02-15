@@ -45,8 +45,8 @@ RUN cd musicbrainz-server && \
     apt-get install -y yarn
 
 RUN cd /musicbrainz-server/ && \
-    eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
-RUN eval $( perl -Mlocal::lib) && cpanm --notest \
+    eval $( perl -Mlocal::lib) && cpanm --installdeps --notest . && \
+    eval $( perl -Mlocal::lib) && cpanm --notest \
         Cache::Memcached::Fast \
         Cache::Memory \
         Catalyst::Plugin::Cache::HTTP \
