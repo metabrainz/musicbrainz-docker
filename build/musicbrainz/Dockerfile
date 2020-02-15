@@ -32,8 +32,9 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 ARG MUSICBRAINZ_SERVER_VERSION=v-2020-01-20
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
-RUN cd musicbrainz-server && \
-    cp docker/yarn_pubkey.txt /tmp && \
+WORKDIR /musicbrainz-server
+
+RUN cp docker/yarn_pubkey.txt /tmp && \
     cd /tmp && \
     apt-key add yarn_pubkey.txt && \
     apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
@@ -46,8 +47,7 @@ RUN cd musicbrainz-server && \
     rm /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN cd /musicbrainz-server/ && \
-    eval $( perl -Mlocal::lib) && cpanm --installdeps --notest . && \
+RUN eval $( perl -Mlocal::lib) && cpanm --installdeps --notest . && \
     eval $( perl -Mlocal::lib) && cpanm --notest \
         Cache::Memcached::Fast \
         Cache::Memory \
@@ -77,12 +77,11 @@ ENV DEVELOPMENT_MUSICBRAINZ_DOCKER=0 \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
-RUN cd /musicbrainz-server/ && yarn install --production && \
-    eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
-
+RUN yarn install --production \
+    && eval $( perl -Mlocal::lib) \
+    && /musicbrainz-server/script/compile_resources.sh
 
 VOLUME  ["/media/dbdump"]
-WORKDIR /musicbrainz-server
 CMD dockerize -wait tcp://db:5432 -timeout 60s \
         -wait tcp://mq:5672 -timeout 60s \
         -wait tcp://redis:6379 -timeout 60s \
