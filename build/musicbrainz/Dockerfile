@@ -26,7 +26,8 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
         python-minimal \
-        zlib1g-dev
+        zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG MUSICBRAINZ_SERVER_VERSION=v-2020-01-20
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
@@ -41,7 +42,9 @@ RUN cd musicbrainz-server && \
     curl -sLO https://deb.nodesource.com/node_8.x/pool/main/n/nodejs/nodejs_8.11.3-1nodesource1_amd64.deb && \
     dpkg -i nodejs_8.11.3-1nodesource1_amd64.deb && \
     apt remove -y cmdtest && \
-    apt-get install -y yarn
+    apt-get install -y yarn && \
+    rm /tmp/* && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN cd /musicbrainz-server/ && \
     eval $( perl -Mlocal::lib) && cpanm --installdeps --notest . && \
@@ -78,7 +81,6 @@ ENV DEVELOPMENT_MUSICBRAINZ_DOCKER=0 \
 RUN cd /musicbrainz-server/ && yarn install --production && \
     eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 VOLUME  ["/media/dbdump"]
 WORKDIR /musicbrainz-server
