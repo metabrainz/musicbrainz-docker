@@ -28,9 +28,8 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         python-minimal \
         zlib1g-dev
 
-RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
-    cd musicbrainz-server && \
-    git checkout v-2020-01-20
+ARG MUSICBRAINZ_SERVER_VERSION=v-2020-01-20
+RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
 RUN cd musicbrainz-server && \
     cp docker/yarn_pubkey.txt /tmp && \
