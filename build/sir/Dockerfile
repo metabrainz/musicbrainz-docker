@@ -32,16 +32,14 @@ ARG SIR_VERSION=1.0.2
 
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
-RUN git clone https://github.com/metabrainz/sir.git /code && \
-    cd /code && \
-    git checkout "v${SIR_VERSION}" && \
-    pip install -r requirements.txt
-
-RUN rm -f /code/config.ini
+# hadolint ignore=DL3003
+RUN git clone --depth=1 --branch "v${SIR_VERSION}" https://github.com/metabrainz/sir.git /code \
+    && cd /code \
+    && pip install -r requirements.txt \
+    && rm -f /code/config.ini \
+    && touch /etc/consul-template.conf
 
 WORKDIR /code
 
-RUN touch /etc/consul-template.conf
-
-ENV POSTGRES_USER musicbrainz
-ENV POSTGRES_PASSWORD musicbrainz
+ENV POSTGRES_USER=musicbrainz
+ENV POSTGRES_PASSWORD=musicbrainz
