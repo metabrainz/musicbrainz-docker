@@ -18,7 +18,8 @@ RUN apt-get update && \
         libpq-dev=${POSTGRES_VERSION}.* \
         libxml2-dev \
         pkg-config \
-        postgresql-server-dev-${POSTGRES_VERSION}
+        postgresql-server-dev-${POSTGRES_VERSION} \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
     git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate && \
