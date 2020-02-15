@@ -11,13 +11,12 @@ RUN apt-get update && \
     apt-get install --allow-downgrades --no-install-recommends -qy \
         build-essential \
         ca-certificates \
+        gcc \
         git \
-        libdb-dev \
-        libexpat1-dev \
         libicu-dev \
         libpq5=${POSTGRES_VERSION}.* \
         libpq-dev=${POSTGRES_VERSION}.* \
-        libxml2-dev \
+        make \
         pkg-config \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
