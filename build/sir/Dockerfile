@@ -11,18 +11,22 @@ LABEL org.label-schema.schema-version="1.0.0-rc1" \
 # From metabrainz/sir #
 #######################
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-                    build-essential \
-                    ca-certificates \
-                    cron \
-                    git \
-                    libpq-dev \
-                    libffi-dev \
-                    libssl-dev \
-                    libxml2-dev \
-                    libxslt1-dev && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install --no-install-recommends -qy \
+      ca-certificates \
+      cron \
+      gcc \
+      git \
+      libc6-dev \
+      # TODO: check if this is actually needed
+      libffi-dev \
+      # required for connections of pip packages
+      libssl-dev \
+      # required for psycopg2. Installs without it but links against a wrong .so.
+      libpq-dev \
+      # required by lxml from mb-rngpy
+      libxslt1-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 ##################
 # Installing sir #
