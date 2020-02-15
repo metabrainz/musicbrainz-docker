@@ -66,7 +66,6 @@ RUN cd /musicbrainz-server/ && \
 
 COPY DBDefs.pm /musicbrainz-server/lib/
 COPY scripts/* /
-RUN apt-get install -y wget
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
