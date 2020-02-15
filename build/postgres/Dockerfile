@@ -21,18 +21,21 @@ RUN apt-get update && \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
-    git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate && \
-    git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp
+# hadolint ignore=DL3003
+RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent \
+    && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate \
+    && git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
+    && cd /tmp/postgresql-musicbrainz-unaccent \
+    && make \
+    && make install \
+    && cd /tmp/postgresql-musicbrainz-collate \
+    && make \
+    && make install \
+    && cd /tmp/pg_amqp \
+    && make \
+    && make install \
+    && rm -R /tmp/*
 
-WORKDIR /tmp/postgresql-musicbrainz-unaccent
-RUN make && make install
-WORKDIR /tmp/postgresql-musicbrainz-collate
-RUN make && make install
-WORKDIR /tmp/pg_amqp
-RUN make && make install
 WORKDIR /
 
 COPY set-config.sh /docker-entrypoint-initdb.d
-
-RUN rm -R /tmp/*
