@@ -8,9 +8,10 @@ ARG POSTGRES_VERSION
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update && \
-    apt-get -y -q install --allow-downgrades \
+    apt-get install --allow-downgrades --no-install-recommends -qy \
         build-essential \
-        git-core \
+        ca-certificates \
+        git \
         libdb-dev \
         libexpat1-dev \
         libicu-dev \
