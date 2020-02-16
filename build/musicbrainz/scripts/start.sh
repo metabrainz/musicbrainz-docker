@@ -9,11 +9,12 @@ then
   /musicbrainz-server/script/compile_resources.sh
 fi
 
+dockerize -wait tcp://db:5432 -timeout 60s -wait tcp://mq:5672 -timeout 60s -wait tcp://redis:6379 -timeout 60s /start_mb_renderer.pl
+
 if [ -f /crons.conf -a -s /crons.conf ]
 then
   crontab /crons.conf
   cron -f &
 fi
 
-/start_mb_renderer.pl
 start_server --port=5000 -- plackup -I lib -s Starlet -E deployment --nproc 10 --pid fcgi.pid
