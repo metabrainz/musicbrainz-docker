@@ -17,7 +17,7 @@ if [ ! -e $LOCK_FILE ]; then
 fi
 
 if [ $# -eq 0 ]; then
-  exec /docker-entrypoint.sh rabbitmq-server
+  exec docker-entrypoint.sh rabbitmq-server
 else
-  exec /docker-entrypoint.sh $@
+  exec docker-entrypoint.sh $@
 fi
