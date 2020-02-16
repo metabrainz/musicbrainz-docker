@@ -85,7 +85,4 @@ RUN yarn install --production \
     && /musicbrainz-server/script/compile_resources.sh
 
 VOLUME  ["/media/dbdump"]
-CMD dockerize -wait tcp://db:5432 -timeout 60s \
-        -wait tcp://mq:5672 -timeout 60s \
-        -wait tcp://redis:6379 -timeout 60s \
-        /start.sh
+CMD /start.sh
