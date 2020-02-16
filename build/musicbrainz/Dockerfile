@@ -12,20 +12,28 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     apt-get update && \
     apt-get install -y \
         cpanminus \
-        build-essential \
+        bzip2 \
         gettext \
-        git-core \
+        g++ \
+        git \
+        # Needed for Cache in DB_File
         libdb-dev \
         libexpat1-dev \
         libicu-dev \
         liblocal-lib-perl \
         libpq-dev \
-        libxml2-dev \
         libssl-dev \
+        # Needed for XML::LibXML
+        libxml2-dev \
+        make \
         memcached \
+        # Needed for Unicode::ICU::Collator
         pkg-config \
-        postgresql-${POSTGRES_VERSION} \
+        postgresql-client-${POSTGRES_VERSION} \
         python-minimal \
+        # Needed to decompress sample data
+        xz-utils \
+        # Needed for XML:LibXML
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -48,8 +56,9 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
     rm /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN eval $( perl -Mlocal::lib) && cpanm --installdeps --notest . && \
-    eval $( perl -Mlocal::lib) && cpanm --notest \
+RUN eval $( perl -Mlocal::lib) \
+    && cpanm --installdeps --notest . \
+    && cpanm --notest \
         Cache::Memcached::Fast \
         Cache::Memory \
         Catalyst::Plugin::Cache::HTTP \
