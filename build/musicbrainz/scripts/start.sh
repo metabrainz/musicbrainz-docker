@@ -1,6 +1,10 @@
 #!/bin/sh
+set -e
 
+# liblocal-lib-perl < 2.000019 generates commands using unset variable
 eval $( perl -Mlocal::lib )
+
+set -u
 
 if ! grep -q -s \
   "//${MUSICBRAINZ_WEB_SERVER_HOST}:${MUSICBRAINZ_WEB_SERVER_PORT}" \
