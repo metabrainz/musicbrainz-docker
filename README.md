@@ -64,7 +64,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 * Current MB Branch: [v-2020-01-20](build/musicbrainz/Dockerfile#L33)
 * Current DB_SCHEMA_SEQUENCE: [25](build/musicbrainz/DBDefs.pm#L112)
 * Postgres Version: [9.5](docker-compose.yml)
-  (can be changed by setting the environement variable `POSTGRES_VERSION`)
+  (can be changed by setting the environment variable `POSTGRES_VERSION`)
 * MB Solr search server: [3.1.1](build/solr/Dockerfile#L1)
 * Search Index Rebuilder: [1.0.2](build/sir/Dockerfile#L31)
 
