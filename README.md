@@ -331,7 +331,7 @@ sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
 The four differences are:
 1. sample data dump is downloaded instead of full data dumps,
 2. MusicBrainz Server runs in standalone mode instead of slave mode,
-3. development mode is enabled (Catalyst debug, ...),
+3. development mode is enabled (but Catalyst debug),
 4. MusicBrainz Server code is in `musicbrainz-server/` directory.
 
 After changing code in `musicbrainz-server/`, it can be run as follows:

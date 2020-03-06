@@ -9,5 +9,7 @@ services:
     volumes:
       - ${MUSICBRAINZ_SERVER_LOCAL_ROOT:?Missing path of musicbrainz-server working copy}:/musicbrainz-server
     environment:
+      - MUSICBRAINZ_CATALYST_DEBUG=${MUSICBRAINZ_CATALYST_DEBUG:-0}
+      - MUSICBRAINZ_DEVELOPMENT_SERVER=${MUSICBRAINZ_DEVELOPMENT_SERVER:-1}
       - PERL_CPANM_HOME=${MUSICBRAINZ_PERL_CPANM_HOME:-/musicbrainz-server/.cpanm}
       - MUSICBRAINZ_PERL_LOCAL_LIB=${MUSICBRAINZ_PERL_LOCAL_LIB:-/musicbrainz-server/perl_modules}
