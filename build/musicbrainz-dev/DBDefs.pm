@@ -401,7 +401,7 @@ sub DATASTORE_REDIS_ARGS {
 
 # sub USE_ETAGS { 1 }
 
-sub CATALYST_DEBUG { shift->DEVELOPMENT_SERVER() ? 1 : 0 }
+sub CATALYST_DEBUG { $ENV{MUSICBRAINZ_CATALYST_DEBUG} == 0 ? 0 : 1 }
 
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
