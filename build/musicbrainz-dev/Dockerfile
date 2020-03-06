@@ -61,6 +61,8 @@ WORKDIR /musicbrainz-server
 
 COPY DBDefs.pm /
 COPY scripts/* /
+RUN cat /snippet.perllocallib.bashrc >> ~/.bashrc \
+    && rm /snippet.perllocallib.bashrc
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
