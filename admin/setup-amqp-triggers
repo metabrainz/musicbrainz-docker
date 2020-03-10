@@ -64,7 +64,7 @@ case "$1" in
     $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
     if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
     then
-      chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
+      sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
     fi
 
     musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
