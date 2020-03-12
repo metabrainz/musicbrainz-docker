@@ -93,5 +93,4 @@ RUN yarn install --production \
     && eval $( perl -Mlocal::lib) \
     && /musicbrainz-server/script/compile_resources.sh
 
-VOLUME  ["/media/dbdump"]
 CMD /start.sh
