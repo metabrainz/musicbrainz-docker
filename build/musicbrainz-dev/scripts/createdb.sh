@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval $( perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}" )
+eval "$(perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
 
 FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
 IMPORT="fullexport"
