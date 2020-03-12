@@ -77,4 +77,4 @@ ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
-CMD /start.sh
+CMD ["/start.sh"]

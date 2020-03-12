@@ -94,4 +94,4 @@ RUN yarn install --production \
     && eval "$(perl -Mlocal::lib)" \
     && /musicbrainz-server/script/compile_resources.sh
 
-CMD /start.sh
+CMD ["/start.sh"]
