@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval $( perl -Mlocal::lib )
+eval "$(perl -Mlocal::lib)"
 
 FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
 IMPORT="fullexport"

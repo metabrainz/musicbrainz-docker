@@ -57,7 +57,7 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
     rm /tmp/* && \
     rm -rf /var/lib/apt/lists/*
 
-RUN eval $( perl -Mlocal::lib) \
+RUN eval "$(perl -Mlocal::lib)" \
     && cpanm --installdeps --notest . \
     && cpanm --notest \
         Cache::Memcached::Fast \
@@ -91,7 +91,7 @@ ENV MUSICBRAINZ_STANDALONE_SERVER=0 \
 
 RUN yarn install --production \
     && yarn cache clean \
-    && eval $( perl -Mlocal::lib) \
+    && eval "$(perl -Mlocal::lib)" \
     && /musicbrainz-server/script/compile_resources.sh
 
 CMD /start.sh

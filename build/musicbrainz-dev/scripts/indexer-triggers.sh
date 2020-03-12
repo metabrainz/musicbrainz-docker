@@ -1,8 +1,11 @@
 #!/bin/bash
 
-eval $( perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}" )
+set -e
 
-set -e -u
+# liblocal-lib-perl < 2.000019 generates commands using unset variable
+eval "$(perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
+
+set -u
 
 HELP="Usage: $0 INDEXER_SQL_DIR <create|drop>"
 
