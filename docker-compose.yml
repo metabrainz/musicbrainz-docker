@@ -11,6 +11,8 @@ volumes:
     driver: local
   dbdump:
     driver: local
+  searchdump:
+    driver: local
 
 services:
   db:
@@ -36,6 +38,7 @@ services:
       - "${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
     volumes:
       - dbdump:/media/dbdump
+      - searchdump:/media/searchdump
     restart: unless-stopped
     env_file:
       - ./default/postgres.env
@@ -64,13 +67,14 @@ services:
     build:
       context: build/solr
       args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.1.1}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.1.1}
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.1.3}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.1.3}
     restart: unless-stopped
     expose:
       - "8983"
     volumes:
       - solrdata:/opt/solr/server/solr/data
+      - searchdump:/media/searchdump
 
   mq:
     build: build/rabbitmq
