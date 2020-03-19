@@ -292,7 +292,7 @@ sudo docker-compose up -d
 Run the below commands instead of following the regular [installation](#installation):
 
 ```bash
-git clone https://github.com/metabrainz/musicbrainz-docker.git
+git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 sudo docker-compose build
 sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
