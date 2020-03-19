@@ -70,7 +70,7 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 * Current DB_SCHEMA_SEQUENCE: [25](build/musicbrainz/DBDefs.pm#L112)
 * Postgres Version: [9.5](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
-* MB Solr search server: [3.1.1](docker-compose.yml#L67)
+* MB Solr search server: [3.1.3](docker-compose.yml#L70)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
 * Search Index Rebuilder: [1.0.2](build/sir/Dockerfile#L31)
 
@@ -118,11 +118,24 @@ only. For indexed search and replication, keep going!
 
 ### Build search indexes
 
-```bash
-sudo docker-compose exec indexer python -m sir reindex
-```
+Depending on your available ressources in CPU/RAM vs. bandwidth, run:
 
-This step is known to take 4½ hours with 16 CPU threads and 16 GB RAM.
+* Either:
+
+  ```bash
+  sudo docker-compose exec indexer python -m sir reindex
+  ```
+
+  (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
+
+* Or, if you have more available bandwidth than CPU/RAM:
+
+  ```bash
+  sudo docker-compose run --rm musicbrainz /fetch-dump.sh search
+  sudo docker-compose run --rm search /load-search-indexes.sh
+  ```
+
+  (This option downloads 28GB of Zstandard-compressed archives from FTP.)
 
 At this point indexed search works on the local website/webservice.
 For replication, keep going!
@@ -382,6 +395,33 @@ There are two directories with helper scripts:
 ### Recreate database
 
 If you need to recreate the database, you will need to enter the
+postgres password set in [postgres.env](default/postgres.env):
+
+* `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
+
+or to fetch new data dumps before recreating the database:
+
+* `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
+
+### Recreate database with indexed search
+
+If you need to recreate the database with indexed search,
+
+```bash
+admin/configure rm replication-cron # if replication is enabled
+sudo docker-compose stop
+sudo docker-compose run --rm musicbrainz /fetch-dump.sh both
+sudo docker-compose run --rm mq /purge-queues.sh
+sudo docker-compose run --rm search /load-search-indexes.sh --force
+sudo docker-compose run --rm musicbrainz /recreatedb.sh
+sudo docker-compose up -d
+admin/setup-amqp-triggers clean
+admin/setup-amqp-triggers install
+admin/configure add replication-cron
+sudo docker-compose up -d
+```
+
+ you will need to enter the
 postgres password set in [postgres.env](default/postgres.env):
 
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
