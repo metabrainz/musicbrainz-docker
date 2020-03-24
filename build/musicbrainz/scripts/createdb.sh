@@ -91,10 +91,11 @@ if [[ -a /media/dbdump/"${DUMP_FILES[0]}" ]]; then
     mkdir -p $TMP_DIR
     cd /media/dbdump
 
-    # if the import fails because the DB does not exist yet such as when the DB
-    # has been dropped, InitDb will be called again with the createdb flag
-    /musicbrainz-server/admin/InitDb.pl --echo --import -- --skip-editor --tmp-dir $TMP_DIR ${DUMP_FILES[@]} ||
-    /musicbrainz-server/admin/InitDb.pl --createdb --echo --import -- --skip-editor --tmp-dir $TMP_DIR ${DUMP_FILES[@]}
+    INITDB_OPTIONS='--echo --import'
+    if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
+        INITDB_OPTIONS="--createdb $INITDB_OPTIONS"
+    fi
+    /musicbrainz-server/admin/InitDb.pl $INITDB_OPTIONS -- --skip-editor --tmp-dir $TMP_DIR ${DUMP_FILES[@]}
 else
     echo "no dumps found or dumps are incomplete"
 fi
