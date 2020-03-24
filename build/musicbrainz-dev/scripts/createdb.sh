@@ -54,16 +54,16 @@ TMP_DIR=/media/dbdump/tmp
 case "$IMPORT" in
     fullexport  )
         DUMP_FILES=(
-        mbdump.tar.bz2
-        mbdump-cdstubs.tar.bz2
-        mbdump-cover-art-archive.tar.bz2
-        mbdump-derived.tar.bz2
-        mbdump-stats.tar.bz2
-        mbdump-wikidocs.tar.bz2
+            mbdump.tar.bz2
+            mbdump-cdstubs.tar.bz2
+            mbdump-cover-art-archive.tar.bz2
+            mbdump-derived.tar.bz2
+            mbdump-stats.tar.bz2
+            mbdump-wikidocs.tar.bz2
         );;
     sample      )
         DUMP_FILES=(
-        mbdump-sample.tar.xz
+            mbdump-sample.tar.xz
         );;
 esac
 
