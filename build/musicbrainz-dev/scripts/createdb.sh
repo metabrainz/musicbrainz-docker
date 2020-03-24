@@ -77,7 +77,15 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
         for F in MD5SUMS ${DUMP_FILES[@]}; do
             wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
         done
-        pushd /media/dbdump && md5sum -c MD5SUMS && popd
+        cd /media/dbdump
+        for F in ${DUMP_FILES[@]}; do
+            MD5SUM=$(md5sum -b "$F")
+            grep -Fqx "$MD5SUM" MD5SUMS ||
+                echo "$0: unmatched checksum:" &&
+                echo "$MD5SUM" &&
+                exit 70 # EX_SOFTWARE
+        done
+        cd -
     elif [[ $IMPORT == "sample" ]]; then
         for F in ${DUMP_FILES[@]}; do
             wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
