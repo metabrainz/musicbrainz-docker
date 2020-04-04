@@ -71,10 +71,12 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
     echo "fetching data dumps"
 
     rm -rf /media/dbdump/*
-    wget $WGET_OPTIONS -nd -nH -P /media/dbdump $FTP_MB/data/$IMPORT/LATEST
+    # shellcheck disable=SC2086
+    wget $WGET_OPTIONS -nd -nH -P /media/dbdump "$FTP_MB/data/$IMPORT/LATEST"
     LATEST=$(cat /media/dbdump/LATEST)
     if [[ $IMPORT == "fullexport" ]]; then
         for F in MD5SUMS ${DUMP_FILES[@]}; do
+            # shellcheck disable=SC2086
             wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
         done
         cd /media/dbdump
@@ -88,6 +90,7 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
         cd -
     elif [[ $IMPORT == "sample" ]]; then
         for F in ${DUMP_FILES[@]}; do
+            # shellcheck disable=SC2086
             wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
         done
     fi
@@ -103,6 +106,7 @@ if [[ -a /media/dbdump/"${DUMP_FILES[0]}" ]]; then
     if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
         INITDB_OPTIONS="--createdb $INITDB_OPTIONS"
     fi
+    # shellcheck disable=SC2086
     /musicbrainz-server/admin/InitDb.pl $INITDB_OPTIONS -- --skip-editor --tmp-dir $TMP_DIR ${DUMP_FILES[@]}
 else
     echo "no dumps found or dumps are incomplete"
