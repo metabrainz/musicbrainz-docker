@@ -1,13 +1,18 @@
 #!/bin/bash
 
+set -e -o pipefail
+
+# liblocal-lib-perl < 2.000019 generates commands using unset variable
 eval "$(perl -Mlocal::lib)"
+
+set -u
 
 FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
 IMPORT="fullexport"
 FETCH_DUMPS=""
 WGET_OPTIONS=""
 
-read -d '' -r HELP <<HELP
+HELP=$(cat <<EOH
 Usage: $0 [-wget-opts <options list>] [-sample] [-fetch] [MUSICBRAINZ_FTP_URL]
 
 Options:
@@ -17,7 +22,8 @@ Options:
               a single argument, escape spaces if necessary) to wget
 
 Default MusicBrainz FTP URL: $FTP_MB
-HELP
+EOH
+)
 
 if [ $# -gt 4 ]; then
     echo "$0: too many arguments"
