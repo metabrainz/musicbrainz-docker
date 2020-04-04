@@ -84,7 +84,8 @@ COPY scripts/* /
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 
-ENV MUSICBRAINZ_STANDALONE_SERVER=0 \
+ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
+    MUSICBRAINZ_STANDALONE_SERVER=0 \
     MUSICBRAINZ_WEB_SERVER_HOST=localhost \
     MUSICBRAINZ_WEB_SERVER_PORT=5000 \
     POSTGRES_USER=musicbrainz \
