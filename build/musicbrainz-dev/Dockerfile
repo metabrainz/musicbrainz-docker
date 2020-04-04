@@ -15,11 +15,11 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
-    apt-get install -y \
+    apt-get install --no-install-recommends -qy \
         python-minimal && \
     curl -sLO https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
-    apt-get install -y \
+    apt-get install --no-install-recommends -qy \
         cpanminus \
         bash-completion \
         build-essential \
