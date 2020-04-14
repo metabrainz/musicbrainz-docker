@@ -30,7 +30,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout v-2020-01-20
+    git checkout v-2020-04-13
 
 RUN cd musicbrainz-server && \
     cp docker/yarn_pubkey.txt /tmp && \
@@ -60,7 +60,7 @@ RUN eval $( perl -Mlocal::lib) && cpanm --notest \
         Starlet \
         Starlet::Server \
         Term::Size::Any \
-        TURNSTEP/DBD-Pg-3.9.1.tar.gz
+        TURNSTEP/DBD-Pg-3.10.3.tar.gz
 
 ADD DBDefs.pm /musicbrainz-server/lib/
 ADD scripts/start.sh /start.sh
