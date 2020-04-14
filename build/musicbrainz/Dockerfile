@@ -38,7 +38,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2020-01-20
+ARG MUSICBRAINZ_SERVER_VERSION=v-2020-04-13
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
 WORKDIR /musicbrainz-server
@@ -74,7 +74,7 @@ RUN eval "$(perl -Mlocal::lib)" \
         Starlet \
         Starlet::Server \
         Term::Size::Any \
-        TURNSTEP/DBD-Pg-3.9.1.tar.gz \
+        TURNSTEP/DBD-Pg-3.10.3.tar.gz \
     && rm -rf /root/.cpan* /root/perl5/man/
 
 COPY DBDefs.pm /musicbrainz-server/lib/
