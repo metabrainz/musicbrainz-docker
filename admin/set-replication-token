@@ -12,6 +12,7 @@ Read token and write it to local/secrets/metabrainz_access_token.
 
 Option:
   -f, --force   Overwrite existing token if any.
+  -h, --help    Print this help message
 
 Environment variable:
   METABRAINZ_ACCESS_TOKEN_PATH

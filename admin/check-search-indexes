@@ -8,6 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME all
    or: $SCRIPT_NAME CORE...
+   or: $SCRIPT_NAME --help
 
 For each of MusicBrainz Solr cores/collections,
 compare the count of existing documents in PostgreSQL,
@@ -69,7 +70,7 @@ fi
 
 declare -a cores
 
-if [ $# -eq 1 -a \( "$1" = '-h' -o "$1" = '--help' \) ]
+if [[ $# -eq 1 && $1 =~ -*h(elp)? ]]
 then
   echo "$HELP"
   exit

@@ -6,19 +6,20 @@ set -e -u
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
 
 HELP=$(cat <<EOH
-Usage: $SCRIPT_NAME <clean|install|uninstall>
+Usage: $SCRIPT_NAME <clean|install|uninstall|help>
 
 Commands:
   clean       Remove temporary install scripts and uninstall scripts.
   install     Create database triggers and add uninstall scripts.
   uninstall   Drop database triggers and remove uninstall scripts.
+  help        Print this help message
 EOH
 )
 
 if [ $# -ne 1 ]
 then
   echo >&2 "$SCRIPT_NAME: wrong number of arguments"
-  echo >&2 "$HELP"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
   exit 64
 fi
 
@@ -94,9 +95,13 @@ case "$1" in
 
     $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr "$REMOTE_TRIGGERS_DIR"
     ;;
+  help|-h|--help)
+    echo "$HELP"
+    exit
+    ;;
   *         )
     echo >&2 "$SCRIPT_NAME: unrecognized command '$1'"
-    echo >&2 "$HELP"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
     exit 64
     ;;
 esac

@@ -9,6 +9,8 @@ HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME <command> [<args>]
 
 Commands:
+  help          Print this help message
+
   list          List available compose files with handle, path and description
   show          Show COMPOSE_FILE from both .env file and environment variable
 
