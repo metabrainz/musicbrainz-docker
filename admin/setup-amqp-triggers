@@ -30,7 +30,9 @@ case "$1" in
   clean     )
     if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
     then
-      echo >&2 "$SCRIPT_NAME: cannot clean: 'musicbrainz' is not a running docker compose service"
+      echo >&2 "$SCRIPT_NAME: cannot clean: " \
+               "the Docker Compose service 'musicbrainz' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
       exit 69
     fi
 
@@ -42,7 +44,9 @@ case "$1" in
   install   )
     if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
     then
-      echo >&2 "$SCRIPT_NAME: cannot install: 'indexer' is not a running docker compose service"
+      echo >&2 "$SCRIPT_NAME: cannot install: " \
+               "the Docker Compose service 'indexer' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
       exit 69
     fi
 
@@ -85,7 +89,9 @@ case "$1" in
   uninstall )
     if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
     then
-      echo >&2 "$SCRIPT_NAME: cannot uninstall: 'musicbrainz' is not a running docker compose service"
+      echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
+               "the Docker Compose service 'musicbrainz' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
       exit 69
     fi
 

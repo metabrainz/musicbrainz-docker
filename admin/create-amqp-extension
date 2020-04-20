@@ -28,7 +28,9 @@ REMOTE_SQL_FILE=/tmp/CreateExtensionAMQP.sql
 
 if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
 then
-  echo >&2 "$SCRIPT_NAME: cannot install: 'indexer' is not a running Docker Compose service"
+  echo >&2 "$SCRIPT_NAME: cannot install: " \
+           "the Docker Compose service 'indexer' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
   exit 69
 fi
 
@@ -43,7 +45,8 @@ fi
 
 if $DOCKER_COMPOSE_CMD exec db test -e "$REMOTE_SQL_FILE"
 then
-  echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_SQL_FILE' exists in 'db' Docker Compose service"
+  echo >&2 "$SCRIPT_NAME: cannot install: " \
+           "file '$REMOTE_SQL_FILE' exists in 'db' Docker Compose service"
   echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
   echo >&2 "Remove this file if you are sure the script is not still running:"
   echo >&2 "    $DOCKER_COMPOSE_CMD exec db rm -fv $(printf %q "$REMOTE_SQL_FILE")"

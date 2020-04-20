@@ -65,7 +65,7 @@ if ! echo "$service_containers" | grep -qw 'Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot delete indexed documents: " \
            "the Docker Compose service 'search' is not up"
-  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d' from '$MB_DOCKER_ROOT'"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d search' from '$MB_DOCKER_ROOT'"
   exit 69
 fi
 
