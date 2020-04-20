@@ -1,6 +1,6 @@
 branches:
   only:
-    - master
+    - mbvm-38-dev
 
 sudo: required
 
