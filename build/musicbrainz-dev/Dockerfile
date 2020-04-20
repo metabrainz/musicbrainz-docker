@@ -12,7 +12,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
+    declare i=5 && while true; do \
+        apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
+        break || echo "apk-key failed with exit status '$?'"; \
+        i=$((i - 1)); [[ $i -gt 0 ]] && echo "retrying..." || exit 1; \
+    done && unset i && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
