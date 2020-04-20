@@ -35,12 +35,18 @@ fi
 if [ -e "$LOCAL_SQL_FILE" ]
 then
   echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_SQL_FILE' exists"
+  echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+  echo >&2 "Remove this file if you are sure the script is not still running:"
+  echo >&2 "    rm -fv $(printf %q "$LOCAL_SQL_FILE")"
   exit 70
 fi
 
 if $DOCKER_COMPOSE_CMD exec db test -e "$REMOTE_SQL_FILE"
 then
   echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_SQL_FILE' exists in 'db' Docker Compose service"
+  echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+  echo >&2 "Remove this file if you are sure the script is not still running:"
+  echo >&2 "    $DOCKER_COMPOSE_CMD exec db rm -fv $(printf %q "$REMOTE_SQL_FILE")"
   exit 70
 fi
 
