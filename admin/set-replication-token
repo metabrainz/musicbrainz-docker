@@ -33,12 +33,12 @@ then
       ;;
     -h|--help|help)
       echo "$HELP"
-      exit
+      exit 0 # EX_OK
       ;;
     *)
       echo >&2 "$SCRIPT_NAME: unrecognized argument: '$1'"
       echo >&2 "Try '$SCRIPT_NAME --help' for usage."
-      exit 64
+      exit 64 # EX_USAGE
       ;;
   esac
 fi
@@ -47,7 +47,7 @@ if [ $# -ne 0 ]
 then
   echo >&2 "$SCRIPT_NAME: too many arguments"
   echo >&2 "Try '$SCRIPT_NAME --help' for usage."
-  exit 64
+  exit 64 # EX_USAGE
 fi
 
 declare token=''
@@ -70,7 +70,7 @@ if [[ -f $TOKEN_PATH && $overwrite -ne 1 ]]
 then
   echo >&2 "$SCRIPT_NAME: token file already exists at: '$TOKEN_PATH'"
   echo >&2 "Try '$SCRIPT_NAME --help' for usage."
-  exit 73
+  exit 73 # EX_CANTCREAT
 fi
 
 mkdir -p "$(dirname "$TOKEN_PATH")"

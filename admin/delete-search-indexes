@@ -24,7 +24,7 @@ if [ $# -eq 0 ]
 then
   echo >&2 "$SCRIPT_NAME: missing argument"
   echo >&2 "Try '$SCRIPT_NAME --help' for usage."
-  exit 64
+  exit 64 # EX_USAGE
 fi
 
 declare -A all_cores=(
@@ -38,7 +38,7 @@ declare -a cores
 if [[ $# -eq 1 && $1 =~ -*h(elp)? ]]
 then
   echo "$HELP"
-  exit
+  exit 0 # EX_OK
 elif [[ $# -eq 1 && $1 == all ]]
 then
   cores=( ${!all_cores[@]} )
@@ -50,7 +50,7 @@ else
     then
       echo >&2 "$SCRIPT_NAME: unrecognized core '$1'"
       echo >&2 "Try '$SCRIPT_NAME --help' for usage."
-      exit 64
+      exit 64 # EX_USAGE
     else
       cores+=( $1 )
       shift
@@ -66,7 +66,7 @@ then
   echo >&2 "$SCRIPT_NAME: cannot delete indexed documents: " \
            "the Docker Compose service 'search' is not up"
   echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d search' from '$MB_DOCKER_ROOT'"
-  exit 69
+  exit 69 # EX_UNAVAILABLE
 fi
 
 # For each collection/core, delete all indexed documents
