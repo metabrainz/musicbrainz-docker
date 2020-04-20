@@ -4,7 +4,7 @@ if ((BASH_VERSINFO[0] < 4))
 then
   echo >&2 "$SCRIPT_NAME: at least version 4 of bash is required"
   echo >&2 "Make sure this version of bash comes first in \$PATH"
-  exit 69
+  exit 69 # EX_UNAVAILABLE
 fi
 
 MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" && pwd)
@@ -29,7 +29,7 @@ then
     echo >&2 "$SCRIPT_NAME: cannot set docker command: please either"
     echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
     echo >&2 "  * or set the variable \$DOCKER_CMD"
-    exit 77
+    exit 77 # EX_NOPERM
   fi
 fi
 
@@ -48,7 +48,7 @@ then
     echo >&2 "$SCRIPT_NAME: cannot set docker-compose command: please either"
     echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
     echo >&2 "  * or set the variable \$DOCKER_COMPOSE_CMD"
-    exit 77
+    exit 77 # EX_NOPERM
   fi
 fi
 

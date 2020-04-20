@@ -20,7 +20,7 @@ if [ $# -ne 1 ]
 then
   echo >&2 "$SCRIPT_NAME: wrong number of arguments"
   echo >&2 "Try '$SCRIPT_NAME help' for usage."
-  exit 64
+  exit 64 # EX_USAGE
 fi
 
 LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
@@ -33,7 +33,7 @@ case "$1" in
       echo >&2 "$SCRIPT_NAME: cannot clean: " \
                "the Docker Compose service 'musicbrainz' is not up"
       echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
-      exit 69
+      exit 69 # EX_UNAVAILABLE
     fi
 
     echo "Cleaning indexer triggers install/uninstall scripts up ..."
@@ -47,7 +47,7 @@ case "$1" in
       echo >&2 "$SCRIPT_NAME: cannot install: " \
                "the Docker Compose service 'indexer' is not up"
       echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
-      exit 69
+      exit 69 # EX_UNAVAILABLE
     fi
 
     if [ -e "$LOCAL_TRIGGERS_DIR" ]
@@ -56,7 +56,7 @@ case "$1" in
       echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
       echo >&2 "Remove this file if you are sure the script is not still running:"
       echo >&2 "    rm -frv $(printf %q "$LOCAL_TRIGGERS_DIR")"
-      exit 70
+      exit 70 # EX_SOFTWARE
     fi
 
     if $DOCKER_COMPOSE_CMD exec musicbrainz test -e "$REMOTE_TRIGGERS_DIR"
@@ -65,7 +65,7 @@ case "$1" in
       echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
       echo >&2 "Revert partial installation if you are sure the script is not still running:"
       echo >&2 "    $SCRIPT_NAME uninstall"
-      exit 70
+      exit 70 # EX_SOFTWARE
     fi
 
     echo "Installing indexer triggers ..."
@@ -92,13 +92,13 @@ case "$1" in
       echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
                "the Docker Compose service 'musicbrainz' is not up"
       echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
-      exit 69
+      exit 69 # EX_UNAVAILABLE
     fi
 
     if $DOCKER_COMPOSE_CMD exec musicbrainz test ! -e "$REMOTE_TRIGGERS_DIR"
     then
       echo >&2 "$SCRIPT_NAME: cannot uninstall: file '$REMOTE_TRIGGERS_DIR' does not exist"
-      exit 70
+      exit 70 # EX_SOFTWARE
     fi
 
     echo "Uninstalling indexer triggers ..."
@@ -109,12 +109,12 @@ case "$1" in
     ;;
   help|-h|--help)
     echo "$HELP"
-    exit
+    exit 0 # EX_OK
     ;;
   *         )
     echo >&2 "$SCRIPT_NAME: unrecognized command '$1'"
   echo >&2 "Try '$SCRIPT_NAME help' for usage."
-    exit 64
+    exit 64 # EX_USAGE
     ;;
 esac
 
