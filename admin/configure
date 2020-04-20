@@ -70,7 +70,7 @@ function scan_files {
 
   for file in local/**/*.yml
   do
-    handle="$(echo ${file%.yml} | tr / -)"
+    handle="$(echo "${file%.yml}" | tr / -)"
     file_handle["$file"]="$handle"
     handle_file["$handle"]="$file"
   done
@@ -160,7 +160,7 @@ case "$1" in
     scan_files
 
     declare -a compose_files
-    if [ $command != 'with' ]
+    if [[ $command != with ]]
     then
       if [ -f "$MB_DOCKER_ROOT/.env" ] \
         && grep -q '^COMPOSE_FILE=' "$MB_DOCKER_ROOT/.env"
@@ -176,18 +176,18 @@ case "$1" in
       if [ "${file_handle[$1]-}" ]
       then
         compose_files=( ${compose_files[@]/$1} )
-        if [ $command != 'rm' ]
+        if [[ $command != rm ]]
         then
           compose_files+=( "$1" )
         fi
       elif [ "${handle_file[$1]-}" ]
       then
         compose_files=( ${compose_files[@]/${handle_file[$1]}} )
-        if [ $command != 'rm' ]
+        if [[ $command != rm ]]
         then
           compose_files+=( "${handle_file[$1]}" )
         fi
-      elif [ $command = 'rm' ]
+      elif [[ $command == rm ]]
       then
         echo "Ignore obsolete/missing '$1'"
       else

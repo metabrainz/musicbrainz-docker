@@ -131,7 +131,7 @@ done
 declare -a ascending_cores=( $(
   for core in "${!counts[@]}"
   do
-    echo $core ${counts["$core"]}
+    echo "$core ${counts["$core"]}"
   done | sort -n -k2 | sed 's/ .*$//'
 ) )
 
@@ -157,7 +157,7 @@ for core in json_status:
 sep="|"
 for core in "${ascending_cores[@]}"
 do
-  if [ ${counts[$core]} -eq ${indexed_docs[$core]:-0} ]
+  if [[ ${counts[$core]} -eq ${indexed_docs[$core]:-0} ]]
   then
     echo "$core${sep}OK$sep${indexed_docs[$core]:-0}$sep/${counts[$core]}"
   else
