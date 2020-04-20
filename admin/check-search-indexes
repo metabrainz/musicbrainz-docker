@@ -74,7 +74,7 @@ if [[ $# -eq 1 && $1 =~ -*h(elp)? ]]
 then
   echo "$HELP"
   exit
-elif [ $# -eq 1 -a "$1" = 'all' ]
+elif [[ $# -eq 1 && $1 == all ]]
 then
   cores=( ${!queries[@]} )
 else

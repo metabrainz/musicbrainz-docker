@@ -66,7 +66,7 @@ echo 'Thank you!'
 declare -r token_default_path="$MB_DOCKER_ROOT/local/secrets/metabrainz_access_token"
 declare -r TOKEN_PATH="${METABRAINZ_ACCESS_TOKEN_PATH:-$token_default_path}"
 
-if [ -f "$TOKEN_PATH" -a "$overwrite" -ne 1 ]
+if [[ -f $TOKEN_PATH && $overwrite -ne 1 ]]
 then
   echo >&2 "$SCRIPT_NAME: token file already exists at: '$TOKEN_PATH'"
   echo >&2 "Try '$SCRIPT_NAME --help' for usage."
