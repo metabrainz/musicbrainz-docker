@@ -350,21 +350,21 @@ Replication is not applicable to development setup.
 There are two directories with helper scripts:
 
 * [`admin/`](admin/) contains helper scripts to be run from the host.
-  For more information, try:
+  For more information, use the `--help` option:
 
   ```bash
   admin/check-search-indexes --help
   admin/delete-search-indexes --help
   ```
 
-  See [Docker Compose overrides](#docker-compose-overrides) for more
-  information about `admin/configure`.
-  See [Enable live indexing](#enable-live-indexing) for more
-  information about `admin/create-amqp-extension` and
-  `admin/setup-amqp-triggers`.
-
-<!-- TODO: add help option to admin/create-amqp-extension -->
-<!-- TODO: add help option to admin/setup-amqp-triggers -->
+  See also:
+  * [Docker Compose overrides](#docker-compose-overrides) for more
+    information about `admin/configure`.
+  * [Enable live indexing](#enable-live-indexing) for more information
+    about `admin/create-amqp-extension`
+    and `admin/setup-amqp-triggers`.
+  * [Enable replication](#enable-replication) for more information
+    about `admin/set-replication-token`.
 
 * [`build/musicbrainz/scripts/`](build/musicbrainz/scripts/) contains
   helper scripts to be run from the container attached to the service

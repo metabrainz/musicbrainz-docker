@@ -6,16 +6,20 @@ set -e -u
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
 
 HELP=$(cat <<EOH
-Usage: $SCRIPT_NAME
+Usage: $SCRIPT_NAME [--help]
 
 Create 'amqp' extension (with broker) in the database.
 EOH
 )
 
-if [ $# -ne 0 ]
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
 then
-  echo >&2 "$SCRIPT_NAME: too many arguments"
-  echo >&2 "$HELP"
+  echo "$HELP"
+  exit
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
   exit 64
 fi
 
