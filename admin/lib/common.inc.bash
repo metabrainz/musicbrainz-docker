@@ -10,7 +10,7 @@ fi
 MB_DOCKER_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" && pwd)
 
 cd "$MB_DOCKER_ROOT" || {
-  echo >&2 "$SCRIPT_NAME: fail to change directory to '$MB_DOCKER_ROOT'";
+  echo >&2 "$SCRIPT_NAME: fail to change directory to '$MB_DOCKER_ROOT'"
   exit 70 # EX_SOFTWARE
 }
 
