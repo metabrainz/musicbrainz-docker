@@ -49,12 +49,18 @@ case "$1" in
     if [ -e "$LOCAL_TRIGGERS_DIR" ]
     then
       echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_TRIGGERS_DIR' exists"
+      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+      echo >&2 "Remove this file if you are sure the script is not still running:"
+      echo >&2 "    rm -frv $(printf %q "$LOCAL_TRIGGERS_DIR")"
       exit 70
     fi
 
     if $DOCKER_COMPOSE_CMD exec musicbrainz test -e "$REMOTE_TRIGGERS_DIR"
     then
       echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_TRIGGERS_DIR' exists in 'musicbrainz' docker compose service"
+      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+      echo >&2 "Revert partial installation if you are sure the script is not still running:"
+      echo >&2 "    $SCRIPT_NAME uninstall"
       exit 70
     fi
 
