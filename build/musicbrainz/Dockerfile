@@ -54,7 +54,7 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
     done && unset i && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
-    curl -sLO https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
+    curl -sSLO https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
     dpkg -i nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
     apt-get purge -qy cmdtest && \
     apt-get install --no-install-recommends -qy \
