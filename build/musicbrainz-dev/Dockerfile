@@ -2,16 +2,16 @@ FROM metabrainz/base-image
 LABEL maintainer="yvanzo@metabrainz.org"
 
 ENV DOCKERIZE_VERSION v0.6.1
-RUN curl -sSLO https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
+RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 ARG NODE_VERSION=10.19.0
 ARG POSTGRES_VERSION=9.5
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    curl -sSL --retry 5 https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     declare i=5 && while true; do \
         apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
         break || echo "apk-key failed with exit status '$?'"; \
@@ -21,7 +21,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     apt-get update && \
     apt-get install --no-install-recommends -qy \
         python-minimal && \
-    curl -sSLO https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
+    curl -sSLO --retry 5 https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
