@@ -16,40 +16,62 @@ cd "$MB_DOCKER_ROOT" || {
 
 if [ -z ${DOCKER_CMD:+smt} ]
 then
-  if groups | grep -Eqw 'sudo|wheel'
-  then
-    DOCKER_CMD='sudo docker'
-  elif groups | grep -Eqw 'docker|root'
-  then
-    DOCKER_CMD='docker'
-  elif type sw_vers &>/dev/null && [ "$(sw_vers -productName)" = "Mac OS X" ]
-  then
-    DOCKER_CMD='docker'
-  else
-    echo >&2 "$SCRIPT_NAME: cannot set docker command: please either"
-    echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
-    echo >&2 "  * or set the variable \$DOCKER_CMD"
-    exit 77 # EX_NOPERM
-  fi
+  case "$OSTYPE" in
+    darwin*) # Mac OS X
+      DOCKER_CMD='docker'
+      ;;
+    linux*)
+      if groups | grep -Eqw 'sudo|wheel'
+      then
+        DOCKER_CMD='sudo docker'
+      elif groups | grep -Eqw 'docker|root'
+      then
+        DOCKER_CMD='docker'
+      else
+        echo >&2 "$SCRIPT_NAME: cannot set docker command: please either"
+        echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
+        echo >&2 "  * or set the variable \$DOCKER_CMD"
+        exit 77 # EX_NOPERM
+      fi
+      ;;
+    msys*) # Git for Windows
+      DOCKER_CMD='docker'
+      ;;
+    *)
+      echo >&2 "$SCRIPT_NAME: cannot detect platform to set docker command"
+      exit 71 # EX_OSERR
+      ;;
+  esac
 fi
 
 if [ -z ${DOCKER_COMPOSE_CMD:+smt} ]
 then
-  if groups | grep -Eqw 'sudo|wheel'
-  then
-    DOCKER_COMPOSE_CMD='sudo docker-compose'
-  elif groups | grep -Eqw 'docker|root'
-  then
-    DOCKER_COMPOSE_CMD='docker-compose'
-  elif type sw_vers &>/dev/null && [ "$(sw_vers -productName)" = "Mac OS X" ]
-  then
-    DOCKER_COMPOSE_CMD='docker-compose'
-  else
-    echo >&2 "$SCRIPT_NAME: cannot set docker-compose command: please either"
-    echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
-    echo >&2 "  * or set the variable \$DOCKER_COMPOSE_CMD"
-    exit 77 # EX_NOPERM
-  fi
+  case "$OSTYPE" in
+    darwin*) # Mac OS X
+      DOCKER_COMPOSE_CMD='docker-compose'
+      ;;
+    linux*)
+      if groups | grep -Eqw 'sudo|wheel'
+      then
+        DOCKER_COMPOSE_CMD='sudo docker-compose'
+      elif groups | grep -Eqw 'docker-compose|root'
+      then
+        DOCKER_COMPOSE_CMD='docker-compose'
+      else
+        echo >&2 "$SCRIPT_NAME: cannot set docker-compose command: please either"
+        echo >&2 "  * add the user '$USER' to the group 'sudo' or 'wheel'"
+        echo >&2 "  * or set the variable \$DOCKER_COMPOSE_CMD"
+        exit 77 # EX_NOPERM
+      fi
+      ;;
+    msys*) # Git for Windows
+      DOCKER_COMPOSE_CMD='docker-compose'
+      ;;
+    *)
+      echo >&2 "$SCRIPT_NAME: cannot detect platform to set docker-compose command"
+      exit 71 # EX_OSERR
+      ;;
+  esac
 fi
 
 # vi: set et sts=2 sw=2 ts=2 :
