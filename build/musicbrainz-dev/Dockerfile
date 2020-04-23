@@ -78,6 +78,8 @@ ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_STANDALONE_SERVER=1 \
     MUSICBRAINZ_WEB_SERVER_HOST=localhost \
     MUSICBRAINZ_WEB_SERVER_PORT=5000 \
+    # Needed for yarn to install devDependencies too
+    NODE_ENV=test \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
