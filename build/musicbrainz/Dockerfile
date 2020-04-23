@@ -93,10 +93,12 @@ ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_STANDALONE_SERVER=0 \
     MUSICBRAINZ_WEB_SERVER_HOST=localhost \
     MUSICBRAINZ_WEB_SERVER_PORT=5000 \
+    # Needed for yarn to install production dependencies only
+    NODE_ENV=production \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
-RUN yarn install --production \
+RUN yarn install \
     && yarn cache clean \
     && eval "$(perl -Mlocal::lib)" \
     && /musicbrainz-server/script/compile_resources.sh
