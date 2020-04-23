@@ -34,11 +34,9 @@ then
         exit 77 # EX_NOPERM
       fi
       ;;
-    msys*) # Git for Windows
-      DOCKER_CMD='docker'
-      ;;
     *)
       echo >&2 "$SCRIPT_NAME: cannot detect platform to set docker command"
+      echo >&2 "Try setting the variable \$DOCKER_CMD appropriately"
       exit 71 # EX_OSERR
       ;;
   esac
@@ -64,11 +62,9 @@ then
         exit 77 # EX_NOPERM
       fi
       ;;
-    msys*) # Git for Windows
-      DOCKER_COMPOSE_CMD='docker-compose'
-      ;;
     *)
       echo >&2 "$SCRIPT_NAME: cannot detect platform to set docker-compose command"
+      echo >&2 "Try setting the variable \$DOCKER_COMPOSE_CMD appropriately"
       exit 71 # EX_OSERR
       ;;
   esac
