@@ -49,10 +49,12 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 * Docker Compose 1.21.1 (or higher), see [how to install Docker Compose](https://docs.docker.com/compose/install/)
 * Git
 * GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
+  (On macOS, use [Homebrew](https://brew.sh/).)
 * Linux or macOS
   (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox instead.)
-* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw,
-  if you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall.
+
+If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
+* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw.
 
 ### External documentation
 
