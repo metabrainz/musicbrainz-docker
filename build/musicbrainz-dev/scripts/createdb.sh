@@ -74,33 +74,11 @@ case "$IMPORT" in
 esac
 
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
-    echo "fetching data dumps"
-
-    rm -rf /media/dbdump/*
-    # shellcheck disable=SC2086
-    wget $WGET_OPTIONS -nd -nH -P /media/dbdump "$FTP_MB/data/$IMPORT/LATEST"
-    LATEST=$(cat /media/dbdump/LATEST)
-    if [[ $IMPORT == "fullexport" ]]; then
-        for F in MD5SUMS "${DUMP_FILES[@]}"; do
-            # shellcheck disable=SC2086
-            wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
-        done
-        cd /media/dbdump
-        for F in "${DUMP_FILES[@]}"; do
-            MD5SUM=$(md5sum -b "$F")
-            grep -Fqx "$MD5SUM" MD5SUMS || {
-                echo "$0: unmatched checksum:" &&
-                echo "$MD5SUM" &&
-                exit 70 # EX_SOFTWARE
-            }
-        done
-        cd -
-    elif [[ $IMPORT == "sample" ]]; then
-        for F in "${DUMP_FILES[@]}"; do
-            # shellcheck disable=SC2086
-            wget $WGET_OPTIONS -P /media/dbdump "$FTP_MB/data/$IMPORT/$LATEST/$F"
-        done
+    FETCH_OPTIONS=("${IMPORT/fullexport/replica}" --base-ftp-url "$FTP_MB")
+    if [[ -n "$WGET_OPTIONS" ]]; then
+        FETCH_OPTIONS+=(--wget-options "$WGET_OPTIONS")
     fi
+    /fetch-dump.sh "${FETCH_OPTIONS[@]}"
 fi
 
 if [[ -a /media/dbdump/"${DUMP_FILES[0]}" ]]; then
