@@ -1,1 +1,2 @@
-FROM metabrainz/mb-solr:3.1.1
+ARG MB_SOLR_VERSION=3.1.1
+FROM metabrainz/mb-solr:${MB_SOLR_VERSION}
