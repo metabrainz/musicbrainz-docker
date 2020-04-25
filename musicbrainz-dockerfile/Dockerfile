@@ -2,9 +2,8 @@ FROM metabrainz/base-image
 LABEL maintainer=jeffsturgis@gmail.com
 
 ENV DOCKERIZE_VERSION v0.5.0
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-    tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
-    rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN curl -sSL https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz | \
+    tar -C /usr/local/bin -xzv
 
 ARG POSTGRES_VERSION=9.5
 RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
@@ -28,9 +27,8 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         python-minimal \
         zlib1g-dev
 
-RUN git clone https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
-    cd musicbrainz-server && \
-    git checkout v-2020-04-13
+ARG MUSICBRAINZ_VERSION=v-2020-04-13
+RUN git clone https://github.com/metabrainz/musicbrainz-server.git -c advice.detachedHead=false -b $MUSICBRAINZ_VERSION musicbrainz-server
 
 ARG NODE_VERSION=10.19.0
 RUN cd musicbrainz-server && \
@@ -64,13 +62,7 @@ RUN eval $( perl -Mlocal::lib) && cpanm --notest \
         TURNSTEP/DBD-Pg-3.10.3.tar.gz
 
 ADD DBDefs.pm /musicbrainz-server/lib/
-ADD scripts/start.sh /start.sh
-ADD scripts/start_mb_renderer.pl /start_mb_renderer.pl
-ADD scripts/crons.conf /crons.conf
-ADD scripts/replication.sh /replication.sh
-ADD scripts/createdb.sh /createdb.sh
-ADD scripts/recreatedb.sh /recreatedb.sh
-ADD scripts/set-token.sh /set-token.sh
+ADD scripts/* /
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
