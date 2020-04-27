@@ -78,7 +78,7 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
     if [[ -n "$WGET_OPTIONS" ]]; then
         FETCH_OPTIONS+=(--wget-options "$WGET_OPTIONS")
     fi
-    /fetch-dump.sh "${FETCH_OPTIONS[@]}"
+    fetch-dump.sh "${FETCH_OPTIONS[@]}"
 fi
 
 if [[ -a /media/dbdump/"${DUMP_FILES[0]}" ]]; then

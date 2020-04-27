@@ -1,1 +1,1 @@
-0 3 * * * /replication.sh
+0 3 * * * replication.sh

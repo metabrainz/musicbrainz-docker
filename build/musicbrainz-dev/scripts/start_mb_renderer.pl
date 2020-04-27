@@ -2,8 +2,7 @@
 
 use strict;
 use warnings;
-use FindBin;
-use lib "$FindBin::Bin/musicbrainz-server/lib";
+use lib "/musicbrainz-server/lib";
 use DBDefs;
 
 my $socket = DBDefs->RENDERER_SOCKET;

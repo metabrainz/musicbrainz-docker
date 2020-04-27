@@ -82,7 +82,7 @@ case "$1" in
     musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
     $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz /indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
+    $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
 
     rm -fr "$LOCAL_TRIGGERS_DIR"
     ;;
@@ -103,7 +103,7 @@ case "$1" in
 
     echo "Uninstalling indexer triggers ..."
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz /indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" drop
+    $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" drop
 
     $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr "$REMOTE_TRIGGERS_DIR"
     ;;
