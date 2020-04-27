@@ -82,7 +82,7 @@ RUN eval "$(perl -Mlocal::lib)" \
     && rm -rf /root/.cpan* /root/perl5/man/
 
 COPY DBDefs.pm /musicbrainz-server/lib/
-COPY scripts/* /
+COPY scripts/* /usr/local/bin/
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
@@ -103,4 +103,4 @@ RUN yarn install \
     && eval "$(perl -Mlocal::lib)" \
     && /musicbrainz-server/script/compile_resources.sh
 
-CMD ["/start.sh"]
+CMD ["start.sh"]

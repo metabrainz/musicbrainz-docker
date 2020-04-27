@@ -99,7 +99,7 @@ sudo docker-compose build
 Download latest full data dumps and create the database with:
 
 ```bash
-sudo docker-compose run --rm musicbrainz /createdb.sh -fetch
+sudo docker-compose run --rm musicbrainz createdb.sh -fetch
 ```
 
 <!-- TODO: document available FTP servers -->
@@ -131,8 +131,8 @@ Depending on your available ressources in CPU/RAM vs. bandwidth, run:
 * Or, if you have more available bandwidth than CPU/RAM:
 
   ```bash
-  sudo docker-compose run --rm musicbrainz /fetch-dump.sh search
-  sudo docker-compose run --rm search /load-search-indexes.sh
+  sudo docker-compose run --rm musicbrainz fetch-dump.sh search
+  sudo docker-compose run --rm search load-search-indexes.sh
   ```
 
   (This option downloads 28GB of Zstandard-compressed archives from FTP.)
@@ -185,7 +185,7 @@ sudo docker-compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-sudo docker-compose exec musicbrainz /replication.sh &
+sudo docker-compose exec musicbrainz replication.sh &
 sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log
 ```
 
@@ -317,7 +317,7 @@ git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.
 cd musicbrainz-docker
 admin/configure add musicbrainz-standalone
 sudo docker-compose build
-sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
+sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 sudo docker-compose up -d
 ```
 
@@ -343,7 +343,7 @@ cd musicbrainz-docker
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
 admin/configure add musicbrainz-dev
 sudo docker-compose up -d
-sudo docker-compose run --rm musicbrainz /createdb.sh -sample -fetch
+sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 ```
 
 The four differences are:
@@ -397,11 +397,11 @@ There are two directories with helper scripts:
 If you need to recreate the database, you will need to enter the
 postgres password set in [postgres.env](default/postgres.env):
 
-* `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
+* `sudo docker-compose run --rm musicbrainz recreatedb.sh`
 
 or to fetch new data dumps before recreating the database:
 
-* `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
+* `sudo docker-compose run --rm musicbrainz recreatedb.sh -fetch`
 
 ### Recreate database with indexed search
 
@@ -410,10 +410,10 @@ If you need to recreate the database with indexed search,
 ```bash
 admin/configure rm replication-cron # if replication is enabled
 sudo docker-compose stop
-sudo docker-compose run --rm musicbrainz /fetch-dump.sh both
-sudo docker-compose run --rm mq /purge-queues.sh
-sudo docker-compose run --rm search /load-search-indexes.sh --force
-sudo docker-compose run --rm musicbrainz /recreatedb.sh
+sudo docker-compose run --rm musicbrainz fetch-dump.sh both
+sudo docker-compose run --rm mq purge-queues.sh
+sudo docker-compose run --rm search load-search-indexes.sh --force
+sudo docker-compose run --rm musicbrainz recreatedb.sh
 sudo docker-compose up -d
 admin/setup-amqp-triggers clean
 admin/setup-amqp-triggers install
@@ -424,11 +424,11 @@ sudo docker-compose up -d
  you will need to enter the
 postgres password set in [postgres.env](default/postgres.env):
 
-* `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
+* `sudo docker-compose run --rm musicbrainz recreatedb.sh`
 
 or to fetch new data dumps before recreating the database:
 
-* `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
+* `sudo docker-compose run --rm musicbrainz recreatedb.sh -fetch`
 
 ## Update (after v1.0.0)
 

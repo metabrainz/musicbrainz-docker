@@ -12,7 +12,7 @@ env:
 
 before_install:
   - docker-compose build
-  - docker-compose run --rm musicbrainz /createdb.sh -fetch -sample
+  - docker-compose run --rm musicbrainz createdb.sh -fetch -sample
   - docker-compose up --quiet-pull -d
 
 script:

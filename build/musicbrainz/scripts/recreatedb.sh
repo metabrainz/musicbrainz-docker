@@ -2,4 +2,4 @@
 
 eval "$(perl -Mlocal::lib)"
 
-psql postgres -U musicbrainz -h db -c "DROP DATABASE musicbrainz_db;"; /createdb.sh "$@"
+psql postgres -U musicbrainz -h db -c "DROP DATABASE musicbrainz_db;"; createdb.sh "$@"

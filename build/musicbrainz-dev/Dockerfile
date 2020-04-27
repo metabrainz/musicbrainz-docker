@@ -65,9 +65,9 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
 WORKDIR /musicbrainz-server
 
 COPY DBDefs.pm /
-COPY scripts/* /
-RUN cat /snippet.perllocallib.bashrc >> ~/.bashrc \
-    && rm /snippet.perllocallib.bashrc
+COPY scripts/* /usr/local/bin/
+RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
+    && rm /usr/local/bin/snippet.perllocallib.bashrc
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
@@ -83,4 +83,4 @@ ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
-CMD ["/start.sh"]
+CMD ["start.sh"]
