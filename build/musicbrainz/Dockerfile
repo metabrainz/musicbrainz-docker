@@ -38,7 +38,7 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2020-04-13
+ARG MUSICBRAINZ_SERVER_VERSION=v-2020-04-27
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
 WORKDIR /musicbrainz-server
