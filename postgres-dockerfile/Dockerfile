@@ -20,8 +20,8 @@ RUN apt-get update && \
         pkg-config \
         postgresql-server-dev-${POSTGRES_VERSION}
 
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
-    git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
+RUN git clone --depth=1 https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
+    git clone --depth=1 https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
 
 WORKDIR /tmp/postgresql-musicbrainz-unaccent
 RUN make && make install

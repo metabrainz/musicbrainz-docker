@@ -28,7 +28,7 @@ RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
         zlib1g-dev
 
 ARG MUSICBRAINZ_VERSION=v-2020-04-13
-RUN git clone https://github.com/metabrainz/musicbrainz-server.git -c advice.detachedHead=false -b $MUSICBRAINZ_VERSION musicbrainz-server
+RUN git clone --depth=1 https://github.com/metabrainz/musicbrainz-server.git -c advice.detachedHead=false -b $MUSICBRAINZ_VERSION musicbrainz-server
 
 ARG NODE_VERSION=10.19.0
 RUN cd musicbrainz-server && \
