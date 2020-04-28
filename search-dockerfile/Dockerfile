@@ -1,4 +1,4 @@
-FROM jetty:9.3.10
+FROM jetty:9.3-jre8
 
 LABEL Author="Robert Kaye <rob@metabrainz.org>"
 
