@@ -17,6 +17,11 @@ services:
       - validator
   validator:
     image: validator/validator:20.3.16
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     restart: unless-stopped
     expose:
       - "8888"
