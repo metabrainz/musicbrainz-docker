@@ -1,4 +1,4 @@
-ARG POSTGRES_VERSION=9.5
+ARG POSTGRES_VERSION=12
 FROM postgres:${POSTGRES_VERSION}
 LABEL Author="jeffsturgis@gmail.com"
 
@@ -22,15 +22,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # hadolint ignore=DL3003
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent \
-    && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate \
-    && git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
-    && cd /tmp/postgresql-musicbrainz-unaccent \
-    && make \
-    && make install \
-    && cd /tmp/postgresql-musicbrainz-collate \
-    && make \
-    && make install \
+RUN git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
     && cd /tmp/pg_amqp \
     && make \
     && make install \

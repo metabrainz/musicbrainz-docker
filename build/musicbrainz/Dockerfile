@@ -7,7 +7,7 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG POSTGRES_VERSION=9.5
+ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
@@ -39,7 +39,7 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2020-05-11
+ARG MUSICBRAINZ_SERVER_VERSION=v-2020-05-18-postgres12
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
 WORKDIR /musicbrainz-server
