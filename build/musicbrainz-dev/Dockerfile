@@ -7,16 +7,35 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 ARG NODE_VERSION=10.19.0
+ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
 ARG POSTGRES_VERSION=9.5
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     curl -sSL --retry 5 https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    declare i=5 && while true; do \
-        apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
-        break || echo "apk-key failed with exit status '$?'"; \
-        i=$((i - 1)); [[ $i -gt 0 ]] && echo "retrying..." || exit 1; \
-    done && unset i && \
+    \
+    # Refresh Yarn signing keys
+    refreshed_keys=''; \
+    for pgp_server in $(tr ' ' '\n' <<<"$PGP_SERVERS"); do \
+        for attempt in {1..3}; do \
+            apt-key adv --keyserver "$pgp_server" --refresh-keys Yarn --textmode 2>&1 && \
+            { refreshed_keys='yes'; break; } || \
+            echo "Temporary failure: apk-key/gpg returned error code '$?' on attempt #$attempt to reach '$pgp_server'."; \
+        done; \
+        if [[ $refreshed_keys == yes ]]; then break; fi; \
+    done; \
+    if [[ $refreshed_keys != yes ]]; then \
+        echo >&2 'Fatal error: Failed all attempts to refresh PGP keys.'; \
+        echo >&2 'Try passing a list of PGP servers that work for you as build argument:'; \
+        echo >&2 ''; \
+        echo >&2 '    docker-compose build --build-arg PGP_SERVERS="LIST" musicbrainz'; \
+        echo >&2 ''; \
+        echo >&2 "Current LIST is \"$PGP_SERVERS\""; \
+        EX_TEMPFAIL=75; \
+        exit $EX_TEMPFAIL; \
+    fi; \
+    unset attempt pgp_server refreshed_keys; \
+    \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
