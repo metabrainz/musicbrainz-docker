@@ -44,14 +44,33 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 WORKDIR /musicbrainz-server
 
 ARG NODE_VERSION=10.19.0
+ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
 RUN cp docker/yarn_pubkey.txt /tmp && \
     cd /tmp && \
     apt-key add yarn_pubkey.txt && \
-    declare i=5 && while true; do \
-        apt-key adv --keyserver hkps.pool.sks-keyservers.net --refresh-keys Yarn && \
-        break || echo "apk-key failed with exit status '$?'"; \
-        i=$((i - 1)); [[ $i -gt 0 ]] && echo "retrying..." || exit 1; \
-    done && unset i && \
+    \
+    # Refresh Yarn signing keys
+    refreshed_keys=''; \
+    for pgp_server in $(tr ' ' '\n' <<<"$PGP_SERVERS"); do \
+        for attempt in {1..3}; do \
+            apt-key adv --keyserver "$pgp_server" --refresh-keys Yarn --textmode 2>&1 && \
+            { refreshed_keys='yes'; break; } || \
+            echo "Temporary failure: apk-key/gpg returned error code '$?' on attempt #$attempt to reach '$pgp_server'."; \
+        done; \
+        if [[ $refreshed_keys == yes ]]; then break; fi; \
+    done; \
+    if [[ $refreshed_keys != yes ]]; then \
+        echo >&2 'Fatal error: Failed all attempts to refresh PGP keys.'; \
+        echo >&2 'Try passing a list of PGP servers that work for you as build argument:'; \
+        echo >&2 ''; \
+        echo >&2 '    docker-compose build --build-arg PGP_SERVERS="LIST" musicbrainz'; \
+        echo >&2 ''; \
+        echo >&2 "Current LIST is \"$PGP_SERVERS\""; \
+        EX_TEMPFAIL=75; \
+        exit $EX_TEMPFAIL; \
+    fi; \
+    unset attempt pgp_server refreshed_keys; \
+    \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
     curl -sSLO --retry 5 https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
