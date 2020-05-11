@@ -42,7 +42,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 
 * CPU: 16 threads (or 2 without indexed search)
 * RAM: 16 GB (or 4 without indexed search)
-* Disk Space: 100 GB (or 50 without indexed search)
+* Disk Space: 150 GB (or 60 without indexed search)
             + system disk usage
 ### Required software
 
