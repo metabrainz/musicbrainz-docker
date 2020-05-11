@@ -6,6 +6,7 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION=10.19.0
 ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
 ARG POSTGRES_VERSION=9.5

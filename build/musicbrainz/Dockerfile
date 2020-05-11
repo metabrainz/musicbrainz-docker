@@ -6,6 +6,7 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG POSTGRES_VERSION=9.5
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
