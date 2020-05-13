@@ -353,6 +353,8 @@ Replication is not applicable to test setup.
 
 ## Development setup
 
+Required disk space is much lesser than normal setup: 15GB to be safe.
+
 For local development of MusicBrainz Server, you can run the below
 commands instead of following the above [installation](#installation):
 
