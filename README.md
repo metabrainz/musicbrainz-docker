@@ -21,8 +21,8 @@ This repo contains everything needed to run a musicbrainz slave server with sear
   * [Create database](#create-database)
   * [Start website](#start-website)
   * [Build search indexes](#build-search-indexes)
-  * [Enable live indexing](#enable-live-indexing)
   * [Enable replication](#enable-replication)
+  * [Enable live indexing](#enable-live-indexing)
 - [Advanced configuration](#advanced-configuration)
   * [Local changes](#local-changes)
   * [Docker environment variables](#docker-environment-variables)
@@ -31,6 +31,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 - [Development setup](#development-setup)
 - [Helper scripts](#helper-scripts)
   * [Recreate database](#recreate-database)
+  * [Recreate database with indexed search](#recreate-database-with-indexed-search)
 - [Update (after v1.0.0)](#update-after-v100)
 - [Issues](#issues)
 
