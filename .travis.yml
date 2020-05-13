@@ -1,7 +1,3 @@
-branches:
-  only:
-    - mbvm-38-dev
-
 sudo: required
 
 services:
