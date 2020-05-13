@@ -454,7 +454,7 @@ or to fetch new data dumps before recreating the database:
 
 * `sudo docker-compose run --rm musicbrainz recreatedb.sh -fetch`
 
-## Update (after v1.0.0)
+## Update
 
 Check your working tree is clean with:
 
@@ -462,16 +462,13 @@ Check your working tree is clean with:
 git status
 ```
 
-List newer versions that have been released since then:
+Check your currently checked out version:
 
 ```bash
-git fetch --prune origin
-git log --oneline --simplify-by-decoration origin/master..master
+git describe --dirty
 ```
 
 Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for update instructions.
-
-<!-- TODO: complete schema change instructions (by release v1.0.0) -->
 
 ## Issues
 
@@ -480,5 +477,5 @@ If anything doesn't work please create an issue with versions info:
 ```bash
 echo MusicBrainz Docker: `git describe --always --broken --dirty --tags` && \
 echo Docker Compose: `docker-compose version --short` && \
-docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
+sudo docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
 ```
