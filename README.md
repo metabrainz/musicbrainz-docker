@@ -29,7 +29,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 - [Helper scripts](#helper-scripts)
   * [Recreate database](#recreate-database)
   * [Recreate database with indexed search](#recreate-database-with-indexed-search)
-- [Update (after v1.0.0)](#update-after-v100)
+- [Update](#update)
 - [Issues](#issues)
 
 <!-- tocstop -->
