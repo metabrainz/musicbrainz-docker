@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME <clean|install|uninstall|help>
+
+Commands:
+  clean       Remove temporary install scripts and uninstall scripts.
+  install     Create database triggers and add uninstall scripts.
+  uninstall   Drop database triggers and remove uninstall scripts.
+  help        Print this help message
+EOH
+)
+
+if [ $# -ne 1 ]
+then
+  echo >&2 "$SCRIPT_NAME: wrong number of arguments"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
+REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
+
+case "$1" in
+  clean     )
+    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
+    then
+      echo >&2 "$SCRIPT_NAME: cannot clean: " \
+               "the Docker Compose service 'musicbrainz' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
+      exit 69 # EX_UNAVAILABLE
+    fi
+
+    echo "Cleaning indexer triggers install/uninstall scripts up ..."
+
+    $DOCKER_COMPOSE_CMD exec musicbrainz rm -frv "$REMOTE_TRIGGERS_DIR"
+    rm -frv "$LOCAL_TRIGGERS_DIR"
+    ;;
+  install   )
+    if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
+    then
+      echo >&2 "$SCRIPT_NAME: cannot install: " \
+               "the Docker Compose service 'indexer' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
+      exit 69 # EX_UNAVAILABLE
+    fi
+
+    if [ -e "$LOCAL_TRIGGERS_DIR" ]
+    then
+      echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_TRIGGERS_DIR' exists"
+      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+      echo >&2 "Remove this file if you are sure the script is not still running:"
+      echo >&2 "    rm -frv $(printf %q "$LOCAL_TRIGGERS_DIR")"
+      exit 70 # EX_SOFTWARE
+    fi
+
+    if $DOCKER_COMPOSE_CMD exec musicbrainz test -e "$REMOTE_TRIGGERS_DIR"
+    then
+      echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_TRIGGERS_DIR' exists in 'musicbrainz' docker compose service"
+      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+      echo >&2 "Revert partial installation if you are sure the script is not still running:"
+      echo >&2 "    $SCRIPT_NAME uninstall"
+      exit 70 # EX_SOFTWARE
+    fi
+
+    echo "Installing indexer triggers ..."
+
+    $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+
+    indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+    $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
+    if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
+    then
+      sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
+    fi
+
+    musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
+    $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
+
+    $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
+
+    rm -fr "$LOCAL_TRIGGERS_DIR"
+    ;;
+  uninstall )
+    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
+    then
+      echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
+               "the Docker Compose service 'musicbrainz' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
+      exit 69 # EX_UNAVAILABLE
+    fi
+
+    if $DOCKER_COMPOSE_CMD exec musicbrainz test ! -e "$REMOTE_TRIGGERS_DIR"
+    then
+      echo >&2 "$SCRIPT_NAME: cannot uninstall: file '$REMOTE_TRIGGERS_DIR' does not exist"
+      exit 70 # EX_SOFTWARE
+    fi
+
+    echo "Uninstalling indexer triggers ..."
+
+    $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" drop
+
+    $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr "$REMOTE_TRIGGERS_DIR"
+    ;;
+  help|-h|--help)
+    echo "$HELP"
+    exit 0 # EX_OK
+    ;;
+  *         )
+    echo >&2 "$SCRIPT_NAME: unrecognized command '$1'"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+    exit 64 # EX_USAGE
+    ;;
+esac
+
+echo "Done."
+
+# vi: set et sts=2 sw=2 ts=2 :

@@ -1,23 +1,34 @@
-version: '3'
+version: '3.1'
+
+# Description: Default compose file, with host port for musicbrainz
 
 volumes:
+  mqdata:
+    driver: local
   pgdata:
     driver: local
-  indexdata:
+  solrdata:
     driver: local
   dbdump:
+    driver: local
+  searchdump:
     driver: local
 
 services:
   db:
     build:
-      context: postgres-dockerfile
+      context: build/postgres
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
     image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
     restart: unless-stopped
     env_file:
-      - ./postgres-dockerfile/postgres.env
+      - ./default/postgres.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     expose:
@@ -25,40 +36,86 @@ services:
 
   musicbrainz:
     build:
-      context: musicbrainz-dockerfile
+      context: build/musicbrainz
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "50"
     ports:
-      - "5000:5000"
+      - "${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
     volumes:
       - dbdump:/media/dbdump
+      - searchdump:/media/searchdump
     restart: unless-stopped
     env_file:
-      - ./postgres-dockerfile/postgres.env
+      - ./default/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
+      - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}
+      - MUSICBRAINZ_WEB_SERVER_PORT=${MUSICBRAINZ_WEB_SERVER_PORT:-5000}
     depends_on:
       - db
+      - mq
       - search
       - redis
 
   indexer:
-    build: indexer-dockerfile
+    build: build/sir
+    env_file:
+      - ./default/postgres.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    volumes:
+      - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
       - db
-    volumes:
-      - indexdata:/home/search/indexdata
+      - mq
+      - search
 
   search:
-    build: search-dockerfile
+    build:
+      context: build/solr
+      args:
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.1.3}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.1.3}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
     restart: unless-stopped
-    ports:
-      - "8080:8080"
+    expose:
+      - "8983"
     volumes:
-      - indexdata:/home/search/indexdata
+      - solrdata:/opt/solr/server/solr/data
+      - searchdump:/media/searchdump
+
+  mq:
+    build: build/rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    volumes:
+      - mqdata:/var/lib/rabbitmq
+    expose:
+      - "5672"
 
   redis:
     image: redis:3-alpine
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
     restart: unless-stopped
     expose:
       - "6379"

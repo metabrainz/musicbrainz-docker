@@ -1,0 +1,18 @@
+version: '3.1'
+
+# Description: Publish all service ports on the host
+
+services:
+  db:
+    ports:
+      - "5432:5432"
+  search:
+    ports:
+      - "8983:8983"
+  mq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  redis:
+    ports:
+      - "6379:6379"

@@ -1,1 +1,14 @@
+# File to declare default environment variables for use in Docker Compose
+# See https://docs.docker.com/compose/environment-variables/#the-env-file
 /.env
+
+# Directory created and managed by the script admin/setup-amqp-triggers
+/admin/.setup-amqp-triggers-sql/
+
+# Directory designated to store local compose overrides and related files
+/local/
+
+# Installed node module 'markdown-toc' used to generate TOC in README.md
+/node_modules/
+/package-lock.json
+

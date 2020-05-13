@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME [--help]
+
+Create 'amqp' extension (with broker) in the database.
+EOH
+)
+
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+LOCAL_SQL_FILE="$(dirname "${BASH_SOURCE[0]}")/.create-amqp-extension.sql"
+REMOTE_SQL_FILE=/tmp/CreateExtensionAMQP.sql
+
+if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: " \
+           "the Docker Compose service 'indexer' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
+  exit 69 # EX_UNAVAILABLE
+fi
+
+if [ -e "$LOCAL_SQL_FILE" ]
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_SQL_FILE' exists"
+  echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+  echo >&2 "Remove this file if you are sure the script is not still running:"
+  echo >&2 "    rm -fv $(printf %q "$LOCAL_SQL_FILE")"
+  exit 70 # EX_SOFTWARE
+fi
+
+if $DOCKER_COMPOSE_CMD exec db test -e "$REMOTE_SQL_FILE"
+then
+  echo >&2 "$SCRIPT_NAME: cannot install: " \
+           "file '$REMOTE_SQL_FILE' exists in 'db' Docker Compose service"
+  echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
+  echo >&2 "Remove this file if you are sure the script is not still running:"
+  echo >&2 "    $DOCKER_COMPOSE_CMD exec db rm -fv $(printf %q "$REMOTE_SQL_FILE")"
+  exit 70 # EX_SOFTWARE
+fi
+
+echo "Installing indexer AMQP extension into PostgreSQL ..."
+
+$DOCKER_COMPOSE_CMD exec indexer python -m sir extension
+
+indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+$DOCKER_CMD cp "$indexer_container_id:/code/sql/CreateExtension.sql" "$LOCAL_SQL_FILE"
+
+db_container_id="$($DOCKER_COMPOSE_CMD ps -q db)"
+$DOCKER_CMD cp "$LOCAL_SQL_FILE" "$db_container_id:$REMOTE_SQL_FILE"
+
+$DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -f "$REMOTE_SQL_FILE"
+
+$DOCKER_COMPOSE_CMD exec db rm -f "$REMOTE_SQL_FILE"
+rm -f "$LOCAL_SQL_FILE"
+
+echo "Successfully created amqp extension in the database."
+
+# vi: set et sts=2 sw=2 ts=2 :

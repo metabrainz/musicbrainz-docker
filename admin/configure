@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME <command> [<args>]
+
+Commands:
+  help          Print this help message
+
+  list          List available compose files with handle, path and description
+  show          Show COMPOSE_FILE from both .env file and environment variable
+
+  with  <compose file list>     Set or update compose file list in .env file
+  add   <compose file list>     Add listed files to COMPOSE_FILE in .env file
+  rm    <compose file list>     Remove files from COMPOSE_FILE in .env file
+
+        List should be either colon-separated or space-separated.
+        Compose file should be refered to by either handle or path.
+
+Examples:
+  $SCRIPT_NAME set docker-compose.yml:compose/publishing-all-ports.yml
+
+  allows to publish ports of all services on the host, just like:
+
+  $SCRIPT_NAME with default live-indexing-search
+  $SCRIPT_NAME add publishing-all-ports
+  $SCRIPT_NAME rm live-indexing-search
+
+Notes:
+  Use '$DOCKER_COMPOSE_CMD config' to see the resulting compose file.
+  Use '$DOCKER_COMPOSE_CMD up -d' to apply configuration changes.
+EOH
+)
+
+if [ $# -eq 0 ]
+then
+  echo >&2 "$SCRIPT_NAME: missing argument"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+declare -a file_path=()
+declare -A file_handle=()
+declare -A handle_file=()
+declare -A file_description=()
+
+function scan_files {
+  # Find Docker Compose files
+  shopt -s globstar nullglob
+  file_path=(
+    docker-compose.yml
+    compose/*.yml
+    local/**/*.yml
+  )
+
+  # Create unique handles
+  file_handle[docker-compose.yml]=default
+  handle_file[default]=docker-compose.yml
+
+  for file in compose/*.yml
+  do
+    handle="$(basename -s.yml "$file")"
+    file_handle["$file"]="$handle"
+    handle_file["$handle"]="$file"
+  done
+
+  for file in local/**/*.yml
+  do
+    handle="$(echo "${file%.yml}" | tr / -)"
+    file_handle["$file"]="$handle"
+    handle_file["$handle"]="$file"
+  done
+
+  # Get description from files
+  for file in "${file_path[@]}"
+  do
+    file_description["$file"]="$(sed -n -E '/^#+ *Description:/{
+      s/^#+ *Description: *//p;
+      q;
+    }' "$file")"
+  done
+}
+
+function parse_env {
+  sed -n "/^COMPOSE_FILE=/{
+    s/^COMPOSE_FILE=//;
+    s/ *#.*$//;
+    s/['\"]//g;
+    p;
+  }" "$MB_DOCKER_ROOT/.env" | tail -1
+}
+
+function print_file_list {
+  sep="|"
+  (
+    echo "[HANDLE]${sep}PATH:${sep}DESCRIPTION"
+    for file in "$@"
+    do
+      echo "[${file_handle[$file]-}]$sep$file:$sep${file_description[$file]-}"
+    done
+  ) | column -t -s "$sep"
+}
+
+case "$1" in
+  help|--help|-h)
+    echo "$HELP"
+    exit 0 # EX_OK
+    ;;
+  list          )
+    scan_files
+    echo Available compose files:
+    print_file_list "${file_path[@]}"
+    exit 0 # EX_OK
+    ;;
+  show          )
+    scan_files
+
+    if [ "${COMPOSE_FILE:-}" ]
+    then
+      echo "COMPOSE_FILE is defined as shell environment variable."
+      echo "Note: Shell environment has precedence over .env file!"
+      echo "Try 'unset COMPOSE_FILE' if you want to use .env file."
+    elif [ -f "$MB_DOCKER_ROOT/.env" ] \
+      && grep -q '^COMPOSE_FILE=' "$MB_DOCKER_ROOT/.env"
+    then
+      echo "COMPOSE_FILE is defined by '$MB_DOCKER_ROOT/.env' file."
+      COMPOSE_FILE=$(parse_env)
+    else
+      echo "COMPOSE_FILE is not defined, default file is used."
+    fi
+
+    declare -a compose_files
+    if [ "${COMPOSE_FILE:-}" ]
+    then
+      echo
+      echo "COMPOSE_FILE=$COMPOSE_FILE"
+      IFS=':' read -r -a compose_files <<< "$COMPOSE_FILE"
+    else
+      compose_files=( docker-compose.yml )
+    fi
+
+    echo
+    echo "Referred-to compose file(s):"
+    print_file_list "${compose_files[@]}"
+    exit 0 # EX_OK
+    ;;
+  with |add |rm )
+    command=$1
+    shift
+    if [ $# -eq 0 ]
+    then
+      echo >&2 "$SCRIPT_NAME: missing argument"
+      echo >&2 "Try '$SCRIPT_NAME help' for usage."
+      exit 64 # EX_USAGE
+    fi
+    scan_files
+
+    declare -a compose_files
+    if [[ $command != with ]]
+    then
+      if [ -f "$MB_DOCKER_ROOT/.env" ] \
+        && grep -q '^COMPOSE_FILE=' "$MB_DOCKER_ROOT/.env"
+      then
+        IFS=':' read -r -a compose_files <<< "$(parse_env)"
+      else
+        compose_files=( docker-compose.yml )
+      fi
+    fi
+
+    while [ $# -gt 0 ]
+    do
+      if [ "${file_handle[$1]-}" ]
+      then
+        compose_files=( ${compose_files[@]/$1} )
+        if [[ $command != rm ]]
+        then
+          compose_files+=( "$1" )
+        fi
+      elif [ "${handle_file[$1]-}" ]
+      then
+        compose_files=( ${compose_files[@]/${handle_file[$1]}} )
+        if [[ $command != rm ]]
+        then
+          compose_files+=( "${handle_file[$1]}" )
+        fi
+      elif [[ $command == rm ]]
+      then
+        echo "Ignore obsolete/missing '$1'"
+      else
+        echo >&2 "$SCRIPT_NAME: unknown file/handle: '$1'"
+        echo >&2 "Try '$SCRIPT_NAME help' for usage."
+        exit 64 # EX_USAGE
+      fi
+      shift
+    done
+
+    # Write to .env
+    touch .env
+    sed -i.bak -e '/^COMPOSE_FILE=/d' .env && rm -f .env.bak
+    echo "COMPOSE_FILE=$(IFS=:; echo "${compose_files[*]}")" >> .env
+    echo "Successfully set/updated COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
+    exit 0 # EX_OK
+    ;;
+  *             )
+    echo >&2 "$SCRIPT_NAME: unknown command: '$1'"
+    echo >&2 "Try '$SCRIPT_NAME help' for usage."
+    exit 64 # EX_USAGE
+    ;;
+esac
+
+# vi: set et sts=2 sw=2 ts=2 :

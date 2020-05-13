@@ -1,0 +1,11 @@
+version: '3.1'
+
+# Description: Make sir watches queue for reindex messages
+
+services:
+  indexer:
+    entrypoint:
+      - python
+      - -m
+      - sir
+      - amqp_watch
