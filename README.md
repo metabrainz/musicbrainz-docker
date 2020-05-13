@@ -137,27 +137,11 @@ Depending on your available ressources in CPU/RAM vs. bandwidth, run:
 
   (This option downloads 28GB of Zstandard-compressed archives from FTP.)
 
+:warning: Search indexes are not included in replication.
+You will have to rebuild search indexes regularly to keep it up-to-date.
+
 At this point indexed search works on the local website/webservice.
 For replication, keep going!
-
-### Enable live indexing
-
-It is needed to automatically update search indexes during replication.
-
-First, make indexer goes through [AMQP Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup) with:
-
-```bash
-sudo docker-compose exec indexer python -m sir amqp_setup
-admin/create-amqp-extension
-admin/setup-amqp-triggers install
-```
-
-Then, make indexer watch reindex messages with:
-
-```bash
-admin/configure add live-indexing-search
-sudo docker-compose up -d
-```
 
 ### Enable replication
 
@@ -215,6 +199,45 @@ You can view the replication log file after it is done with:
 ```bash
 sudo docker-compose exec musicbrainz tail slave.log.1
 ```
+
+### Enable live indexing
+
+:warning: Search indexes’ live update for slave server is **not stable** yet.
+Until then, it should be considered as an experimental feature.
+Do not use it if you don't want to get your hands dirty.
+
+1. Disable [replication cron job](#schedule-replication) if you enabled it:
+
+   ```
+   admin/configure rm replication-cron
+   sudo docker-compose up -d
+   ```
+
+2. Make indexer goes through [AMQP Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup) with:
+
+   ```bash
+   sudo docker-compose exec indexer python -m sir amqp_setup
+   admin/create-amqp-extension
+   admin/setup-amqp-triggers install
+   ```
+
+3. [Build search indexes](#build-search-indexes)
+   either if it has not been built
+   or if it is outdated.
+
+4. Make indexer watch reindex messages with:
+
+   ```bash
+   admin/configure add live-indexing-search
+   sudo docker-compose up -d
+   ```
+
+5. Reenable [replication cron job](#schedule-replication) if you disabled it at 1.
+
+   ```
+   admin/configure add replication-cron
+   sudo docker-compose up -d
+   ```
 
 ## Advanced configuration
 
