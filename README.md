@@ -80,7 +80,7 @@ with locally indexed search and automatically replicated data.
 Download this repository and change current working directory with:
 
 ```bash
-git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
+git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 ```
 
@@ -334,7 +334,7 @@ queries and/or MusicBrainz Web Service calls, you can run the below
 commands instead of following the above [installation](#installation):
 
 ```bash
-git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
+git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 admin/configure add musicbrainz-standalone
 sudo docker-compose build
@@ -361,7 +361,7 @@ commands instead of following the above [installation](#installation):
 ```bash
 git clone --recursive https://github.com/metabrainz/musicbrainz-server.git
 MUSICBRAINZ_SERVER_LOCAL_ROOT=$PWD/musicbrainz-server
-git clone --branch mbvm-38-dev https://github.com/metabrainz/musicbrainz-docker.git
+git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
 admin/configure add musicbrainz-dev
