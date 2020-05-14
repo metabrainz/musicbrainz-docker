@@ -327,6 +327,36 @@ admin/configure add publishing-all-ports
 sudo docker-compose up -d
 ```
 
+#### Modify memory settings
+
+To modify memory settings for `db` and `search` services,
+create a file `local/compose/memory-settings.yml` as follows:
+
+```yaml
+version: '3.1'
+
+# Description: Customize memory settings
+
+services:
+  db:
+    command: postgres -c "shared_buffers=4GB" -c "shared_preload_libraries=pg_amqp.so"
+  search:
+    environment:
+      - SOLR_HEAP=4g
+```
+
+See [`postgres`](https://www.postgresql.org/docs/current/app-postgres.html)
+for more configuration parameters and options to pass to `db` service,
+and [`solr.in.sh`](https://github.com/apache/lucene-solr/blob/releases/lucene-solr/7.7.2/solr/bin/solr.in.sh)
+for more environment variables to pass to `search` service,
+
+Then enable it by running:
+
+```bash
+admin/configure add local/compose/memory-settings.yml
+sudo docker-compose up -d
+```
+
 ## Test setup
 
 If you just need a small server with sample data to test your own SQL
