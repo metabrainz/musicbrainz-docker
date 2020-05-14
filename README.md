@@ -94,6 +94,11 @@ sudo docker-compose build
 
 ### Create database
 
+:gear: Postgres shared buffers are set to 2GB by default.
+Before running this step, you should consider [modifying your memory
+settings](#modify-memory-settings) in order to give your database a
+sufficient amount of ram, otherwise your database could run very slowly.
+
 Download latest full data dumps and create the database with:
 
 ```bash
@@ -123,6 +128,11 @@ Depending on your available ressources in CPU/RAM vs. bandwidth, run:
   ```bash
   sudo docker-compose exec indexer python -m sir reindex
   ```
+
+  :gear: Java heap for Solr is set to 2GB by default.
+  Before running this step, you should consider [modifying your memory
+  settings](#modify-memory-settings) in order to give your search server a
+  sufficient amount of ram, otherwise your search server could run very slowly.
 
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
@@ -329,7 +339,11 @@ sudo docker-compose up -d
 
 #### Modify memory settings
 
-To modify memory settings for `db` and `search` services,
+By default, each of `db` and `search` services have about 2GB of RAM.
+You may want to set more or less memory for any of these services,
+depending on your available resources or on your priorities.
+
+For example, to set 4GB to each of `db` and `search` services,
 create a file `local/compose/memory-settings.yml` as follows:
 
 ```yaml
