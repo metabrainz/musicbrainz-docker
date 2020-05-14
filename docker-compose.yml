@@ -91,6 +91,8 @@ services:
         max-size: "10m"
         max-file: "10"
     restart: unless-stopped
+    environment:
+      - SOLR_HEAP=2g
     expose:
       - "8983"
     volumes:
