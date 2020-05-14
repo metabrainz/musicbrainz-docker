@@ -35,7 +35,3 @@ RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git 
     && make \
     && make install \
     && rm -R /tmp/*
-
-WORKDIR /
-
-COPY set-config.sh /docker-entrypoint-initdb.d

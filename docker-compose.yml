@@ -27,6 +27,7 @@ services:
         max-size: "10m"
         max-file: "10"
     restart: unless-stopped
+    command: postgres -c "shared_buffers=2048MB" -c "shared_preload_libraries=pg_amqp.so"
     env_file:
       - ./default/postgres.env
     volumes:
