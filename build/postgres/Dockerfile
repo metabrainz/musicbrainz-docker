@@ -1,6 +1,5 @@
 ARG POSTGRES_VERSION=12
 FROM postgres:${POSTGRES_VERSION}
-LABEL Author="jeffsturgis@gmail.com"
 
 ARG DEBIAN_FRONTEND="noninteractive"
 # Has to be redeclared due to being in a different build stage
