@@ -1,9 +1,10 @@
 ARG POSTGRES_VERSION=12
 FROM postgres:${POSTGRES_VERSION}
 
-ARG DEBIAN_FRONTEND="noninteractive"
-# Has to be redeclared due to being in a different build stage
 ARG POSTGRES_VERSION
+LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_VERSION}"
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update && \
