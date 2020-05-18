@@ -48,7 +48,7 @@ sudo -u postgres /usr/lib/postgresql/12/bin/initdb \
 	--username musicbrainz \
 	"$PGDATA_NEW"
 
-git clone https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
+git clone -b "v0.4.1" --depth=1 https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
 cd "$PGAMQP_DIR"
 make PG_CONFIG=/usr/lib/postgresql/12/bin/pg_config
 make install

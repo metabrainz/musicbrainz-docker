@@ -21,8 +21,9 @@ RUN apt-get update && \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
+ARG PG_AMQP_VERSION="0.4.1"
 # hadolint ignore=DL3003
-RUN git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
+RUN git clone -b "v$PG_AMQP_VERSION" --depth=1 https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
     && cd /tmp/pg_amqp \
     && make \
     && make install \
