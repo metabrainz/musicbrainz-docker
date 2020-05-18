@@ -1,15 +1,23 @@
-FROM metabrainz/base-image
-LABEL maintainer="yvanzo@metabrainz.org"
+ARG METABRAINZ_BASE_IMAGE_VERSION=0.9.22
+ARG METABRAINZ_BASE_IMAGE_VARIANT=-1
+ARG METABRAINZ_BASE_IMAGE_TAG=v${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
+FROM metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}
+
+ARG METABRAINZ_BASE_IMAGE_VERSION
+ARG METABRAINZ_BASE_IMAGE_VARIANT
+ARG METABRAINZ_BASE_IMAGE_TAG
+LABEL org.metabrainz.based-on-image="metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}"
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 ENV DOCKERIZE_VERSION v0.6.1
 RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_VERSION=10.19.0
 ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
-ARG POSTGRES_VERSION=9.5
+ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \

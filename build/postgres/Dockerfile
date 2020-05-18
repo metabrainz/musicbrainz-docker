@@ -1,10 +1,10 @@
-ARG POSTGRES_VERSION=9.5
+ARG POSTGRES_VERSION=12
 FROM postgres:${POSTGRES_VERSION}
-LABEL Author="jeffsturgis@gmail.com"
 
-ARG DEBIAN_FRONTEND="noninteractive"
-# Has to be redeclared due to being in a different build stage
 ARG POSTGRES_VERSION
+LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_VERSION}"
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Update the Ubuntu and PostgreSQL repository indexes
 RUN apt-get update && \
@@ -21,16 +21,9 @@ RUN apt-get update && \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
+ARG PG_AMQP_VERSION="0.4.1"
 # hadolint ignore=DL3003
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent \
-    && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate \
-    && git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
-    && cd /tmp/postgresql-musicbrainz-unaccent \
-    && make \
-    && make install \
-    && cd /tmp/postgresql-musicbrainz-collate \
-    && make \
-    && make install \
+RUN git clone -b "v$PG_AMQP_VERSION" --depth=1 https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
     && cd /tmp/pg_amqp \
     && make \
     && make install \

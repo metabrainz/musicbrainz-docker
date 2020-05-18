@@ -3,9 +3,7 @@ FROM metabrainz/python:${PYTHON_VERSION}
 
 ARG PYTHON_VERSION
 
-LABEL org.label-schema.schema-version="1.0.0-rc1" \
-      org.label-schema.vendor="MetaBrainz Foundation" \
-      org.metabrainz.based-on-image="metabrainz/python:${PYTHON_VERSION}"
+LABEL org.metabrainz.based-on-image="metabrainz/python:${PYTHON_VERSION}"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -35,7 +33,6 @@ RUN apt-get update \
 ##################
 
 ARG SIR_VERSION=1.0.2
-
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003

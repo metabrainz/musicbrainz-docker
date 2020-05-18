@@ -1,5 +1,12 @@
-FROM rabbitmq:3.6.16-management
-LABEL Author="yvanzo@metabrainz.org"
+ARG RABBITMQ_VERSION=3.6.16
+ARG RABBITMQ_VARIANT=-management
+ARG RABBITMQ_TAG=${RABBITMQ_VERSION}${RABBITMQ_VARIANT}
+FROM rabbitmq:${RABBITMQ_TAG}
+
+ARG RABBITMQ_VERSION
+ARG RABBITMQ_VARIANT
+ARG RABBITMQ_TAG
+LABEL org.metabrainz.based-on-image="rabbitmq:${RABBITMQ_TAG}"
 
 COPY [ "scripts/*", "/" ]
 

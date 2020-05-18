@@ -19,8 +19,8 @@ services:
     build:
       context: build/postgres
       args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
-    image: musicbrainz-docker_db:${POSTGRES_VERSION:-9.5}
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-12}
+    image: musicbrainz-docker_db:${POSTGRES_VERSION:-12}
     logging:
       driver: "json-file"
       options:
@@ -39,7 +39,7 @@ services:
     build:
       context: build/musicbrainz
       args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION:-9.5}
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-12}
     logging:
       driver: "json-file"
       options:
