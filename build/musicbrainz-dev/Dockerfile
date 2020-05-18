@@ -1,4 +1,4 @@
-FROM metabrainz/base-image
+FROM metabrainz/base-image:v0.9.22-1
 
 ENV DOCKERIZE_VERSION v0.6.1
 RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
