@@ -1,0 +1,70 @@
+ version: '3.1'
+
+# Description: Default compose file, run dependencies for local indexed search
+
+volumes:
+  mqdata:
+    driver: local
+  solrdata:
+    driver: local
+
+services:
+  db:
+    depends_on:
+      - mq
+
+  musicbrainz:
+    environment:
+      - MUSICBRAINZ_SEARCH_SERVER=${MUSICBRAINZ_SEARCH_SERVER:-search:8983/solr}
+    depends_on:
+      - mq
+      - search
+
+  indexer:
+    build: build/sir
+    env_file:
+      - ./default/postgres.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    volumes:
+      - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
+    depends_on:
+      - db
+      - mq
+      - search
+
+  search:
+    build:
+      context: build/solr
+      args:
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.1.3}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.1.3}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    environment:
+      - SOLR_HEAP=2g
+    expose:
+      - "8983"
+    volumes:
+      - solrdata:/opt/solr/server/solr/data
+      - searchdump:/media/searchdump
+
+  mq:
+    build: build/rabbitmq
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    volumes:
+      - mqdata:/var/lib/rabbitmq
+    expose:
+      - "5672"

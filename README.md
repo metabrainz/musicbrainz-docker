@@ -84,6 +84,12 @@ git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 ```
 
+Then enable support for hosting locally indexed search with:
+
+```bash
+admin/configure add hosting-indexed-search
+```
+
 ### Build Docker images
 
 Docker images for composed services should be built once using:
@@ -380,7 +386,7 @@ commands instead of following the above [installation](#installation):
 ```bash
 git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
-admin/configure add musicbrainz-standalone
+admin/configure add hosting-indexed-search musicbrainz-standalone
 sudo docker-compose build
 sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 sudo docker-compose up -d
@@ -408,7 +414,7 @@ MUSICBRAINZ_SERVER_LOCAL_ROOT=$PWD/musicbrainz-server
 git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
-admin/configure add musicbrainz-dev
+admin/configure add hosting-indexed-search musicbrainz-dev
 sudo docker-compose up -d
 sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 ```

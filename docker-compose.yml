@@ -1,13 +1,9 @@
 version: '3.1'
 
-# Description: Default compose file, with host port for musicbrainz
+# Description: Default compose file, run MusicBrainz Server without indexed search
 
 volumes:
-  mqdata:
-    driver: local
   pgdata:
-    driver: local
-  solrdata:
     driver: local
   dbdump:
     driver: local
@@ -55,63 +51,12 @@ services:
       - ./default/postgres.env
     environment:
       - MUSICBRAINZ_USE_PROXY=1
-      - MUSICBRAINZ_SEARCH_SERVER=${MUSICBRAINZ_SEARCH_SERVER:-search:8983/solr}
+      - MUSICBRAINZ_SEARCH_SERVER=${MUSICBRAINZ_SEARCH_SERVER:-search.musicbrainz.org}
       - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}
       - MUSICBRAINZ_WEB_SERVER_PORT=${MUSICBRAINZ_WEB_SERVER_PORT:-5000}
     depends_on:
       - db
-      - mq
-      - search
       - redis
-
-  indexer:
-    build: build/sir
-    env_file:
-      - ./default/postgres.env
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    volumes:
-      - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
-    depends_on:
-      - db
-      - mq
-      - search
-
-  search:
-    build:
-      context: build/solr
-      args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.1.3}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.1.3}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    restart: unless-stopped
-    environment:
-      - SOLR_HEAP=2g
-    expose:
-      - "8983"
-    volumes:
-      - solrdata:/opt/solr/server/solr/data
-      - searchdump:/media/searchdump
-
-  mq:
-    build: build/rabbitmq
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    restart: unless-stopped
-    volumes:
-      - mqdata:/var/lib/rabbitmq
-    expose:
-      - "5672"
 
   redis:
     image: redis:3-alpine
