@@ -3,6 +3,9 @@ version: '3.1'
 # Description: Make sir watches queue for reindex messages
 
 services:
+  db:
+    depends_on:
+      - mq
   indexer:
     entrypoint:
       - python
