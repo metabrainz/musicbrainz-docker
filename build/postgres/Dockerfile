@@ -21,10 +21,12 @@ RUN apt-get update && \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
-ARG PG_AMQP_VERSION="0.4.1"
+# There is no tag v0.4.2 (or 0.5.0) yet
+ARG PG_AMQP_GIT_REF="240d477d40c5e7a579b931c98eb29cef4edda164"
 # hadolint ignore=DL3003
-RUN git clone -b "v$PG_AMQP_VERSION" --depth=1 https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
+RUN git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
     && cd /tmp/pg_amqp \
+    && git checkout "$PG_AMQP_GIT_REF" \
     && make \
     && make install \
     && rm -R /tmp/*
