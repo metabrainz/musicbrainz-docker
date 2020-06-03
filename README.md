@@ -51,6 +51,13 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 * Linux or macOS
   (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox instead.)
 
+If you use Ubuntu 19.10 or later, the above requirements can be set up by running:
+```bash
+sudo apt-get update && \
+sudo apt-get install docker.io docker-compose git && \
+sudo systemctl enable --now docker.service
+```
+
 If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 * [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw.
 
