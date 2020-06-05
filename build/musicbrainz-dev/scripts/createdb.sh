@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 # liblocal-lib-perl < 2.000019 generates commands using unset variable
-eval "$(perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
+eval "$(perl -Mlocal::lib -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
 
 set -u
 
