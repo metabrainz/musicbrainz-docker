@@ -30,6 +30,7 @@ services:
     command: postgres -c "shared_buffers=2048MB" -c "shared_preload_libraries=pg_amqp.so"
     env_file:
       - ./default/postgres.env
+    shm_size: "2GB"
     volumes:
       - pgdata:/var/lib/postgresql/data
     expose:
