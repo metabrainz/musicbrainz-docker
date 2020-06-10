@@ -219,7 +219,7 @@ sub SEARCH_ENGINE             { "SOLR" }
 # Keeping this defined enables the banner that is shown across the top of each
 # page, as well as some testing features that are only enabled when not on
 # the live server.
-sub DB_STAGING_SERVER { 0 }
+# sub DB_STAGING_SERVER { 1 }
 
 # This description is shown in the banner when DB_STAGING_SERVER is enabled.
 # If left empty the default value will be shown.
