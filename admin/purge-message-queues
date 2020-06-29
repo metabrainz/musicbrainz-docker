@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME [--help]
+
+Purge message queues for search index rebuilder in RabbitMQ.
+EOH
+)
+
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+# Check whether Docker Compose service running RabbitMQ is up
+
+was_mq_up='no'
+service_containers="$($DOCKER_COMPOSE_CMD ps mq 2>/dev/null)"
+if echo "$service_containers" | grep -qw 'Up'
+then
+  was_mq_up='yes'
+else
+  $DOCKER_COMPOSE_CMD up -d mq
+  sleep 30
+fi
+
+# Check message queues vhost access, queues creation, messages count
+
+queues=$($DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -u sir -p sir -V /search-index-rebuilder list queues)
+if [[ $queues =~ 'Access refused' ]]
+then
+  echo "$queues"
+  echo "$SCRIPT_NAME: missing permissions"
+  echo "Try '$DOCKER_COMPOSE_CMD up -d --force-recreate mq' from '$MB_DOCKER_ROOT'"
+  exit 67 # EX_NOUSER
+elif [[ $queues =~ 'No items' ]]
+then
+  echo There is no message queue to be purged for search index rebuilder.
+  exit 0 # EX_OK
+else
+  echo "Current count of messages for search index rebuilder:"
+  echo "$queues"
+fi
+
+# For each queue, delete all messages
+
+for q in $($DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -f bash -u sir -p sir -V /search-index-rebuilder list queues name | strings)
+do
+	echo -n "$q ... "
+	$DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -f bash -u sir -p sir -V /search-index-rebuilder purge queue name="$q"
+done
+
+# Stop RabbitMQ if it was not initially up
+
+if [[ $was_mq_up == 'no' ]]
+then
+  $DOCKER_COMPOSE_CMD stop mq
+fi
+
+# vi: set et sts=2 sw=2 ts=2 :
