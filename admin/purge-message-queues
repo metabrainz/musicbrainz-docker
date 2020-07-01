@@ -26,8 +26,7 @@ fi
 # Check whether Docker Compose service running RabbitMQ is up
 
 was_mq_up='no'
-service_containers="$($DOCKER_COMPOSE_CMD ps mq 2>/dev/null)"
-if echo "$service_containers" | grep -qw 'Up'
+if $DOCKER_COMPOSE_CMD ps mq 2>/dev/null | grep -qw 'Up'
 then
   was_mq_up='yes'
 else
