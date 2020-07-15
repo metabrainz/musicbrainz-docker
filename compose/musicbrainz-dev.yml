@@ -14,7 +14,22 @@ services:
       - PERL_CPANM_HOME=${MUSICBRAINZ_PERL_CPANM_HOME:-/musicbrainz-server/.cpanm}
       - MUSICBRAINZ_PERL_LOCAL_LIB=${MUSICBRAINZ_PERL_LOCAL_LIB:-/musicbrainz-server/perl_modules}
     depends_on:
+      - selenium
       - validator
+  selenium:
+    image: selenium/standalone-chrome-debug:3.141.59
+    environment:
+      - VNC_NO_PASSWORD=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    restart: unless-stopped
+    ports:
+      - "${SELENIUM_VNC_PORT:-5900}:5900"
+    expose:
+      - "4444"
   validator:
     image: validator/validator:20.3.16
     logging:
