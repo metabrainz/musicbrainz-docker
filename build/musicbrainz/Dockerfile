@@ -112,6 +112,9 @@ RUN eval "$(perl -Mlocal::lib)" \
 
 COPY DBDefs.pm /musicbrainz-server/lib/
 COPY scripts/* /usr/local/bin/
+RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
+    && rm /usr/local/bin/snippet.perllocallib.bashrc \
+    && ln -s /usr/local/bin/docker-entrypoint.sh /
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
@@ -133,4 +136,5 @@ RUN yarn install \
     && eval "$(perl -Mlocal::lib)" \
     && /musicbrainz-server/script/compile_resources.sh
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["start.sh"]

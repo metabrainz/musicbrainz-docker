@@ -1,11 +1,6 @@
 #!/bin/bash
 
-set -e
-
-# liblocal-lib-perl < 2.000019 generates commands using unset variable
-eval "$(perl -Mlocal::lib)"
-
-set -u
+set -e -u
 
 HELP="Usage: $0 INDEXER_SQL_DIR <create|drop>"
 

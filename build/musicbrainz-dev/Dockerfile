@@ -95,13 +95,15 @@ WORKDIR /musicbrainz-server
 COPY DBDefs.pm /
 COPY scripts/* /usr/local/bin/
 RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
-    && rm /usr/local/bin/snippet.perllocallib.bashrc
+    && rm /usr/local/bin/snippet.perllocallib.bashrc \
+    && ln -s /usr/local/bin/docker-entrypoint.sh /
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 
-ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
+ENV BASH_ENV=/noninteractive.bash_env \
+    MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=1 \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr \
     MUSICBRAINZ_STANDALONE_SERVER=1 \
@@ -112,4 +114,5 @@ ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["start.sh"]

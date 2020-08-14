@@ -1,13 +1,6 @@
-#!/bin/sh
-set -e
+#!/bin/bash
 
-# liblocal-lib-perl < 2.000019 generates commands using unset variable
-eval "$(perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
-
-set -u
-
-mkdir -p "${MUSICBRAINZ_PERL_LOCAL_LIB}"
-mkdir -p "${PERL_CPANM_HOME}"
+set -e -u
 
 cd /musicbrainz-server
 
