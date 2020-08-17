@@ -10,7 +10,7 @@ LABEL org.metabrainz.based-on-image="metabrainz/base-image:${METABRAINZ_BASE_IMA
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV DOCKERIZE_VERSION v0.6.1
+ARG DOCKERIZE_VERSION=v0.6.1
 RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
