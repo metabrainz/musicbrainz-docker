@@ -1,11 +1,6 @@
 #!/bin/bash
 
-set -e -o pipefail
-
-# liblocal-lib-perl < 2.000019 generates commands using unset variable
-eval "$(perl -Mlocal::lib="${MUSICBRAINZ_PERL_LOCAL_LIB}")"
-
-set -u
+set -e -o pipefail -u
 
 FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
 IMPORT="fullexport"

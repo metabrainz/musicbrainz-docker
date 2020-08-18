@@ -1,1 +1,3 @@
+SHELL=/bin/bash
+BASH_ENV=/noninteractive.bash_env
 0 3 * * * /usr/local/bin/replication.sh
