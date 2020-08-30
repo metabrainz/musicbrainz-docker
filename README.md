@@ -184,8 +184,8 @@ sudo docker-compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-sudo docker-compose exec musicbrainz replication.sh &
-sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log
+sudo docker-compose run --name musicbrainz_ri --rm replication.sh &
+sudo docker exec musicbrainz_ri /usr/bin/tail -f slave.log
 ```
 
 <!-- TODO: estimate replication time per missing day -->
@@ -212,8 +212,6 @@ sudo docker-compose exec musicbrainz tail --follow slave.log
 You can view the replication log file after it is done with:
 
 ```bash
-sudo docker-compose exec musicbrainz tail slave.log.1
-```
 
 ### Enable live indexing
 
