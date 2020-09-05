@@ -184,7 +184,7 @@ sudo docker-compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-sudo docker-compose run --name musicbrainz_ri --rm replication.sh &
+sudo docker-compose run --name musicbrainz_ri --rm musicbrainz replication.sh &
 sudo docker exec musicbrainz_ri /usr/bin/tail -f slave.log
 ```
 
