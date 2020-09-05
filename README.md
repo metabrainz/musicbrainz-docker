@@ -212,6 +212,8 @@ sudo docker-compose exec musicbrainz tail --follow slave.log
 You can view the replication log file after it is done with:
 
 ```bash
+sudo docker-compose exec musicbrainz tail slave.log.1
+```
 
 ### Enable live indexing
 
