@@ -120,7 +120,8 @@ RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 
-ENV MUSICBRAINZ_CATALYST_DEBUG=0 \
+ENV BASH_ENV=/noninteractive.bash_env \
+    MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=0 \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr \
     MUSICBRAINZ_STANDALONE_SERVER=0 \
