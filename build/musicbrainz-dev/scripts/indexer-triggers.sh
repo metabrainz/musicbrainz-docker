@@ -18,7 +18,9 @@ case "$2" in
   create)
     admin/psql < "$INDEXER_SQL_DIR/CreateFunctions.sql"
     admin/psql < "$INDEXER_SQL_DIR/CreateTriggers.sql"
-    admin/GenerateSQLScripts.pl "$INDEXER_SQL_DIR/"
+    admin/GenerateSQLScripts.pl \
+      -c "CreateFunctions.sql" "CreateTriggers.sql" \
+      "$INDEXER_SQL_DIR/"
     ;;
   drop  )
     admin/psql < "$INDEXER_SQL_DIR/DropTriggers.sql"
