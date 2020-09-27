@@ -14,10 +14,12 @@ RUN apt-get update && \
         gcc \
         git \
         libicu-dev \
-        libpq5=${POSTGRES_VERSION}.* \
-        libpq-dev=${POSTGRES_VERSION}.* \
         make \
         pkg-config \
+    && apt-get install --allow-downgrades --no-install-recommends -qy \
+        --target-release "n=$(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg" \
+        libpq5 \
+        libpq-dev \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
