@@ -406,6 +406,10 @@ Replication is not applicable to test setup.
 
 Required disk space is much lesser than normal setup: 15GB to be safe.
 
+The below sections are optional depending on which service(s) you are coding.
+
+### Local development of MusicBrainz Server
+
 For local development of MusicBrainz Server, you can run the below
 commands instead of following the above [installation](#installation):
 
@@ -436,6 +440,34 @@ sudo docker-compose restart musicbrainz
 [Enable live indexing](#enable-live-indexing) are the same.
 
 Replication is not applicable to development setup.
+
+Simply restart the container when checking out a new branch.
+
+### Local development of Search Index Rebuilder
+
+This is very similar to the above but for Search Index Rebuilder (SIR):
+1. Set the variable `SIR_LOCAL_ROOT` in the `.env` file
+2. Run `admin/configure add sir-dev`
+3. Run `sudo docker-compose up -d`
+
+Notes:
+* It will override any `config.ini` file in your local working copy of SIR.
+* Requirements are being cached and will be updated on container’s startup.
+* See [how to configure SIR in `musicbrainz-docker`](#customize-search-indexer-configuration).
+
+### Local development of MusicBrainz Solr
+
+The situation is quite different for this service as it doesn’t
+depends on any other. Its development rather rely on schema. See
+[mb-solr](https://github.com/metabrainz/mb-solr) and
+[mmd-schema](https://github.com/metabrainz/mmd-schema).
+
+However, other services depend on it, so it is useful to run a local
+version of `mb-solr` in `search` service for integration tests:
+1. Run `build.sh` from your `mb-solr` local working copy to build a
+   an image of `metabrainz/mb-solr` with a custom tag.
+2. Set `MB_SOLR_VERSION` in `.env` to this custom tag.
+3. Run `sudo docker-compose up -d`
 
 ## Helper scripts
 
