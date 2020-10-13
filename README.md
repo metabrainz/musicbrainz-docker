@@ -293,6 +293,13 @@ By default, the web server listens at <http://localhost:5000>
 This can be changed using the two Docker environment variables
 `MUSICBRAINZ_WEB_SERVER_HOST` and `MUSICBRAINZ_WEB_SERVER_PORT`.
 
+#### Customize the number of processes for MusicBrainz Server
+
+By default, MusicBrainz Server uses 10 `plackup` processes at once.
+
+This number can be changed using the Docker environment variable
+`MUSICBRAINZ_SERVER_PROCESSES`.
+
 #### Customize replication schedule
 
 By default, there is no crontab file in `musicbrainz` service container.

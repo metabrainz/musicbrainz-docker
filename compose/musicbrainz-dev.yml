@@ -13,6 +13,7 @@ services:
       - MUSICBRAINZ_DEVELOPMENT_SERVER=${MUSICBRAINZ_DEVELOPMENT_SERVER:-1}
       - PERL_CPANM_HOME=${MUSICBRAINZ_PERL_CPANM_HOME:-/musicbrainz-server/.cpanm}
       - MUSICBRAINZ_PERL_LOCAL_LIB=${MUSICBRAINZ_PERL_LOCAL_LIB:-/musicbrainz-server/perl_modules}
+      - MUSICBRAINZ_SERVER_PROCESSES=${MUSICBRAINZ_SERVER_PROCESSES:-1}
     depends_on:
       - validator
   validator:
