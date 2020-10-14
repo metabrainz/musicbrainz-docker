@@ -17,4 +17,4 @@ then
   cron -f &
 fi
 
-start_server --port=5000 -- plackup -I lib -s Starlet -E deployment --nproc 10 --pid fcgi.pid
+start_server --port=5000 -- plackup -I lib -s Starlet -E deployment --nproc ${MUSICBRAINZ_SERVER_PROCESSES} --pid fcgi.pid
