@@ -12,6 +12,8 @@ fi
 
 INDEXER_SQL_DIR="$1"
 
+dockerize -wait tcp://db:5432 -timeout 60s sleep 0
+
 cd /musicbrainz-server
 
 case "$2" in
