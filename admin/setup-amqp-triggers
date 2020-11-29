@@ -70,7 +70,7 @@ case "$1" in
 
     echo "Installing indexer triggers ..."
 
-    $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+    $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers --entity-type artist --entity-type release-group
 
     indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
     $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
