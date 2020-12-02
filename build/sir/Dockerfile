@@ -1,9 +1,11 @@
 ARG PYTHON_VERSION=2.7
-FROM metabrainz/python:${PYTHON_VERSION}
+ARG BASE_IMAGE_DATE=20190302
+FROM metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
 
 ARG PYTHON_VERSION
+ARG BASE_IMAGE_DATE
 
-LABEL org.metabrainz.based-on-image="metabrainz/python:${PYTHON_VERSION}"
+LABEL org.metabrainz.based-on-image="metabrainz/python:${PYTHON_VERSION}-${BASE_IMAGE_DATE}"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
