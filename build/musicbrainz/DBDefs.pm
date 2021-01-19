@@ -169,7 +169,12 @@ sub REPLICATION_ACCESS_TOKEN {
 # Additionally you should set the environment variable
 # MUSICBRAINZ_USE_PROXY=1 when using a reverse proxy to make the server
 # aware of it when generating things like the canonical url in catalyst.
-sub WEB_SERVER                { "$ENV{MUSICBRAINZ_WEB_SERVER_HOST}:$ENV{MUSICBRAINZ_WEB_SERVER_PORT}" }
+sub WEB_SERVER {
+    $ENV{MUSICBRAINZ_WEB_SERVER_PORT} == 80 ||
+    $ENV{MUSICBRAINZ_WEB_SERVER_PORT} == 443
+        ? "$ENV{MUSICBRAINZ_WEB_SERVER_HOST}"
+        : "$ENV{MUSICBRAINZ_WEB_SERVER_HOST}:$ENV{MUSICBRAINZ_WEB_SERVER_PORT}"
+}
 # Relevant only if SSL redirects are enabled
 # sub WEB_SERVER_SSL            { "localhost" }
 sub SEARCH_SERVER             { "$ENV{MUSICBRAINZ_SEARCH_SERVER}" }

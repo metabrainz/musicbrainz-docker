@@ -293,6 +293,12 @@ By default, the web server listens at <http://localhost:5000>
 This can be changed using the two Docker environment variables
 `MUSICBRAINZ_WEB_SERVER_HOST` and `MUSICBRAINZ_WEB_SERVER_PORT`.
 
+If `MUSICBRAINZ_WEB_SERVER_PORT` set to `80` (http), then the
+port number will not appear in the base URL of the web server.
+
+If set to `443` (https), then the port number will not appear either,
+but the a separate reverse proxy is required to handle https correctly.
+
 #### Customize the number of processes for MusicBrainz Server
 
 By default, MusicBrainz Server uses 10 `plackup` processes at once.
