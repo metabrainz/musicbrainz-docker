@@ -42,6 +42,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 * RAM: 16 GB (or 4 without indexed search)
 * Disk Space: 150 GB (or 60 without indexed search)
             + system disk usage
+
 ### Required software
 
 * Docker Compose 1.21.1 (or higher), see [how to install Docker Compose](https://docs.docker.com/compose/install/)
@@ -50,6 +51,11 @@ This repo contains everything needed to run a musicbrainz slave server with sear
   (On macOS, use [Homebrew](https://brew.sh/).)
 * Linux or macOS
   (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox instead.)
+
+If you use Docker Desktop on macOS you may need to increase the amount of memory
+available to containers from the default of 2GB:
+
+* Preferences > Resources > Memory
 
 If you use Ubuntu 19.10 or later, the above requirements can be set up by running:
 ```bash
