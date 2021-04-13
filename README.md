@@ -132,11 +132,11 @@ sudo docker-compose up -d
 At this point the local website will show data loaded from the dumps
 only. For indexed search and replication, keep going!
 
-### Build search indexes
+### Set up search indexes
 
 Depending on your available ressources in CPU/RAM vs. bandwidth, run:
 
-* Either:
+* To build indexes manually from the installed database:
 
   ```bash
   sudo docker-compose exec indexer python -m sir reindex
@@ -149,7 +149,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth, run:
 
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
-* Or, if you have more available bandwidth than CPU/RAM:
+* To download pre-built search indexes based on the latest data dump:
 
   ```bash
   sudo docker-compose run --rm musicbrainz fetch-dump.sh search
