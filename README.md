@@ -156,7 +156,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
   sudo docker-compose run --rm search load-search-indexes.sh
   ```
 
-  (This option downloads 28GB of Zstandard-compressed archives from FTP.)
+  (This option downloads 30GB of Zstandard-compressed archives from FTP.)
 
 :warning: Search indexes are not included in replication.
 You will have to rebuild search indexes regularly to keep it up-to-date.
