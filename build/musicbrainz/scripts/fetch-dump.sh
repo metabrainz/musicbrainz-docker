@@ -148,7 +148,7 @@ then
 
 	"${WGET_CMD[@]}" -nd -nH -P "$DB_DUMP_DIR" \
 		"$BASE_FTP_URL/$DB_DUMP_REMOTE_DIR/LATEST"
-	DUMP_TIMESTAMP=$(cat /media/dbdump/LATEST)
+	DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST")
 fi
 
 # Actually fetch database dump
