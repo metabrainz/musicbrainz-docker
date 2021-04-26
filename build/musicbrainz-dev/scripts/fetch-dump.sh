@@ -49,6 +49,10 @@ do
 		--base-ftp-url )
 			shift
 			BASE_FTP_URL="$1"
+			if ! [[ $BASE_FTP_URL =~ '^ftp://' ]]
+			then
+				BASE_FTP_URL="ftp://$BASE_FTP_URL"
+			fi
 			;;
 		--wget-options )
 			shift
