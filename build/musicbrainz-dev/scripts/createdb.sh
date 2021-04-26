@@ -2,7 +2,7 @@
 
 set -e -o pipefail -u
 
-FTP_MB=ftp://ftp.eu.metabrainz.org/pub/musicbrainz
+FTP_MB="$MUSICBRAINZ_BASE_FTP_URL"
 IMPORT="fullexport"
 FETCH_DUMPS=""
 WGET_OPTIONS=""
