@@ -17,9 +17,28 @@ while :; do
   remaining_time=$(($remaining_time - 1))
 done
 
-rabbitmqctl add_user sir sir
-rabbitmqctl set_user_tags sir management
-rabbitmqctl add_vhost /search-index-rebuilder
-rabbitmqctl set_permissions -p /search-index-rebuilder sir '.*' '.*' '.*'
+if ! (rabbitmqctl list_users \
+  | grep -q '^sir\s')
+then
+  rabbitmqctl add_user sir sir
+fi
+
+if ! (rabbitmqctl list_users \
+  | grep -q '^sir\s\+\[management\]$')
+then
+  rabbitmqctl set_user_tags sir management
+fi
+
+if ! (rabbitmqctl list_vhosts \
+  | grep -q '^/search-index-rebuilder$')
+then
+  rabbitmqctl add_vhost /search-index-rebuilder
+fi
+
+if ! (rabbitmqctl list_permissions -p /search-index-rebuilder \
+  | grep -q '^sir\s\+\.\*\s\+\.\*\s\+\.\*$')
+then
+  rabbitmqctl set_permissions -p /search-index-rebuilder sir '.*' '.*' '.*'
+fi
 
 echo "Done."
