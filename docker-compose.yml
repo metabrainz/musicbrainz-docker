@@ -103,6 +103,7 @@ services:
 
   mq:
     build: build/rabbitmq
+    hostname: "mq"
     logging:
       driver: "json-file"
       options:
