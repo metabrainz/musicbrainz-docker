@@ -573,7 +573,10 @@ Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for 
 
 ## Issues
 
-If anything doesn't work please create an issue with versions info:
+If anything doesn't work, check the [troubleshooting](TROUBLESHOOTING.md) page.
+
+
+If you still don’t have a solution, please create an issue with versions info:
 
 ```bash
 echo MusicBrainz Docker: `git describe --always --broken --dirty --tags` && \
