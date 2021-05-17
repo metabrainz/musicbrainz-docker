@@ -86,8 +86,8 @@ services:
     build:
       context: build/solr
       args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.4.1}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.4.1}
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.4.2}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.4.2}
     logging:
       driver: "json-file"
       options:
