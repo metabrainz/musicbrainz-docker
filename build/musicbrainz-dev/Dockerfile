@@ -1,6 +1,6 @@
-ARG METABRAINZ_BASE_IMAGE_VERSION=0.9.22
-ARG METABRAINZ_BASE_IMAGE_VARIANT=-1
-ARG METABRAINZ_BASE_IMAGE_TAG=v${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
+ARG METABRAINZ_BASE_IMAGE_VERSION=focal-1.0.0-alpha1
+ARG METABRAINZ_BASE_IMAGE_VARIANT=
+ARG METABRAINZ_BASE_IMAGE_TAG=${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
 FROM metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}
 
 ARG METABRAINZ_BASE_IMAGE_VERSION
@@ -8,6 +8,7 @@ ARG METABRAINZ_BASE_IMAGE_VARIANT
 ARG METABRAINZ_BASE_IMAGE_TAG
 LABEL org.metabrainz.based-on-image="metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}"
 
+ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG DOCKERIZE_VERSION=v0.6.1
@@ -15,7 +16,7 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ARG NODE_VERSION=10.19.0
+ARG NODE_VERSION=16.1.0
 ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
 ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -48,9 +49,9 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
-        python-minimal && \
-    curl -sSLO --retry 5 https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
-    dpkg -i nodejs_${NODE_VERSION}-1nodesource1_amd64.deb && \
+        python2-minimal && \
+    curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
+    dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
         bash-completion \

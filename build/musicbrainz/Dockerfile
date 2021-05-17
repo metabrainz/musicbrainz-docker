@@ -1,6 +1,6 @@
-ARG METABRAINZ_BASE_IMAGE_VERSION=0.9.22
-ARG METABRAINZ_BASE_IMAGE_VARIANT=-1
-ARG METABRAINZ_BASE_IMAGE_TAG=v${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
+ARG METABRAINZ_BASE_IMAGE_VERSION=focal-1.0.0-alpha1
+ARG METABRAINZ_BASE_IMAGE_VARIANT=
+ARG METABRAINZ_BASE_IMAGE_TAG=${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
 FROM metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}
 
 ARG METABRAINZ_BASE_IMAGE_VERSION
@@ -8,6 +8,7 @@ ARG METABRAINZ_BASE_IMAGE_VARIANT
 ARG METABRAINZ_BASE_IMAGE_TAG
 LABEL org.metabrainz.based-on-image="metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}"
 
+ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG DOCKERIZE_VERSION=v0.6.1
@@ -40,20 +41,20 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-client-${POSTGRES_VERSION} \
-        python-minimal \
+        python2-minimal \
         # Needed to decompress sample data
         xz-utils \
         # Needed for XML:LibXML
         zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2021-05-03
+ARG MUSICBRAINZ_SERVER_VERSION=v-2021-05-19-hotfixes
 LABEL org.metabrainz.musicbrainz-server.version="${MUSICBRAINZ_SERVER_VERSION}"
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
 WORKDIR /musicbrainz-server
 
-ARG NODE_VERSION=10.19.0
+ARG NODE_VERSION=16.1.0
 ARG PGP_SERVERS="ha.pool.sks-keyservers.net ipv4.pool.sks-keyservers.net p80.pool.sks-keyservers.net:80"
 RUN cp docker/yarn_pubkey.txt /tmp && \
     cd /tmp && \
@@ -83,8 +84,8 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
     \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
-    curl -sSLO --retry 5 https://deb.nodesource.com/node_10.x/pool/main/n/nodejs/nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
-    dpkg -i nodejs_$NODE_VERSION-1nodesource1_amd64.deb && \
+    curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
+    dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get purge -qy cmdtest && \
     apt-get install --no-install-recommends -qy \
         yarn && \
@@ -123,6 +124,7 @@ ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 ENV BASH_ENV=/noninteractive.bash_env \
     MUSICBRAINZ_BASE_FTP_URL=ftp://ftp.eu.metabrainz.org/pub/musicbrainz \
     MUSICBRAINZ_CATALYST_DEBUG=0 \
+    MUSICBRAINZ_DB_SCHEMA_SEQUENCE=26 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=0 \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr \
     MUSICBRAINZ_SERVER_PROCESSES=10 \
