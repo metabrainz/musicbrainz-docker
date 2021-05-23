@@ -4,7 +4,7 @@ set -e -o pipefail -u
 
 DB_DUMP_DIR=/media/dbdump
 SEARCH_DUMP_DIR=/media/searchdump
-BASE_FTP_MB="$MUSICBRAINZ_BASE_FTP_URL"
+BASE_FTP_URL="$MUSICBRAINZ_BASE_FTP_URL"
 TARGET=''
 WGET_CMD=(wget)
 
