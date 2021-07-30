@@ -50,13 +50,16 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
     apt-get update && \
     apt-get install --no-install-recommends -qy \
         python2-minimal && \
+    curl -sSLO --retry 5 https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get install --no-install-recommends -qy \
+        ./google-chrome-stable_current_amd64.deb \
         cpanminus \
         bash-completion \
         build-essential \
         bzip2 \
+        firefox-geckodriver \
         gettext \
         g++ \
         git \
@@ -79,11 +82,16 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         libssl-dev \
         # Needed for XML::LibXML
         libxml2-dev \
+        lsof \
         make \
         memcached \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
+        runit \
+        runit-systemd \
+        software-properties-common \
+        sudo \
         # Needed to decompress sample data
         xz-utils \
         yarn \
@@ -98,6 +106,17 @@ COPY scripts/* /usr/local/bin/
 RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
     && rm /usr/local/bin/snippet.perllocallib.bashrc \
     && ln -s /usr/local/bin/docker-entrypoint.sh /
+
+COPY chrome.service /etc/service/chrome/run
+RUN curl -sLO https://chromedriver.storage.googleapis.com/92.0.4515.43/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip -d /usr/local/bin && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm chromedriver_linux64.zip && \
+    chmod 755 /etc/service/chrome/run && \
+    touch /etc/service/chrome/down && \
+    chmod +x /usr/local/bin/install_svlogd_services.sh && \
+    install_svlogd_services.sh chrome && \
+    rm /usr/local/bin/install_svlogd_services.sh
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests

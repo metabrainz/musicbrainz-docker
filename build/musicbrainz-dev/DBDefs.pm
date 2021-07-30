@@ -451,7 +451,7 @@ sub HTML_VALIDATOR { 'http://validator:8888?out=json' }
 
 # Set to 1 if you're a developer and plan to run tests locally. Never
 # enable in production.
-# sub USE_SET_DATABASE_HEADER { 0 }
+# sub USE_SET_DATABASE_HEADER { 1 }
 
 # Disable auto forking it is handled by superdaemon
 sub FORK_RENDERER { 0 }
