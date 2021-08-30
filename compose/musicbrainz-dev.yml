@@ -17,7 +17,7 @@ services:
     depends_on:
       - validator
   validator:
-    image: ghcr.io/validator/validator@sha256:88641ddddc43c9414afe4903fb4b602aab2e81d87bae3a569ff79d611ffbcaf3
+    image: validator/validator:20.3.16
     logging:
       driver: "json-file"
       options:
