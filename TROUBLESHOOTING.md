@@ -81,3 +81,29 @@ It will automatically reinstall them all using current Perl version:
 sudo rm -fr "$MUSICBRAINZ_SERVER_LOCAL_ROOT/perl_modules/
 sudo docker-compose restart musicbrainz
 ```
+
+## ImportError: No module named
+
+Using Search Index Rebuilder’s development setup only,
+when `indexer` service doesn’t work as expected,
+and python commands return the following:
+
+```log
+Traceback (most recent call last):
+[...]
+ImportError: No module named [...]
+```
+
+(where the latest `[...]` may be `sqlalchemy` or any other dependency)
+
+Solution:
+
+Remove all installed Python packages and installation cache as follows:
+
+```bash
+sudo docker-compose exec indexer rm -fr /code/.cache /code/venv-musicbrainz-docker
+sudo docker-compose restart indexer
+```
+
+Python packages are downloaded again and installed again when the
+service `indexer` restarts.
