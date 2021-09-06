@@ -458,7 +458,9 @@ The four differences are:
 1. sample data dump is downloaded instead of full data dumps,
 2. MusicBrainz Server runs in standalone mode instead of slave mode,
 3. development mode is enabled (but Catalyst debug),
-4. MusicBrainz Server code is in `musicbrainz-server/` directory.
+4. JavaScript and resources are automaticaly recompiled on file changes,
+5. MusicBrainz Server is automatically restarted on Perl file changes,
+6. MusicBrainz Server code is in `musicbrainz-server/` directory.
 
 After changing code in `musicbrainz-server/`, it can be run as follows:
 
