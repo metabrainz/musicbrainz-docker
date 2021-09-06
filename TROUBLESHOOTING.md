@@ -6,6 +6,8 @@
 
 - [InitDb.pl failed on macOS](#initdbpl-failed-on-macos)
 - [Resolving name failed](#resolving-name-failed)
+- [Loadable library and perl binaries are mismatched](#loadable-library-and-perl-binaries-are-mismatched)
+- [ImportError: No module named](#importerror-no-module-named)
 
 <!-- tocstop -->
 
