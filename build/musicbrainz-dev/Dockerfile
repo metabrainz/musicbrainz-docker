@@ -80,7 +80,6 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         # Needed for XML::LibXML
         libxml2-dev \
         make \
-        memcached \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
