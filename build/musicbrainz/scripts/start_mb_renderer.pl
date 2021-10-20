@@ -7,5 +7,5 @@ use DBDefs;
 
 my $socket = DBDefs->RENDERER_SOCKET;
 
-system("rm $socket");
+system("rm -f $socket");
 system("/musicbrainz-server/script/start_renderer.pl --daemonize --socket $socket");
