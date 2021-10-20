@@ -8,8 +8,6 @@ diff /DBDefs.pm lib/DBDefs.pm || cat /DBDefs.pm > lib/DBDefs.pm
 
 cpanm --installdeps --notest --with-develop .
 cpanm --notest \
-  Cache::Memcached::Fast \
-  Cache::Memory \
   Catalyst::Plugin::Cache::HTTP \
   Catalyst::Plugin::StackTrace \
   Digest::MD5::File \

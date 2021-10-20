@@ -37,7 +37,6 @@ RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt
         # Needed for XML::LibXML
         libxml2-dev \
         make \
-        memcached \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-client-${POSTGRES_VERSION} \
@@ -95,8 +94,6 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
 RUN eval "$(perl -Mlocal::lib)" \
     && cpanm --installdeps --notest . \
     && cpanm --notest \
-        Cache::Memcached::Fast \
-        Cache::Memory \
         Catalyst::Plugin::Cache::HTTP \
         Catalyst::Plugin::StackTrace \
         Digest::MD5::File \
