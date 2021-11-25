@@ -269,22 +269,37 @@ sub PLUGIN_CACHE_OPTIONS {
 # The caching options here relate to object caching in Redis - such as for
 # artists, releases, etc. in order to speed up queries. See below if you want
 # to disable caching.
+# sub CACHE_MANAGER_OPTIONS {
+#     my $self = shift;
+#     my %CACHE_MANAGER_OPTIONS = (
+#         profiles => {
+#             external => {
+#                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
+#                 options => {
+#                     server => 'redis:6379',
+#                     namespace => $self->CACHE_NAMESPACE,
+#                 },
+#             },
+#         },
+#         default_profile => 'external',
+#     );
+#
+#     return \%CACHE_MANAGER_OPTIONS
+# }
+
+# Alternatively, you may disable caching by pointing to Cache::Null:
 sub CACHE_MANAGER_OPTIONS {
     my $self = shift;
     my %CACHE_MANAGER_OPTIONS = (
         profiles => {
-            external => {
-                class => 'MusicBrainz::Server::CacheWrapper::Redis',
-                options => {
-                    server => 'redis:6379',
-                    namespace => $self->CACHE_NAMESPACE,
-                },
+            null => {
+                class => 'Cache::Null',
+                wrapped => 1,
             },
         },
-        default_profile => 'external',
+        default_profile => 'null',
     );
-
-    return \%CACHE_MANAGER_OPTIONS
+    return \%CACHE_MANAGER_OPTIONS;
 }
 
 # Sets the TTL for entities stored in Redis, in seconds. A value of 0
@@ -299,6 +314,7 @@ sub ENTITY_CACHE_TTL { 3600 }
 # uses DATASTORE_REDIS_ARGS to connect to and store sessions in Redis.
 
 # sub SESSION_STORE { "Session::Store::MusicBrainz" }
+sub SESSION_STORE { "Session::Store::Dummy" }
 # sub SESSION_STORE_ARGS { return {} }
 # sub SESSION_EXPIRE { return 36000; } # 10 hours
 
