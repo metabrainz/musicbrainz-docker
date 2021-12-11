@@ -450,8 +450,9 @@ git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
 admin/configure add musicbrainz-dev
-sudo docker-compose up -d
+sudo docker-compose build
 sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
+sudo docker-compose up -d
 ```
 
 The four differences are:
