@@ -96,6 +96,7 @@ services:
     restart: unless-stopped
     environment:
       - SOLR_HEAP=2g
+      - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
     expose:
       - "8983"
     volumes:
