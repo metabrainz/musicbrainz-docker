@@ -2,6 +2,18 @@
 
 set -e -u
 
+if ! [[ -x /code/venv-musicbrainz-docker/bin/python2 ]]
+then
+  (
+    unset PYTHONPATH
+    virtualenv \
+      --python=python2 \
+      --system-site-packages \
+      --verbose \
+      /code/venv-musicbrainz-docker
+  )
+fi
+
 mkdir -p .cache
 
 pip install \

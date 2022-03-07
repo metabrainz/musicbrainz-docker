@@ -29,6 +29,8 @@ RUN apt-get update \
       libsqlite3-dev \
       # required by lxml from mb-rngpy
       libxslt1-dev \
+      # required to initialize the virtual environment (development setup)
+      virtualenv \
     && rm -rf /var/lib/apt/lists/*
 
 ##################
@@ -58,4 +60,4 @@ ENV PYTHONPATH="/code/venv-musicbrainz-docker/lib/python2.7"
 ENV PATH="/code/venv-musicbrainz-docker/bin:$PATH"
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["my_init"]
+CMD unset PYTHONPATH; my_init
