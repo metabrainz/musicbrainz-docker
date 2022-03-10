@@ -61,7 +61,7 @@ fi
 # Check that required Docker Compose services are up
 
 service_containers="$($DOCKER_COMPOSE_CMD ps search 2>/dev/null)"
-if ! echo "$service_containers" | grep -qw 'Up'
+if ! echo "$service_containers" | grep -qw 'running\|Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot delete indexed documents: " \
            "the Docker Compose service 'search' is not up"
