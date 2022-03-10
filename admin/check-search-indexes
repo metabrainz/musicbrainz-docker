@@ -96,7 +96,7 @@ fi
 # Check that required Docker Compose services are up
 
 service_containers="$($DOCKER_COMPOSE_CMD ps db 2>/dev/null)"
-if ! echo "$service_containers" | grep -qw 'Up'
+if ! echo "$service_containers" | grep -qw 'running\|Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot count existing documents: " \
            "the Docker Compose service 'db' is not up"
@@ -105,7 +105,7 @@ then
 fi
 
 service_containers="$($DOCKER_COMPOSE_CMD ps indexer 2>/dev/null)"
-if ! echo "$service_containers" | grep -qw 'Up'
+if ! echo "$service_containers" | grep -qw 'running\|Up'
 then
   echo >&2 "$SCRIPT_NAME: cannot count indexed documents: " \
            "the Docker Compose service 'indexer' is not up"

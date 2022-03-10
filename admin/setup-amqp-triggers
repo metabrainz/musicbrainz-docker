@@ -28,7 +28,7 @@ REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
 
 case "$1" in
   clean     )
-    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
+    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
     then
       echo >&2 "$SCRIPT_NAME: cannot clean: " \
                "the Docker Compose service 'musicbrainz' is not up"
@@ -42,7 +42,7 @@ case "$1" in
     rm -frv "$LOCAL_TRIGGERS_DIR"
     ;;
   install   )
-    if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'Up'
+    if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'running\|Up'
     then
       echo >&2 "$SCRIPT_NAME: cannot install: " \
                "the Docker Compose service 'indexer' is not up"
@@ -87,7 +87,7 @@ case "$1" in
     rm -fr "$LOCAL_TRIGGERS_DIR"
     ;;
   uninstall )
-    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'Up'
+    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
     then
       echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
                "the Docker Compose service 'musicbrainz' is not up"
