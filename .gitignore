@@ -2,6 +2,9 @@
 # See https://docs.docker.com/compose/environment-variables/#the-env-file
 /.env
 
+# File created and managed by the script admin/create-amqp-extension
+/admin/.create-amqp-extension.sql
+
 # Directory created and managed by the script admin/setup-amqp-triggers
 /admin/.setup-amqp-triggers-sql/
 
