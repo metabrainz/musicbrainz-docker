@@ -7,7 +7,7 @@ services:
     depends_on:
       - mq
   indexer:
-    entrypoint:
+    command:
       - python
       - -m
       - sir
