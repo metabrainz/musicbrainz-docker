@@ -8,7 +8,6 @@ ARG METABRAINZ_BASE_IMAGE_VARIANT
 ARG METABRAINZ_BASE_IMAGE_TAG
 LABEL org.metabrainz.based-on-image="metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}"
 
-ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG DOCKERIZE_VERSION=v0.6.1
@@ -18,8 +17,12 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
 
 ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN mkdir -p /usr/local/share/keyrings && \
+    curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc > /tmp/postgres-key.asc && \
+    gpg --no-default-keyring --keyring /tmp/postgres-keyring.gpg --import /tmp/postgres-key.asc && \
+    gpg --no-default-keyring --keyring /tmp/postgres-keyring.gpg --export --output /usr/local/share/keyrings/apt.postgresql.org.gpg && \
+    rm -f /tmp/postgres-key.asc /tmp/postgres-keyring.gpg && \
+    echo "deb [signed-by=/usr/local/share/keyrings/apt.postgresql.org.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
@@ -55,17 +58,17 @@ WORKDIR /musicbrainz-server
 
 ARG NODE_VERSION=16.1.0
 ARG PGP_SERVERS="keys.openpgp.org keyserver.ubuntu.com pgp.mit.edu"
-RUN cp docker/yarn_pubkey.txt /tmp && \
+RUN cp docker/yarn_pubkey.txt /tmp/yarn-key.asc && \
     cd /tmp && \
-    apt-key add yarn_pubkey.txt && \
+    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --import /tmp/yarn-key.asc && \
     \
     # Refresh Yarn signing keys
     refreshed_keys=''; \
     for pgp_server in $(tr ' ' '\n' <<<"$PGP_SERVERS"); do \
         for attempt in {1..3}; do \
-            apt-key adv --keyserver "$pgp_server" --refresh-keys Yarn --textmode 2>&1 && \
+            gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --keyserver "$pgp_server" --refresh-keys Yarn 2>&1 && \
             { refreshed_keys='yes'; break; } || \
-            echo "Temporary failure: apk-key/gpg returned error code '$?' on attempt #$attempt to reach '$pgp_server'."; \
+            echo "Temporary failure: gpg returned error code '$?' on attempt #$attempt to reach '$pgp_server'."; \
         done; \
         if [[ $refreshed_keys == yes ]]; then break; fi; \
     done; \
@@ -81,8 +84,10 @@ RUN cp docker/yarn_pubkey.txt /tmp && \
     fi; \
     unset attempt pgp_server refreshed_keys; \
     \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarn.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
+    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --export --output /usr/local/share/keyrings/dl.yarnpkg.com.gpg && \
+    rm -f /tmp/yarn-key.asc /tmp/yarn-keyring.gpg && \
+    echo "deb [signed-by=/usr/local/share/keyrings/dl.yarnpkg.com.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarnpkg.list && \
+    apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarnpkg.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
     curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get purge -qy cmdtest && \
