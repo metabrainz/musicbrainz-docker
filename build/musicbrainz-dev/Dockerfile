@@ -86,6 +86,8 @@ RUN mkdir -p /usr/local/share/keyrings && \
         # Needed for XML::LibXML
         libxml2-dev \
         make \
+        # Needed for ts
+        moreutils \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
