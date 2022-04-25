@@ -448,6 +448,7 @@ git clone --recursive https://github.com/metabrainz/musicbrainz-server.git
 MUSICBRAINZ_SERVER_LOCAL_ROOT=$PWD/musicbrainz-server
 git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
+echo MUSICBRAINZ_DOCKER_HOST_IPADDRCOL=127.0.0.1: >> .env
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
 admin/configure add musicbrainz-dev
 sudo docker-compose build
@@ -462,6 +463,7 @@ The four differences are:
 4. JavaScript and resources are automaticaly recompiled on file changes,
 5. MusicBrainz Server is automatically restarted on Perl file changes,
 6. MusicBrainz Server code is in `musicbrainz-server/` directory.
+7. Ports are published to the host only (through `MUSICBRAINZ_DOCKER_HOST_IPADDRCOL`)
 
 After changing code in `musicbrainz-server/`, it can be run as follows:
 

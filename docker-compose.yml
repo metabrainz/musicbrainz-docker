@@ -47,7 +47,7 @@ services:
         max-size: "50m"
         max-file: "50"
     ports:
-      - "${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
+      - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
     volumes:
       - dbdump:/media/dbdump
       - searchdump:/media/searchdump
