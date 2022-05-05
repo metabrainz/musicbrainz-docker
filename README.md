@@ -444,7 +444,7 @@ For local development of MusicBrainz Server, you can run the below
 commands instead of following the above [installation](#installation):
 
 ```bash
-git clone --recursive https://github.com/metabrainz/musicbrainz-server.git
+git clone https://github.com/metabrainz/musicbrainz-server.git
 MUSICBRAINZ_SERVER_LOCAL_ROOT=$PWD/musicbrainz-server
 git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
