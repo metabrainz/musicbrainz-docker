@@ -26,6 +26,30 @@ fi
 LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
 REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
 
+generate_sql_scripts() {
+  $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+}
+
+copy_sql_scripts() {
+  indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+  $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
+  if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
+  then
+    sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
+  fi
+
+  musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
+  $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
+}
+
+remove_temp_sql_scripts_from_host() {
+  rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+}
+
+remove_temp_sql_scripts_from_container() {
+  $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr"${1:+v}" "$REMOTE_TRIGGERS_DIR"
+}
+
 case "$1" in
   clean     )
     if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
@@ -38,8 +62,8 @@ case "$1" in
 
     echo "Cleaning indexer triggers install/uninstall scripts up ..."
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz rm -frv "$REMOTE_TRIGGERS_DIR"
-    rm -frv "$LOCAL_TRIGGERS_DIR"
+    remove_temp_sql_scripts_from_host -v
+    remove_temp_sql_scripts_from_container -v
     ;;
   install   )
     if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'running\|Up'
@@ -70,21 +94,13 @@ case "$1" in
 
     echo "Installing indexer triggers ..."
 
-    $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+    generate_sql_scripts
 
-    indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
-    $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
-    if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
-    then
-      sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
-    fi
-
-    musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
-    $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
+    copy_sql_scripts
 
     $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
 
-    rm -fr "$LOCAL_TRIGGERS_DIR"
+    remove_temp_sql_scripts_from_host
     ;;
   uninstall )
     if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
@@ -105,7 +121,7 @@ case "$1" in
 
     $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" drop
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr "$REMOTE_TRIGGERS_DIR"
+    remove_temp_sql_scripts_from_container
     ;;
   help|-h|--help)
     echo "$HELP"
