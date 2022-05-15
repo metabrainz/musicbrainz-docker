@@ -83,7 +83,7 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
 * MB Solr search server: [3.4.2](docker-compose.yml#L88)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
-* Search Index Rebuilder: [2.1.1](build/sir/Dockerfile#L37)
+* Search Index Rebuilder: [3.0.0](build/sir/Dockerfile#L37)
 
 ## Installation
 
