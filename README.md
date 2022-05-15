@@ -556,7 +556,6 @@ admin/purge-message-queues
 sudo docker-compose run --rm search load-search-indexes.sh --force
 sudo docker-compose run --rm musicbrainz recreatedb.sh
 sudo docker-compose up -d
-admin/setup-amqp-triggers clean
 admin/setup-amqp-triggers install
 admin/configure add replication-cron
 sudo docker-compose up -d
