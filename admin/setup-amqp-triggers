@@ -43,7 +43,15 @@ copy_sql_scripts() {
 }
 
 remove_temp_sql_scripts_from_host() {
-  rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+  if [ -e "$LOCAL_TRIGGERS_DIR" ]
+  then
+    if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
+    then
+      sudo rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+    else
+      rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+    fi
+  fi
 }
 
 remove_temp_sql_scripts_from_container() {
