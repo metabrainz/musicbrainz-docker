@@ -53,6 +53,7 @@ function scan_files {
   shopt -s globstar nullglob
   file_path=(
     docker-compose.yml
+    docker-compose.alt.db-only-mirror.yml
     compose/*.yml
     local/**/*.yml
   )
@@ -60,6 +61,8 @@ function scan_files {
   # Create unique handles
   file_handle[docker-compose.yml]=default
   handle_file[default]=docker-compose.yml
+  file_handle[docker-compose.alt.db-only-mirror.yml]=alt-db-only-mirror
+  handle_file[alt-db-only-mirror]=docker-compose.alt.db-only-mirror.yml
 
   for file in compose/*.yml
   do
