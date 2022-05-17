@@ -122,6 +122,21 @@ sudo docker-compose run --rm musicbrainz createdb.sh -fetch
 <!-- TODO: document available FTP servers -->
 <!-- TODO: document how to load local dumps -->
 
+### Build materialized tables
+
+This is an optional step.
+
+MusicBrainz Server makes use of materialized (or denormalized) tables in production to improve the performance of
+certain pages and features. These tables duplicate primary table data and can take up several additional gigabytes of
+space, so they're optional but recommended. If you don't populate these tables, the server will generally fall back
+to slower queries in their place.
+
+If you wish to configure the materialized tables, you can run:
+
+```bash
+sudo docker-compose exec musicbrainz bash -c './admin/BuildMaterializedTables --database=MAINTENANCE all'
+```
+
 ### Start website
 
 Make the local website available at <http://localhost:5000> with:
@@ -260,21 +275,6 @@ Do not use it if you don't want to get your hands dirty.
    admin/configure add replication-cron
    sudo docker-compose up -d
    ```
-
-### Build materialized tables
-
-This is an optional step.
-
-MusicBrainz Server makes use of materialized (or denormalized) tables in production to improve the performance of
-certain pages and features. These tables duplicate primary table data and can take up several additional gigabytes of
-space, so they're optional but recommended. If you don't populate these tables, the server will generally fall back
-to slower queries in their place.
-
-If you wish to configure the materialized tables, you can run:
-
-```bash
-sudo docker-compose exec musicbrainz bash -c './admin/BuildMaterializedTables --database=MAINTENANCE all'
-```
 
 ## Advanced configuration
 
