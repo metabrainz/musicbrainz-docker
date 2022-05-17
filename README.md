@@ -16,6 +16,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 - [Installation](#installation)
   * [Build Docker images](#build-docker-images)
   * [Create database](#create-database)
+  * [Build materialized tables](#build-materialized-tables)
   * [Start website](#start-website)
   * [Set up search indexes](#set-up-search-indexes)
   * [Enable replication](#enable-replication)
@@ -26,6 +27,9 @@ This repo contains everything needed to run a musicbrainz slave server with sear
   * [Docker Compose overrides](#docker-compose-overrides)
 - [Test setup](#test-setup)
 - [Development setup](#development-setup)
+  * [Local development of MusicBrainz Server](#local-development-of-musicbrainz-server)
+  * [Local development of Search Index Rebuilder](#local-development-of-search-index-rebuilder)
+  * [Local development of MusicBrainz Solr](#local-development-of-musicbrainz-solr)
 - [Helper scripts](#helper-scripts)
   * [Recreate database](#recreate-database)
   * [Recreate database with indexed search](#recreate-database-with-indexed-search)
@@ -120,6 +124,21 @@ sudo docker-compose run --rm musicbrainz createdb.sh -fetch
 
 <!-- TODO: document available FTP servers -->
 <!-- TODO: document how to load local dumps -->
+
+### Build materialized tables
+
+This is an optional step.
+
+MusicBrainz Server makes use of materialized (or denormalized) tables in production to improve the performance of
+certain pages and features. These tables duplicate primary table data and can take up several additional gigabytes of
+space, so they're optional but recommended. If you don't populate these tables, the server will generally fall back
+to slower queries in their place.
+
+If you wish to configure the materialized tables, you can run:
+
+```bash
+sudo docker-compose exec musicbrainz bash -c './admin/BuildMaterializedTables --database=MAINTENANCE all'
+```
 
 ### Start website
 
