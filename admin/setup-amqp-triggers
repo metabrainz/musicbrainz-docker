@@ -26,6 +26,44 @@ fi
 LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
 REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
 
+generate_sql_scripts() {
+  $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+  $DOCKER_COMPOSE_CMD exec indexer ./GenerateDropSql.pl
+}
+
+copy_sql_scripts() {
+  remove_temp_sql_scripts_from_host
+  remove_temp_sql_scripts_from_container
+
+  indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
+  $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
+  if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
+  then
+    sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
+  fi
+
+  musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
+  $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
+
+  remove_temp_sql_scripts_from_host
+}
+
+remove_temp_sql_scripts_from_host() {
+  if [ -e "$LOCAL_TRIGGERS_DIR" ]
+  then
+    if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
+    then
+      sudo rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+    else
+      rm -fr"${1:+v}" "$LOCAL_TRIGGERS_DIR"
+    fi
+  fi
+}
+
+remove_temp_sql_scripts_from_container() {
+  $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr"${1:+v}" "$REMOTE_TRIGGERS_DIR"
+}
+
 case "$1" in
   clean     )
     if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
@@ -38,74 +76,48 @@ case "$1" in
 
     echo "Cleaning indexer triggers install/uninstall scripts up ..."
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz rm -frv "$REMOTE_TRIGGERS_DIR"
-    rm -frv "$LOCAL_TRIGGERS_DIR"
+    remove_temp_sql_scripts_from_host -v
+    remove_temp_sql_scripts_from_container -v
     ;;
   install   )
-    if ! $DOCKER_COMPOSE_CMD ps indexer | grep -qw 'running\|Up'
-    then
-      echo >&2 "$SCRIPT_NAME: cannot install: " \
-               "the Docker Compose service 'indexer' is not up"
-      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d indexer' from '$MB_DOCKER_ROOT'"
-      exit 69 # EX_UNAVAILABLE
-    fi
+    for service in indexer musicbrainz
+    do
+      if ! $DOCKER_COMPOSE_CMD ps "$service" | grep -qw 'running\|Up'
+      then
+        echo >&2 "$SCRIPT_NAME: cannot install: " \
+                 "the Docker Compose service '$service' is not up"
+        echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d $service' from '$MB_DOCKER_ROOT'"
+        exit 69 # EX_UNAVAILABLE
+      fi
+    done
 
-    if [ -e "$LOCAL_TRIGGERS_DIR" ]
-    then
-      echo >&2 "$SCRIPT_NAME: cannot install: file '$LOCAL_TRIGGERS_DIR' exists"
-      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
-      echo >&2 "Remove this file if you are sure the script is not still running:"
-      echo >&2 "    rm -frv $(printf %q "$LOCAL_TRIGGERS_DIR")"
-      exit 70 # EX_SOFTWARE
-    fi
-
-    if $DOCKER_COMPOSE_CMD exec musicbrainz test -e "$REMOTE_TRIGGERS_DIR"
-    then
-      echo >&2 "$SCRIPT_NAME: cannot install: file '$REMOTE_TRIGGERS_DIR' exists in 'musicbrainz' docker compose service"
-      echo >&2 "Either $SCRIPT_NAME is already running or stopped before its time."
-      echo >&2 "Revert partial installation if you are sure the script is not still running:"
-      echo >&2 "    $SCRIPT_NAME uninstall"
-      exit 70 # EX_SOFTWARE
-    fi
+    generate_sql_scripts
+    copy_sql_scripts
 
     echo "Installing indexer triggers ..."
 
-    $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
-
-    indexer_container_id="$($DOCKER_COMPOSE_CMD ps -q indexer)"
-    $DOCKER_CMD cp "$indexer_container_id":/code/sql "$LOCAL_TRIGGERS_DIR"
-    if [ "$(stat -c %U "$LOCAL_TRIGGERS_DIR")" != "$(id -un)" ]
-    then
-      sudo chown -R "$(id -un):$(id -gn)" "$LOCAL_TRIGGERS_DIR"
-    fi
-
-    musicbrainz_container_id="$($DOCKER_COMPOSE_CMD ps -q musicbrainz)"
-    $DOCKER_CMD cp "$LOCAL_TRIGGERS_DIR" "$musicbrainz_container_id":"$REMOTE_TRIGGERS_DIR"
-
     $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" create
-
-    rm -fr "$LOCAL_TRIGGERS_DIR"
     ;;
   uninstall )
-    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
-    then
-      echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
-               "the Docker Compose service 'musicbrainz' is not up"
-      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d musicbrainz' from '$MB_DOCKER_ROOT'"
-      exit 69 # EX_UNAVAILABLE
-    fi
+    for service in indexer musicbrainz
+    do
+      if ! $DOCKER_COMPOSE_CMD ps "$service" | grep -qw 'running\|Up'
+      then
+        echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
+                 "the Docker Compose service '$service' is not up"
+        echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d $service' from '$MB_DOCKER_ROOT'"
+        exit 69 # EX_UNAVAILABLE
+      fi
+    done
 
-    if $DOCKER_COMPOSE_CMD exec musicbrainz test ! -e "$REMOTE_TRIGGERS_DIR"
-    then
-      echo >&2 "$SCRIPT_NAME: cannot uninstall: file '$REMOTE_TRIGGERS_DIR' does not exist"
-      exit 70 # EX_SOFTWARE
-    fi
+    generate_sql_scripts
+    copy_sql_scripts
 
     echo "Uninstalling indexer triggers ..."
 
     $DOCKER_COMPOSE_CMD exec musicbrainz indexer-triggers.sh "$REMOTE_TRIGGERS_DIR" drop
 
-    $DOCKER_COMPOSE_CMD exec musicbrainz rm -fr "$REMOTE_TRIGGERS_DIR"
+    remove_temp_sql_scripts_from_container
     ;;
   help|-h|--help)
     echo "$HELP"

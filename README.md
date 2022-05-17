@@ -44,7 +44,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 
 * CPU: 16 threads (or 2 without indexed search)
 * RAM: 16 GB (or 4 without indexed search)
-* Disk Space: 150 GB (or 60 without indexed search)
+* Disk Space: 200 GB (or 70 without indexed search)
             + system disk usage
 
 ### Required software
@@ -81,13 +81,13 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Components version
 
-* Current MB Branch: [v-2022-04-18](build/musicbrainz/Dockerfile#L53)
-* Current DB_SCHEMA_SEQUENCE: [26](build/musicbrainz/DBDefs.pm#L112)
+* Current MB Branch: [v-2022-05-16-schema-change](build/musicbrainz/Dockerfile#L53)
+* Current DB_SCHEMA_SEQUENCE: [27](build/musicbrainz/Dockerfile#L129)
 * Postgres Version: [12](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
 * MB Solr search server: [3.4.2](docker-compose.yml#L88)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
-* Search Index Rebuilder: [2.1.1](build/sir/Dockerfile#L37)
+* Search Index Rebuilder: [3.0.1](build/sir/Dockerfile#L37)
 
 ## Installation
 
@@ -575,7 +575,6 @@ admin/purge-message-queues
 sudo docker-compose run --rm search load-search-indexes.sh --force
 sudo docker-compose run --rm musicbrainz recreatedb.sh
 sudo docker-compose up -d
-admin/setup-amqp-triggers clean
 admin/setup-amqp-triggers install
 admin/configure add replication-cron
 sudo docker-compose up -d

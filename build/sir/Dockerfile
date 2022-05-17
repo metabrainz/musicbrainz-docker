@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=2.7
-ARG BASE_IMAGE_DATE=20210115
+ARG BASE_IMAGE_DATE=20220421
 FROM metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
 
 ARG PYTHON_VERSION
@@ -34,7 +34,7 @@ RUN apt-get update \
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=2.1.1
+ARG SIR_VERSION=3.0.1
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003
