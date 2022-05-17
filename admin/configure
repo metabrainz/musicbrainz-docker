@@ -22,7 +22,7 @@ Commands:
         Compose file should be refered to by either handle or path.
 
 Examples:
-  $SCRIPT_NAME set docker-compose.yml:compose/publishing-all-ports.yml
+  $SCRIPT_NAME with docker-compose.yml:compose/publishing-all-ports.yml
 
   allows to publish ports of all services on the host, just like:
 
