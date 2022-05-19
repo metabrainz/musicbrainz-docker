@@ -1,8 +1,8 @@
-# MusicBrainz slave server with search and replication
+# MusicBrainz mirror server with search and replication
 
 [![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
-This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
+This repo contains everything needed to run a musicbrainz mirror server with search and replication in docker.
 
 ## Table of contents
 
@@ -91,7 +91,7 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Installation
 
-This section is about installing MusicBrainz slave server (mirror)
+This section is about installing MusicBrainz mirror server
 with locally indexed search and automatically replicated data.
 
 Download this repository and change current working directory with:
@@ -210,7 +210,7 @@ Run replication script once to catch up with latest database updates:
 
 ```bash
 sudo docker-compose exec musicbrainz replication.sh &
-sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log
+sudo docker-compose exec musicbrainz /usr/bin/tail -f mirror.log
 ```
 
 <!-- TODO: estimate replication time per missing day -->
@@ -231,18 +231,18 @@ To change that, see [advanced configuration](#advanced-configuration).
 You can view the replication log file while it is running with:
 
 ```bash
-sudo docker-compose exec musicbrainz tail --follow slave.log
+sudo docker-compose exec musicbrainz tail --follow mirror.log
 ```
 
 You can view the replication log file after it is done with:
 
 ```bash
-sudo docker-compose exec musicbrainz tail slave.log.1
+sudo docker-compose exec musicbrainz tail mirror.log.1
 ```
 
 ### Enable live indexing
 
-:warning: Search indexes’ live update for slave server is **not stable** yet.
+:warning: Search indexes’ live update for mirror server is **not stable** yet.
 Until then, it should be considered as an experimental feature.
 Do not use it if you don't want to get your hands dirty.
 
@@ -444,7 +444,7 @@ sudo docker-compose up -d
 
 The two differences are:
 1. sample data dump is downloaded instead of full data dumps,
-2. MusicBrainz Server runs in standalone mode instead of slave mode.
+2. MusicBrainz Server runs in standalone mode instead of mirror mode.
 
 [Build search indexes](#build-search-indexes) and
 [Enable live indexing](#enable-live-indexing) are the same.
@@ -477,7 +477,7 @@ sudo docker-compose up -d
 
 The four differences are:
 1. sample data dump is downloaded instead of full data dumps,
-2. MusicBrainz Server runs in standalone mode instead of slave mode,
+2. MusicBrainz Server runs in standalone mode instead of mirror mode,
 3. development mode is enabled (but Catalyst debug),
 4. JavaScript and resources are automaticaly recompiled on file changes,
 5. MusicBrainz Server is automatically restarted on Perl file changes,
