@@ -1,0 +1,56 @@
+variables:
+  majorVersion: '1.0'
+  minorVersion: $[counter('minorVersion')]
+  version: '$(majorVersion).$(minorVersion)'
+  buildName: '$(Build.SourceBranchName).$(version)'
+
+trigger:
+  branches:
+    include:
+    - master
+
+pr:
+- master
+
+jobs:
+- job:
+  displayName: Setup
+  pool:
+    vmImage: 'Ubuntu-18.04'
+  steps:
+  - powershell: Write-Host "##vso[build.updatebuildnumber]$($env:VERSION)"
+    displayName: Set Build Name
+
+- job:
+  displayName: Build postgres
+  pool:
+    vmImage: 'Ubuntu-18.04'
+  steps:
+  - task: Docker@2
+    displayName: Build image
+    inputs:
+      containerRegistry: 'ghcr'
+      repository: lidarr/mb-postgres
+      command: buildAndPush
+      Dockerfile: build/postgres/Dockerfile
+      tags: |
+        latest
+        $(Build.SourceBranchName)
+        $(version)
+
+- job:
+  displayName: Build server
+  pool:
+    vmImage: 'Ubuntu-18.04'
+  steps:
+  - task: Docker@2
+    displayName: Build image
+    inputs:
+      containerRegistry: 'ghcr'
+      repository: lidarr/mb-server
+      command: buildAndPush
+      Dockerfile: build/musicbrainz/Dockerfile
+      tags: |
+        latest
+        $(Build.SourceBranchName)
+        $(version)
