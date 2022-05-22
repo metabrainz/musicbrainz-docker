@@ -134,13 +134,7 @@ sub REPLICATION_TYPE { $ENV{MUSICBRAINZ_STANDALONE_SERVER} == 1
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-sub REPLICATION_ACCESS_TOKEN {
-    my $file = '/run/secrets/metabrainz_access_token';
-    open(my $fh, '<', $file) or return '';
-    read($fh, my $token, 40) or $token = '';
-    close $fh;
-    return $token;
-}
+sub REPLICATION_ACCESS_TOKEN { $ENV{BRAINZCODE} }
 
 ################################################################################
 # GPG Signature

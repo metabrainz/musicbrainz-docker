@@ -149,10 +149,5 @@ ENV BASH_ENV=/noninteractive.bash_env \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
-RUN yarn install && \
-    yarn cache clean && \
-    eval "$(perl -Mlocal::lib)" && \
-    carton exec -- /musicbrainz-server/script/compile_resources.sh
-
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["start.sh"]

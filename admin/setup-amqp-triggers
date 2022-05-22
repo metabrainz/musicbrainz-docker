@@ -27,7 +27,7 @@ LOCAL_TRIGGERS_DIR="$(dirname "${BASH_SOURCE[0]}")/.setup-amqp-triggers-sql"
 REMOTE_TRIGGERS_DIR=/tmp/indexer-sql
 
 generate_sql_scripts() {
-  $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers
+  $DOCKER_COMPOSE_CMD exec indexer python -m sir triggers --entity-type artist --entity-type release-group
   $DOCKER_COMPOSE_CMD exec indexer ./GenerateDropSql.pl
 }
 
