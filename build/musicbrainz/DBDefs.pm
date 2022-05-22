@@ -52,8 +52,8 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect when we need read-write access to the database
     READWRITE => {
         database    => "musicbrainz_db",
-        username    => "$ENV{POSTGRES_USER}",
-        password    => "$ENV{POSTGRES_PASSWORD}",
+        username    => $ENV{"POSTGRES_USER"},
+        password    => $ENV{"POSTGRES_PASSWORD"},
         host        => "db",
         port        => "5432",
     },
@@ -78,16 +78,16 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
     # How to connect for read-only access.  See "REPLICATION_TYPE" (below)
     READONLY => {
         database    => "musicbrainz_db",
-        username    => "$ENV{POSTGRES_USER}",
-        password    => "$ENV{POSTGRES_PASSWORD}",
+        username    => $ENV{"POSTGRES_USER"},
+        password    => $ENV{"POSTGRES_PASSWORD"},
         host        => "db",
         port        => "5432",
     },
     # How to connect for administrative access
     SYSTEM    => {
         database    => "template1",
-        username    => "$ENV{POSTGRES_USER}",
-        password    => "$ENV{POSTGRES_PASSWORD}",
+        username    => $ENV{"POSTGRES_USER"},
+        password    => $ENV{"POSTGRES_PASSWORD"},
         host        => "db",
         port        => "5432",
     },
@@ -134,13 +134,7 @@ sub REPLICATION_TYPE { $ENV{MUSICBRAINZ_STANDALONE_SERVER} == 1
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-sub REPLICATION_ACCESS_TOKEN {
-    my $file = '/run/secrets/metabrainz_access_token';
-    open(my $fh, '<', $file) or return '';
-    read($fh, my $token, 40) or $token = '';
-    close $fh;
-    return $token;
-}
+sub REPLICATION_ACCESS_TOKEN { $ENV{'BRAINZCODE'} }
 
 ################################################################################
 # GPG Signature

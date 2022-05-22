@@ -179,10 +179,10 @@ then
 			-delete
 	fi
 	"${WGET_CMD[@]}" -nd -nH -c -r -P "$SEARCH_DUMP_DIR" \
-		--accept 'MD5SUMS,*.tar.zst' --no-parent --relative \
+		--accept 'MD5SUMS,artist.tar.zst,release-group.tar.zst' --no-parent --relative \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
 	echo "$(date): Checking MD5 sums..."
-	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd - >/dev/null
+	cd "$SEARCH_DUMP_DIR" && grep -E '(artist|release-group)' MD5SUMS > MD5SUMS_lidarr && md5sum -c MD5SUMS_lidarr && cd -
 	if [[ $TARGET == search ]]
 	then
 		echo 'Done fetching search indexes dump'
