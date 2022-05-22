@@ -5,6 +5,7 @@ FROM postgres:${POSTGRES_IMAGE_TAG}
 
 ARG POSTGRES_VERSION
 LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_IMAGE_TAG}"
+LABEL org.opencontainers.image.source="https://github.com/lidarr/musicbrainz-docker"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
