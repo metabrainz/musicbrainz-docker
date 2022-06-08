@@ -1,0 +1,66 @@
+version: '3.1'
+
+# Description: Database-only mirror, as an alternative to 'default'
+
+volumes:
+  pgdata:
+    driver: local
+  dbdump:
+    driver: local
+
+services:
+  db:
+    build:
+      context: build/postgres
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-12}
+    image: musicbrainz-docker_db:${POSTGRES_VERSION:-12}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    command: postgres -c "shared_buffers=2048MB"
+    env_file:
+      - ./default/postgres.env
+    shm_size: "2GB"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+  musicbrainz:
+    build:
+      context: build/musicbrainz
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-12}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "50"
+    volumes:
+      - dbdump:/media/dbdump
+    restart: unless-stopped
+    env_file:
+      - ./default/postgres.env
+    environment:
+      - MUSICBRAINZ_BASE_FTP_URL=${MUSICBRAINZ_BASE_FTP_URL:-ftp://ftp.eu.metabrainz.org/pub/musicbrainz}
+      - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}
+      - MUSICBRAINZ_WEB_SERVER_PORT=${MUSICBRAINZ_WEB_SERVER_PORT:-5000}
+    command: load-crontab-only.sh
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis:3-alpine
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    restart: unless-stopped
+    expose:
+      - "6379"

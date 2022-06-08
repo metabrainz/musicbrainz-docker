@@ -101,6 +101,14 @@ git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 ```
 
+If you want to mirror the Postgres database only (neither the website
+nor the web API), change the base configuration with the following
+command (as a first step, otherwise it will blank it out):
+
+```bash
+admin/configure with alt-db-only-mirror
+```
+
 ### Build Docker images
 
 Docker images for composed services should be built once using:
