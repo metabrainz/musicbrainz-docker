@@ -401,6 +401,13 @@ admin/configure add publishing-all-ports
 sudo docker-compose up -d
 ```
 
+If you are running a database only mirror, run this instead:
+
+```bash
+admin/configure add publishing-db-port
+sudo docker-compose up -d
+```
+
 #### Modify memory settings
 
 By default, each of `db` and `search` services have about 2GB of RAM.
