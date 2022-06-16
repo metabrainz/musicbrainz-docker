@@ -29,8 +29,6 @@ RUN apt-get update \
       libsqlite3-dev \
       # required by lxml from mb-rngpy
       libxslt1-dev \
-      # required to initialize the virtual environment (development setup)
-      virtualenv \
     && rm -rf /var/lib/apt/lists/*
 
 ##################
@@ -56,8 +54,8 @@ WORKDIR /code
 
 ENV POSTGRES_USER=musicbrainz
 ENV POSTGRES_PASSWORD=musicbrainz
-ENV PYTHONPATH="/code/venv-musicbrainz-docker/lib/python2.7"
+ENV PYTHONUSERBASE="/code/venv-musicbrainz-docker"
 ENV PATH="/code/venv-musicbrainz-docker/bin:$PATH"
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD unset PYTHONPATH; my_init
+CMD unset PYTHONUSERBASE; my_init
