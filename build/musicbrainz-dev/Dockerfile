@@ -66,6 +66,8 @@ RUN mkdir -p /usr/local/share/keyrings && \
         gettext \
         g++ \
         git \
+        # Needed to generate SVG from database schema DOT diagrams
+        graphviz \
         language-pack-de \
         language-pack-el \
         language-pack-es \
@@ -91,6 +93,8 @@ RUN mkdir -p /usr/local/share/keyrings && \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
+        # Needed to normalize database schema SVG diagrams
+        scour \
         # Needed to decompress sample data
         xz-utils \
         yarn \
