@@ -42,7 +42,7 @@ This repo contains everything needed to run a musicbrainz mirror server with sea
 
 ### Recommended hardware/VM
 
-* CPU: 16 threads (or 2 without indexed search)
+* CPU: 16 threads (or 2 without indexed search), x86-64 architecture
 * RAM: 16 GB (or 4 without indexed search)
 * Disk Space: 200 GB (or 70 without indexed search)
             + system disk usage
