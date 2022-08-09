@@ -56,7 +56,7 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 
 WORKDIR /musicbrainz-server
 
-ARG NODE_VERSION=16.1.0
+ARG NODE_VERSION=16.16.0
 ARG PGP_SERVERS="keys.openpgp.org keyserver.ubuntu.com pgp.mit.edu"
 RUN cp docker/yarn_pubkey.txt /tmp/yarn-key.asc && \
     cd /tmp && \
