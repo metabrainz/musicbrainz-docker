@@ -54,6 +54,11 @@ TMP_DIR=/media/dbdump/tmp
 
 case "$IMPORT" in
     fullexport  )
+        if [[ $MUSICBRAINZ_STANDALONE_SERVER -eq 1 ]]; then
+            echo "$0: Only sample data can be loaded in standalone mode"
+            echo "$HELP"
+            exit 1
+        fi
         DUMP_FILES=(
             mbdump.tar.bz2
             mbdump-cdstubs.tar.bz2
@@ -63,6 +68,11 @@ case "$IMPORT" in
             mbdump-wikidocs.tar.bz2
         );;
     sample      )
+        if [[ $MUSICBRAINZ_STANDALONE_SERVER -eq 0 ]]; then
+            echo "$0: Only full data can be loaded in mirror mode"
+            echo "$HELP"
+            exit 1
+        fi
         DUMP_FILES=(
             mbdump-sample.tar.xz
         );;
