@@ -176,7 +176,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
-  To index cores individually, rather than all at once, add `--entity-type CORE` (any number of times) to the command above. For example `sudo docker-compose exec indexer python -m sir reindex --entity-type artist --entity-type artist --entity-type release`
+  To index cores individually, rather than all at once, add `--entity-type CORE` (any number of times) to the command above. For example `sudo docker-compose exec indexer python -m sir reindex --entity-type artist --entity-type release`
 
 * Or download pre-built search indexes based on the latest data dump:
 
