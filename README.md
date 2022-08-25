@@ -219,7 +219,7 @@ sudo docker-compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-sudo docker-compose exec musicbrainz replication.sh &
+sudo bash -c 'docker-compose exec musicbrainz replication.sh &' && \
 sudo docker-compose exec musicbrainz /usr/bin/tail -f mirror.log
 ```
 
