@@ -103,6 +103,7 @@ RUN mkdir -p /usr/local/share/keyrings && \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /musicbrainz-server
+RUN git config --global --add safe.directory /musicbrainz-server
 
 COPY DBDefs.pm /
 COPY scripts/* /usr/local/bin/
