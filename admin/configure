@@ -204,6 +204,15 @@ case "$1" in
     # Write to .env
     touch .env
     sed -i.bak -e '/^COMPOSE_FILE=/d' .env && rm -f .env.bak
+    if [[ $OS == Windows_NT ]]
+    then
+      # Mandatory to keep this script working
+      # https://docs.docker.com/compose/reference/envvars/#compose_path_separator
+      if ! grep -q '^COMPOSE_PATH_SEPARATOR=:$' "$MB_DOCKER_ROOT/.env"
+      then
+        echo 'COMPOSE_PATH_SEPARATOR=:' >> .env
+      fi
+    fi
     echo "COMPOSE_FILE=$(IFS=:; echo "${compose_files[*]}")" >> .env
     echo "Successfully set/updated COMPOSE_FILE in '$MB_DOCKER_ROOT/.env'."
     exit 0 # EX_OK
