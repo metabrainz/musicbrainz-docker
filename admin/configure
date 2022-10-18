@@ -206,6 +206,12 @@ case "$1" in
     sed -i.bak -e '/^COMPOSE_FILE=/d' .env && rm -f .env.bak
     if [[ $OS == Windows_NT ]]
     then
+      # Optional but convenient to copy/paste paths from file explorer
+      # https://docs.docker.com/compose/reference/envvars/#compose_convert_windows_paths
+      if ! grep -q '^COMPOSE_CONVERT_WINDOWS_PATHS=' "$MB_DOCKER_ROOT/.env"
+      then
+        echo 'COMPOSE_CONVERT_WINDOWS_PATHS=1' >> .env
+      fi
       # Mandatory to keep this script working
       # https://docs.docker.com/compose/reference/envvars/#compose_path_separator
       if ! grep -q '^COMPOSE_PATH_SEPARATOR=:$' "$MB_DOCKER_ROOT/.env"
