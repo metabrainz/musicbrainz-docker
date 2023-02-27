@@ -110,7 +110,7 @@ RUN eval "$(perl -Mlocal::lib)" \
         Starlet \
         Starlet::Server \
         Term::Size::Any \
-        TURNSTEP/DBD-Pg-3.10.3.tar.gz \
+        TURNSTEP/DBD-Pg-3.16.0.tar.gz \
     && rm -rf /root/.cpan* /root/perl5/man/
 
 COPY DBDefs.pm /musicbrainz-server/lib/
