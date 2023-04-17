@@ -22,10 +22,10 @@ Targets:
   search        Fetch latest search indexes only.
 
 Options:
-  --base-ftp-url <url>          Specify URL of a MetaBrainz/MusicBrainz FTP server.
-                                (Note: this option is deprecated and will be removed in a future release)
   --base-download-url <url>     Specify URL of a MetaBrainz/MusicBrainz download server.
                                 (Default: '$BASE_DOWNLOAD_URL')
+  --base-ftp-url <url>          Specify URL of a MetaBrainz/MusicBrainz FTP server.
+                                (Note: this option is deprecated and will be removed in a future release)
   --wget-options <wget options> Specify additional options to be passed to wget,
                                 these should be separated with whitespace,
                                 the list should be a single argument
@@ -49,15 +49,6 @@ do
 			fi
 			TARGET=$1
 			;;
-		--base-ftp-url )
-			shift
-			echo >&2 "WARNING: --base-ftp-url is deprecated and will be removed in a future release"
-			BASE_FTP_URL="$1"
-			if ! [[ $BASE_FTP_URL =~ ^ftp:// ]]
-			then
-				BASE_FTP_URL="ftp://$BASE_FTP_URL"
-			fi
-			;;
 		--base-download-url )
 			shift
 			BASE_DOWNLOAD_URL="$1"
@@ -65,6 +56,15 @@ do
 			then
 				echo >&2 "$SCRIPT_NAME: --base-download-url must begin with ftp://, http:// or https://"
 				exit 64 # EX_USAGE
+			fi
+			;;
+		--base-ftp-url )
+			shift
+			echo >&2 "WARNING: --base-ftp-url is deprecated and will be removed in a future release"
+			BASE_FTP_URL="$1"
+			if ! [[ $BASE_FTP_URL =~ ^ftp:// ]]
+			then
+				BASE_FTP_URL="ftp://$BASE_FTP_URL"
 			fi
 			;;
 		--wget-options )
