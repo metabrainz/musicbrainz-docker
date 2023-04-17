@@ -55,7 +55,8 @@ services:
     env_file:
       - ./default/postgres.env
     environment:
-      - MUSICBRAINZ_BASE_FTP_URL=${MUSICBRAINZ_BASE_FTP_URL:-ftp://ftp.eu.metabrainz.org/pub/musicbrainz}
+      - MUSICBRAINZ_BASE_FTP_URL=${MUSICBRAINZ_BASE_FTP_URL:-}
+      - MUSICBRAINZ_BASE_DOWNLOAD_URL=${MUSICBRAINZ_BASE_DOWNLOAD_URL:-http://ftp.eu.metabrainz.org/pub/musicbrainz}
       - MUSICBRAINZ_SERVER_PROCESSES=${MUSICBRAINZ_SERVER_PROCESSES:-10}
       - MUSICBRAINZ_USE_PROXY=1
       - MUSICBRAINZ_WEB_SERVER_HOST=${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}

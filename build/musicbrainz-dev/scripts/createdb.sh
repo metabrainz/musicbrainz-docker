@@ -2,21 +2,21 @@
 
 set -e -o pipefail -u
 
-FTP_MB="$MUSICBRAINZ_BASE_FTP_URL"
+BASE_DOWNLOAD_URL="${MUSICBRAINZ_BASE_FTP_URL:-$MUSICBRAINZ_BASE_DOWNLOAD_URL}"
 IMPORT="fullexport"
 FETCH_DUMPS=""
 WGET_OPTIONS=""
 
 HELP=$(cat <<EOH
-Usage: $0 [-wget-opts <options list>] [-sample] [-fetch] [MUSICBRAINZ_FTP_URL]
+Usage: $0 [-wget-opts <options list>] [-sample] [-fetch] [MUSICBRAINZ_BASE_DOWNLOAD_URL]
 
 Options:
-  -fetch      Fetch latest dump from MusicBrainz FTP
+  -fetch      Fetch latest dump from MusicBrainz download server
   -sample     Load sample data instead of full data
   -wget-opts  Pass additional space-separated options list (should be
               a single argument, escape spaces if necessary) to wget
 
-Default MusicBrainz FTP URL: $FTP_MB
+Default MusicBrainz base download URL: $BASE_DOWNLOAD_URL
 EOH
 )
 
@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
             exit 1
             ;;
         *       )
-            FTP_MB="$1"
+            BASE_DOWNLOAD_URL="$1"
             ;;
     esac
     shift
@@ -79,7 +79,7 @@ case "$IMPORT" in
 esac
 
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
-    FETCH_OPTIONS=("${IMPORT/fullexport/replica}" --base-ftp-url "$FTP_MB")
+    FETCH_OPTIONS=("${IMPORT/fullexport/replica}" --base-download-url "$BASE_DOWNLOAD_URL")
     if [[ -n "$WGET_OPTIONS" ]]; then
         FETCH_OPTIONS+=(--wget-options "$WGET_OPTIONS")
     fi
