@@ -52,7 +52,7 @@ do
 		--base-download-url )
 			shift
 			BASE_DOWNLOAD_URL="$1"
-			if ! [[ $BASE_DOWNLOAD_URL =~ "^(ftp|https?)://" ]]
+			if ! [[ $BASE_DOWNLOAD_URL =~ ^(ftp|https?):// ]]
 			then
 				echo >&2 "$SCRIPT_NAME: --base-download-url must begin with ftp://, http:// or https://"
 				exit 64 # EX_USAGE
