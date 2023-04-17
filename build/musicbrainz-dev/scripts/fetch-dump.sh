@@ -4,7 +4,8 @@ set -e -o pipefail -u
 
 DB_DUMP_DIR=/media/dbdump
 SEARCH_DUMP_DIR=/media/searchdump
-BASE_FTP_URL="$MUSICBRAINZ_BASE_FTP_URL"
+BASE_FTP_URL=''
+MIRROR_URL="$MUSICBRAINZ_MIRROR_URL"
 TARGET=''
 WGET_CMD=(wget)
 
@@ -21,14 +22,16 @@ Targets:
   search        Fetch latest search indexes only.
 
 Options:
-  --base-ftp-url <url>          Specify URL to MetaBrainz/MusicBrainz FTP directory.
-                                (Default: '$BASE_FTP_URL')
+  --base-ftp-url <url>          Specify URL of a MetaBrainz/MusicBrainz FTP mirror server.
+                                (Note: this option is deprecated and will be removed in a future release)
+  --mirror-url <url>            Specify URL of a MetaBrainz/MusicBrainz mirror server.
+                                (Default: '$MIRROR_URL')
   --wget-options <wget options> Specify additional options to be passed to wget,
                                 these should be separated with whitespace,
                                 the list should be a single argument
                                 (escape whitespaces if needed).
 
-  -h, --help                    Print this help message.
+  -h, --help                    Print this help message and exit.
 EOH
 )
 
@@ -48,10 +51,20 @@ do
 			;;
 		--base-ftp-url )
 			shift
+			echo >&2 "WARNING: --base-ftp-url is deprecated and will be removed in a future release"
 			BASE_FTP_URL="$1"
 			if ! [[ $BASE_FTP_URL =~ ^ftp:// ]]
 			then
 				BASE_FTP_URL="ftp://$BASE_FTP_URL"
+			fi
+			;;
+		--mirror-url )
+			shift
+			MIRROR_URL="$1"
+			if ! [[ $MIRROR_URL =~ "^(ftp|https?)://" ]]
+			then
+				echo >&2 "$SCRIPT_NAME: --mirror-url must begin with ftp://, http:// or https://"
+				exit 64 # EX_USAGE
 			fi
 			;;
 		--wget-options )
@@ -92,10 +105,10 @@ then
 	echo "$(date): Fetching search indexes dump..."
 	cd "$SEARCH_DUMP_DIR" && find . -delete && cd -
 	"${WGET_CMD[@]}" -nd -nH -P "$SEARCH_DUMP_DIR" \
-		"$BASE_FTP_URL/data/search-indexes/LATEST"
+		"${BASE_FTP_URL:-$MIRROR_URL}/data/search-indexes/LATEST"
 	DUMP_TIMESTAMP=$(cat /media/searchdump/LATEST)
 	"${WGET_CMD[@]}" -nd -nH -r -P "$SEARCH_DUMP_DIR" \
-		"$BASE_FTP_URL/data/search-indexes/$DUMP_TIMESTAMP/"
+		"${BASE_FTP_URL:-$MIRROR_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
 	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd -
 	if [[ $TARGET == search ]]
 	then
@@ -139,7 +152,7 @@ then
 
 	SEARCH_DUMP_DAY="${DUMP_TIMESTAMP/-*}"
 	"${WGET_CMD[@]}" --spider --no-remove-listing -P "$DB_DUMP_DIR" \
-		"$BASE_FTP_URL/$DB_DUMP_REMOTE_DIR"
+		"${BASE_FTP_URL:-$MIRROR_URL}/$DB_DUMP_REMOTE_DIR"
 	DUMP_TIMESTAMP=$(
 		grep -E "\\s${SEARCH_DUMP_DAY}-\\d*" "$DB_DUMP_DIR/.listing" \
 			| sed -e 's/\s*$//' -e 's/.*\s//'
@@ -151,7 +164,7 @@ then
 	# Just find latest database dump
 
 	"${WGET_CMD[@]}" -nd -nH -P "$DB_DUMP_DIR" \
-		"$BASE_FTP_URL/$DB_DUMP_REMOTE_DIR/LATEST"
+		"${BASE_FTP_URL:-$MIRROR_URL}/$DB_DUMP_REMOTE_DIR/LATEST"
 	DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST")
 fi
 
@@ -162,7 +175,7 @@ then
 	for F in MD5SUMS "${DB_DUMP_FILES[@]}"
 	do
 		"${WGET_CMD[@]}" -P "$DB_DUMP_DIR" \
-			"$BASE_FTP_URL/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
+			"${BASE_FTP_URL:-$MIRROR_URL}/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
 	done
 	cd "$DB_DUMP_DIR"
 	for F in "${DB_DUMP_FILES[@]}"
@@ -179,7 +192,7 @@ then
 	for F in "${DB_DUMP_FILES[@]}"
 	do
 		"${WGET_CMD[@]}" -P "$DB_DUMP_DIR" \
-			"$BASE_FTP_URL/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
+			"${BASE_FTP_URL:-$MIRROR_URL}/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
 	done
 fi
 

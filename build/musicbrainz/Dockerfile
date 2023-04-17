@@ -124,7 +124,7 @@ ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 
 ENV BASH_ENV=/noninteractive.bash_env \
-    MUSICBRAINZ_BASE_FTP_URL=ftp://ftp.eu.metabrainz.org/pub/musicbrainz \
+    MUSICBRAINZ_MIRROR_URL=http://ftp.eu.metabrainz.org/pub/musicbrainz \
     MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_DB_SCHEMA_SEQUENCE=27 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=0 \
