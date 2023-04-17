@@ -341,19 +341,19 @@ By default, MusicBrainz Server uses 10 `plackup` processes at once.
 This number can be changed using the Docker environment variable
 `MUSICBRAINZ_SERVER_PROCESSES`.
 
-#### Customize mirror server
+#### Customize download server
 
 By default, data dumps and pre-built search indexes are downloaded from
 `http://ftp.eu.metabrainz.org/pub/musicbrainz`.
 
-The mirror server can be changed using the Docker environment variable
-`MUSICBRAINZ_MIRROR_URL`.
+The download server can be changed using the Docker environment variable
+`MUSICBRAINZ_BASE_DOWNLOAD_URL`.
 
-For backwards compatibility reasons an FTP mirror can be specified using the
+For backwards compatibility reasons an FTP server can be specified using the
 `MUSICBRAINZ_BASE_FTP_URL` Docker environment variable. Note that support for
 this variable is deprecated and will be removed in a future release.
 
-See the [list of mirrors](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download)
+See the [list of download servers](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download)
 for alternative download sources.
 
 #### Customize replication schedule
