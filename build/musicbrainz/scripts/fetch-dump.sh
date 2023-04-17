@@ -51,7 +51,7 @@ do
 			;;
 		--base-download-url )
 			shift
-			BASE_DOWNLOAD_URL="$1"
+			BASE_DOWNLOAD_URL="${1%/base/fullexport/}"
 			if ! [[ $BASE_DOWNLOAD_URL =~ ^(ftp|https?):// ]]
 			then
 				echo >&2 "$SCRIPT_NAME: --base-download-url must begin with ftp://, http:// or https://"
