@@ -16,7 +16,7 @@ Options:
   -wget-opts  Pass additional space-separated options list (should be
               a single argument, escape spaces if necessary) to wget
 
-Default MusicBrainz download base URL: $BASE_DOWNLOAD_URL
+Default MusicBrainz base download URL: $BASE_DOWNLOAD_URL
 EOH
 )
 

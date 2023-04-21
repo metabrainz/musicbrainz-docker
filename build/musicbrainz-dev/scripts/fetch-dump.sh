@@ -60,7 +60,7 @@ do
 			;;
 		--base-ftp-url )
 			shift
-			echo >&2 "WARNING: --base-ftp-url is deprecated and will be removed in a future release"
+			echo >&2 "Warning: --base-ftp-url is deprecated and will be removed in a future release"
 			BASE_FTP_URL="$1"
 			if ! [[ $BASE_FTP_URL =~ ^ftp:// ]]
 			then
