@@ -192,7 +192,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 :warning: Search indexes are not included in replication.
 You will have to rebuild search indexes regularly to keep it up-to-date. This can be done manually with the commands above, with Live Indexing (see below), or with a scheduled cron job. Here's an example cron job that can be added to your `etc/crontab` file from your server's root:
 
-```bash
+```crontab
 0 1 * * 7 YOUR_USER_NAME cd ~/musicbrainz-docker && /usr/bin/docker-compose exec -T indexer python -m sir reindex
 ```
 
@@ -277,9 +277,8 @@ Do not use it if you don't want to get your hands dirty.
    admin/setup-amqp-triggers install
    ```
 
-3. [Build search indexes](#set-up-search-indexes)
-   either if it has not been built
-   or if it is outdated.
+3. [Build search indexes](#set-up-search-indexes) if they either have not been
+   built or are outdated.
 
 4. Make indexer watch reindex messages with:
 
@@ -505,11 +504,11 @@ sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 sudo docker-compose up -d
 ```
 
-The four differences are:
+The main differences are:
 
 1. Sample data dump is downloaded instead of full data dumps,
 2. MusicBrainz Server runs in standalone mode instead of mirror mode,
-3. development mode is enabled (but Catalyst debug),
+3. Development mode is enabled (but Catalyst debug),
 4. JavaScript and resources are automaticaly recompiled on file changes,
 5. MusicBrainz Server is automatically restarted on Perl file changes,
 6. MusicBrainz Server code is in `musicbrainz-server/` directory.
