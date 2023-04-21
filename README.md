@@ -2,39 +2,40 @@
 
 [![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
-This repo contains everything needed to run a musicbrainz mirror server with search and replication in docker.
+This repo contains everything needed to run a musicbrainz mirror server with
+search and replication in docker.
 
 ## Table of contents
 
 <!-- toc -->
 
-- [Prerequisites](#prerequisites)
-  * [Recommended hardware/VM](#recommended-hardwarevm)
-  * [Required software](#required-software)
-  * [External documentation](#external-documentation)
-- [Components version](#components-version)
-- [Installation](#installation)
-  * [Build Docker images](#build-docker-images)
-  * [Create database](#create-database)
-  * [Build materialized tables](#build-materialized-tables)
-  * [Start website](#start-website)
-  * [Set up search indexes](#set-up-search-indexes)
-  * [Enable replication](#enable-replication)
-  * [Enable live indexing](#enable-live-indexing)
-- [Advanced configuration](#advanced-configuration)
-  * [Local changes](#local-changes)
-  * [Docker environment variables](#docker-environment-variables)
-  * [Docker Compose overrides](#docker-compose-overrides)
-- [Test setup](#test-setup)
-- [Development setup](#development-setup)
-  * [Local development of MusicBrainz Server](#local-development-of-musicbrainz-server)
-  * [Local development of Search Index Rebuilder](#local-development-of-search-index-rebuilder)
-  * [Local development of MusicBrainz Solr](#local-development-of-musicbrainz-solr)
-- [Helper scripts](#helper-scripts)
-  * [Recreate database](#recreate-database)
-  * [Recreate database with indexed search](#recreate-database-with-indexed-search)
-- [Update](#update)
-- [Issues](#issues)
+* [Prerequisites](#prerequisites)
+  - [Recommended hardware/VM](#recommended-hardwarevm)
+  - [Required software](#required-software)
+  - [External documentation](#external-documentation)
+* [Components version](#components-version)
+* [Installation](#installation)
+  - [Build Docker images](#build-docker-images)
+  - [Create database](#create-database)
+  - [Build materialized tables](#build-materialized-tables)
+  - [Start website](#start-website)
+  - [Set up search indexes](#set-up-search-indexes)
+  - [Enable replication](#enable-replication)
+  - [Enable live indexing](#enable-live-indexing)
+* [Advanced configuration](#advanced-configuration)
+  - [Local changes](#local-changes)
+  - [Docker environment variables](#docker-environment-variables)
+  - [Docker Compose overrides](#docker-compose-overrides)
+* [Test setup](#test-setup)
+* [Development setup](#development-setup)
+  - [Local development of MusicBrainz Server](#local-development-of-musicbrainz-server)
+  - [Local development of Search Index Rebuilder](#local-development-of-search-index-rebuilder)
+  - [Local development of MusicBrainz Solr](#local-development-of-musicbrainz-solr)
+* [Helper scripts](#helper-scripts)
+  - [Recreate database](#recreate-database)
+  - [Recreate database with indexed search](#recreate-database-with-indexed-search)
+* [Update](#update)
+* [Issues](#issues)
 
 <!-- tocstop -->
 
@@ -54,7 +55,8 @@ This repo contains everything needed to run a musicbrainz mirror server with sea
 * GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
   (On macOS, use [Homebrew](https://brew.sh/).)
 * Linux or macOS
-  (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox instead.)
+  (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox
+  instead.)
 
 If you use Docker Desktop on macOS you may need to increase the amount of memory
 available to containers from the default of 2GB:
@@ -62,6 +64,7 @@ available to containers from the default of 2GB:
 * Preferences > Resources > Memory
 
 If you use Ubuntu 19.10 or later, the above requirements can be set up by running:
+
 ```bash
 sudo apt-get update && \
 sudo apt-get install docker.io docker-compose git && \
@@ -69,14 +72,16 @@ sudo systemctl enable --now docker.service
 ```
 
 If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
-* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw.
+
+* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix
+  the Docker and UFW security flaw.
 
 ### External documentation
 
 * Introduction: [Getting started with Docker](https://docs.docker.com/get-started/)
   and [Overview of Docker Compose](https://docs.docker.com/compose/)
-* Command-line: [<code>docker</code> CLI reference](https://docs.docker.com/engine/reference/commandline/docker/)
-  and [<code>docker-compose</code> CLI reference](https://docs.docker.com/compose/reference/overview/)
+* Command-line: [`docker` CLI reference](https://docs.docker.com/engine/reference/commandline/docker/)
+  and [`docker-compose` CLI reference](https://docs.docker.com/compose/reference/overview/)
 * Configuration: [Compose file version 3 reference](https://docs.docker.com/compose/compose-file/)
 
 ## Components version
@@ -137,10 +142,11 @@ sudo docker-compose run --rm musicbrainz createdb.sh -fetch
 
 This is an optional step.
 
-MusicBrainz Server makes use of materialized (or denormalized) tables in production to improve the performance of
-certain pages and features. These tables duplicate primary table data and can take up several additional gigabytes of
-space, so they're optional but recommended. If you don't populate these tables, the server will generally fall back
-to slower queries in their place.
+MusicBrainz Server makes use of materialized (or denormalized) tables in
+production to improve the performance of certain pages and features. These
+tables duplicate primary table data and can take up several additional gigabytes
+of space, so they're optional but recommended. If you don't populate these
+tables, the server will generally fall back to slower queries in their place.
 
 If you wish to configure the materialized tables, you can run:
 
@@ -163,7 +169,7 @@ only. For indexed search and replication, keep going!
 
 Depending on your available ressources in CPU/RAM vs. bandwidth:
 
-* Either build indexes manually from the installed database:
+* Either build search indexes manually from the installed database:
 
   ```bash
   sudo docker-compose exec indexer python -m sir reindex
@@ -176,7 +182,9 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
-  To index cores individually, rather than all at once, add `--entity-type CORE` (any number of times) to the command above. For example `sudo docker-compose exec indexer python -m sir reindex --entity-type artist --entity-type release`
+  To index cores individually, rather than all at once, add `--entity-type CORE`
+  (any number of times) to the command above. For example `sudo docker-compose
+  exec indexer python -m sir reindex --entity-type artist --entity-type release`
 
 * Or download pre-built search indexes based on the latest data dump:
 
@@ -187,8 +195,15 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 
   (This option downloads 30GB of Zstandard-compressed archives from FTP.)
 
-:warning: Search indexes are not included in replication.
-You will have to rebuild search indexes regularly to keep it up-to-date. This can be done manually with the commands above, with Live Indexing (see below), or with a scheduled cron job. Here's an example cron job that can be added to your `etc/crontab` file from your server's root: `0 1 * * 7 YOUR_USER_NAME cd ~/musicbrainz-docker && /usr/bin/docker-compose exec -T indexer python -m sir reindex`.
+:warning: Search indexes are not included in replication. You will have to
+rebuild search indexes regularly to keep it up-to-date. This can be done
+manually with the commands above, with Live Indexing (see below), or with a
+scheduled cron job. Here's an example cron job that can be added to your
+`etc/crontab` file from your server's root:
+
+```crontab
+0 1 * * 7 YOUR_USER_NAME cd ~/musicbrainz-docker && /usr/bin/docker-compose exec -T indexer python -m sir reindex
+```
 
 At this point indexed search works on the local website/webservice.
 For replication, keep going!
@@ -205,7 +220,8 @@ and paste when prompted to by the following command:
 admin/set-replication-token
 ```
 
-The token will be written to the file [`local`](local/)`/secrets/metabrainz_access_token`.
+The token will be written to the file
+[`local`](local/)`/secrets/metabrainz_access_token`.
 
 Then, grant access to the token for replication with:
 
@@ -258,12 +274,14 @@ Do not use it if you don't want to get your hands dirty.
 
 1. Disable [replication cron job](#schedule-replication) if you enabled it:
 
-   ```
+   ```bash
    admin/configure rm replication-cron
    sudo docker-compose up -d
    ```
 
-2. Make indexer goes through [AMQP Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup) with:
+2. Make indexer goes through [AMQP
+   Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup)
+   with:
 
    ```bash
    sudo docker-compose exec indexer python -m sir amqp_setup
@@ -271,9 +289,8 @@ Do not use it if you don't want to get your hands dirty.
    admin/setup-amqp-triggers install
    ```
 
-3. [Build search indexes](#build-search-indexes)
-   either if it has not been built
-   or if it is outdated.
+3. [Build search indexes](#set-up-search-indexes) if they either have not been
+   built or are outdated.
 
 4. Make indexer watch reindex messages with:
 
@@ -284,7 +301,7 @@ Do not use it if you don't want to get your hands dirty.
 
 5. Reenable [replication cron job](#schedule-replication) if you disabled it at 1.
 
-   ```
+   ```bash
    admin/configure add replication-cron
    sudo docker-compose up -d
    ```
@@ -307,8 +324,9 @@ Git is set to ignore the followings you are encouraged to write to:
 
 ### Docker environment variables
 
-There are many ways to set [environment variables in Docker Compose](https://docs.docker.com/compose/environment-variables/),
-the most convenient here is probably to edit the hidden file `.env`.
+There are many ways to set [environment variables in Docker
+Compose](https://docs.docker.com/compose/environment-variables/), the most
+convenient here is probably to edit the hidden file `.env`.
 
 You can then check values to be passed to containers using:
 
@@ -321,6 +339,7 @@ Finally, make Compose picks up configuration changes with:
 ```bash
 sudo docker-compose up -d
 ```
+
 #### Customize web server host:port
 
 By default, the web server listens at <http://localhost:5000>
@@ -353,8 +372,9 @@ For backwards compatibility reasons an FTP server can be specified using the
 `MUSICBRAINZ_BASE_FTP_URL` Docker environment variable. Note that support for
 this variable is deprecated and will be removed in a future release.
 
-See the [list of download servers](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download)
-for alternative download sources.
+See the [list of download
+servers](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download) for
+alternative download sources.
 
 #### Customize replication schedule
 
@@ -389,13 +409,14 @@ Some overrides are available under [`compose`](compose/) directory.
 Feel free to write your own overrides under [`local`](local/) directory.
 
 The helper script [`admin/configure`](admin/configure) is able to:
+
 * **list** available compose files, with a descriptive summary
 * **show** the value of `COMPOSE_FILE` variable in Docker environment
 * set/update `COMPOSE_FILE` in `.env` file **with** a list of compose files
 * set/update `COMPOSE_FILE` in `.env` file with **add**ed or
   **r**e**m**oved compose files
 
-Try <code>admin/configure help</code> for more information.
+Try `admin/configure help` for more information.
 
 #### Publish ports of all services
 
@@ -464,10 +485,11 @@ sudo docker-compose up -d
 ```
 
 The two differences are:
-1. sample data dump is downloaded instead of full data dumps,
+
+1. Sample data dump is downloaded instead of full data dumps,
 2. MusicBrainz Server runs in standalone mode instead of mirror mode.
 
-[Build search indexes](#build-search-indexes) and
+[Build search indexes](#set-up-search-indexes) and
 [Enable live indexing](#enable-live-indexing) are the same.
 
 Replication is not applicable to test setup.
@@ -496,10 +518,11 @@ sudo docker-compose run --rm musicbrainz createdb.sh -sample -fetch
 sudo docker-compose up -d
 ```
 
-The four differences are:
-1. sample data dump is downloaded instead of full data dumps,
+The main differences are:
+
+1. Sample data dump is downloaded instead of full data dumps,
 2. MusicBrainz Server runs in standalone mode instead of mirror mode,
-3. development mode is enabled (but Catalyst debug),
+3. Development mode is enabled (but Catalyst debug),
 4. JavaScript and resources are automaticaly recompiled on file changes,
 5. MusicBrainz Server is automatically restarted on Perl file changes,
 6. MusicBrainz Server code is in `musicbrainz-server/` directory.
@@ -511,7 +534,7 @@ After changing code in `musicbrainz-server/`, it can be run as follows:
 sudo docker-compose restart musicbrainz
 ```
 
-[Build search indexes](#build-search-indexes) and
+[Build search indexes](#set-up-search-indexes) and
 [Enable live indexing](#enable-live-indexing) are the same.
 
 Replication is not applicable to development setup.
@@ -521,11 +544,13 @@ Simply restart the container when checking out a new branch.
 ### Local development of Search Index Rebuilder
 
 This is very similar to the above but for Search Index Rebuilder (SIR):
+
 1. Set the variable `SIR_LOCAL_ROOT` in the `.env` file
 2. Run `admin/configure add sir-dev`
 3. Run `sudo docker-compose up -d`
 
 Notes:
+
 * It will override any `config.ini` file in your local working copy of SIR.
 * Requirements are being cached and will be updated on container’s startup.
 * See [how to configure SIR in `musicbrainz-docker`](#customize-search-indexer-configuration).
@@ -539,6 +564,7 @@ depends on any other. Its development rather rely on schema. See
 
 However, other services depend on it, so it is useful to run a local
 version of `mb-solr` in `search` service for integration tests:
+
 1. Run `build.sh` from your `mb-solr` local working copy to build a
    an image of `metabrainz/mb-solr` with a custom tag.
 2. Set `MB_SOLR_VERSION` in `.env` to this custom tag.
@@ -557,12 +583,12 @@ There are two directories with helper scripts:
   ```
 
   See also:
-  * [Docker Compose overrides](#docker-compose-overrides) for more
+  - [Docker Compose overrides](#docker-compose-overrides) for more
     information about `admin/configure`.
-  * [Enable live indexing](#enable-live-indexing) for more information
+  - [Enable live indexing](#enable-live-indexing) for more information
     about `admin/create-amqp-extension`
     and `admin/setup-amqp-triggers`.
-  * [Enable replication](#enable-replication) for more information
+  - [Enable replication](#enable-replication) for more information
     about `admin/set-replication-token`.
 
 * [`build/musicbrainz/scripts/`](build/musicbrainz/scripts/) contains
@@ -624,12 +650,12 @@ Check your currently checked out version:
 git describe --dirty
 ```
 
-Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for update instructions.
+Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for
+update instructions.
 
 ## Issues
 
 If anything doesn't work, check the [troubleshooting](TROUBLESHOOTING.md) page.
-
 
 If you still don’t have a solution, please create an issue with versions info:
 
