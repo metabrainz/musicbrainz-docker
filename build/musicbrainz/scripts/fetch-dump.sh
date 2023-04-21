@@ -98,6 +98,59 @@ then
 	exit 64 # EX_USAGE
 fi
 
+# Show information about signing up for data use
+
+if [[ $TARGET != sample &&
+	! -a "$DB_DUMP_DIR/.for-commercial-use" &&
+	! -a  "$DB_DUMP_DIR/.for-non-commercial-use"
+]]
+then
+	prompt=$(cat <<-EOQ
+		The data you are about to download is provided by the MetaBrainz Foundation.
+		Are you planning to use this data for commercial or business purposes?
+		(y/n)
+	EOQ
+	)
+	read -e -p "$prompt " -r
+	while [[ ! ${REPLY:0:1} =~ [YNyn] ]]
+	do
+		read -e -p "Invalid reply. Yes or no? " -r
+	done
+	echo
+	if [[ ${REPLY:0:1} =~ [Yy] ]]
+	then
+		prompt=$(cat <<-EOQ
+			The MetaBrainz Foundation is supported by commercial users of our data and
+			through end-user donations. If you are using our data in a commercial context,
+			we require you to support MetaBrainz financially in order for us ensure the
+			availability of these datasets in the future.
+			
+			Please sign up at https://metabrainz.org/supporters/account-type
+			
+			[Press any key when OK]
+		EOQ
+		)
+		read -e -N 1 -p "$prompt" -r -s
+		echo OK
+		touch "$DB_DUMP_DIR/.for-commercial-use"
+	else
+		prompt=$(cat <<-EOQ
+			Could you please sign up at https://metabrainz.org/supporters/account-type
+			(for free!) so that we may better understand how our data is being used?
+			
+			We also encourage our non-commercial users who can afford it to make a donation
+			to the MetaBrainz Foundation so that we may continue our mission:
+			https://metabrainz.org/donate
+			
+			[Press any key when OK]
+		EOQ
+		)
+		read -e -N 1 -p "$prompt" -r -s
+		echo OK
+		touch "$DB_DUMP_DIR/.for-non-commercial-use"
+	fi
+fi
+
 # Keep support for (deprecated) FTP option (which still takes precedence)
 
 BASE_DOWNLOAD_URL="${BASE_FTP_URL:-$BASE_DOWNLOAD_URL}"
@@ -120,6 +173,8 @@ then
 	then
 		find "$SEARCH_DUMP_DIR" \
 			! -path "$SEARCH_DUMP_DIR" \
+			! -path "$DB_DUMP_DIR/.for-commercial-use" \
+			! -path "$DB_DUMP_DIR/.for-non-commercial-use" \
 			! -path "$SEARCH_DUMP_DIR/LATEST" \
 			-delete
 	fi
@@ -206,6 +261,8 @@ then
 	then
 		find "$DB_DUMP_DIR" \
 			! -path "$DB_DUMP_DIR" \
+			! -path "$DB_DUMP_DIR/.for-commercial-use" \
+			! -path "$DB_DUMP_DIR/.for-non-commercial-use" \
 			! -path "$DB_DUMP_DIR/LATEST" \
 			! -path "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" \
 			-delete
