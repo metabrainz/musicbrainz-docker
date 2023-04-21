@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/metabrainz/musicbrainz-docker)
 
-This repo contains everything needed to run a musicbrainz mirror server with search and replication in docker.
+This repo contains everything needed to run a musicbrainz mirror server with
+search and replication in docker.
 
 ## Table of contents
 
@@ -54,7 +55,8 @@ This repo contains everything needed to run a musicbrainz mirror server with sea
 * GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
   (On macOS, use [Homebrew](https://brew.sh/).)
 * Linux or macOS
-  (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox instead.)
+  (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox
+  instead.)
 
 If you use Docker Desktop on macOS you may need to increase the amount of memory
 available to containers from the default of 2GB:
@@ -71,7 +73,8 @@ sudo systemctl enable --now docker.service
 
 If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
-* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix the Docker and UFW security flaw.
+* [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix
+  the Docker and UFW security flaw.
 
 ### External documentation
 
@@ -139,10 +142,11 @@ sudo docker-compose run --rm musicbrainz createdb.sh -fetch
 
 This is an optional step.
 
-MusicBrainz Server makes use of materialized (or denormalized) tables in production to improve the performance of
-certain pages and features. These tables duplicate primary table data and can take up several additional gigabytes of
-space, so they're optional but recommended. If you don't populate these tables, the server will generally fall back
-to slower queries in their place.
+MusicBrainz Server makes use of materialized (or denormalized) tables in
+production to improve the performance of certain pages and features. These
+tables duplicate primary table data and can take up several additional gigabytes
+of space, so they're optional but recommended. If you don't populate these
+tables, the server will generally fall back to slower queries in their place.
 
 If you wish to configure the materialized tables, you can run:
 
@@ -178,7 +182,9 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
-  To index cores individually, rather than all at once, add `--entity-type CORE` (any number of times) to the command above. For example `sudo docker-compose exec indexer python -m sir reindex --entity-type artist --entity-type release`
+  To index cores individually, rather than all at once, add `--entity-type CORE`
+  (any number of times) to the command above. For example `sudo docker-compose
+  exec indexer python -m sir reindex --entity-type artist --entity-type release`
 
 * Or download pre-built search indexes based on the latest data dump:
 
@@ -189,8 +195,11 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 
   (This option downloads 30GB of Zstandard-compressed archives from FTP.)
 
-:warning: Search indexes are not included in replication.
-You will have to rebuild search indexes regularly to keep it up-to-date. This can be done manually with the commands above, with Live Indexing (see below), or with a scheduled cron job. Here's an example cron job that can be added to your `etc/crontab` file from your server's root:
+:warning: Search indexes are not included in replication. You will have to
+rebuild search indexes regularly to keep it up-to-date. This can be done
+manually with the commands above, with Live Indexing (see below), or with a
+scheduled cron job. Here's an example cron job that can be added to your
+`etc/crontab` file from your server's root:
 
 ```crontab
 0 1 * * 7 YOUR_USER_NAME cd ~/musicbrainz-docker && /usr/bin/docker-compose exec -T indexer python -m sir reindex
@@ -211,7 +220,8 @@ and paste when prompted to by the following command:
 admin/set-replication-token
 ```
 
-The token will be written to the file [`local`](local/)`/secrets/metabrainz_access_token`.
+The token will be written to the file
+[`local`](local/)`/secrets/metabrainz_access_token`.
 
 Then, grant access to the token for replication with:
 
@@ -269,7 +279,9 @@ Do not use it if you don't want to get your hands dirty.
    sudo docker-compose up -d
    ```
 
-2. Make indexer goes through [AMQP Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup) with:
+2. Make indexer goes through [AMQP
+   Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup)
+   with:
 
    ```bash
    sudo docker-compose exec indexer python -m sir amqp_setup
@@ -312,8 +324,9 @@ Git is set to ignore the followings you are encouraged to write to:
 
 ### Docker environment variables
 
-There are many ways to set [environment variables in Docker Compose](https://docs.docker.com/compose/environment-variables/),
-the most convenient here is probably to edit the hidden file `.env`.
+There are many ways to set [environment variables in Docker
+Compose](https://docs.docker.com/compose/environment-variables/), the most
+convenient here is probably to edit the hidden file `.env`.
 
 You can then check values to be passed to containers using:
 
@@ -359,8 +372,9 @@ For backwards compatibility reasons an FTP server can be specified using the
 `MUSICBRAINZ_BASE_FTP_URL` Docker environment variable. Note that support for
 this variable is deprecated and will be removed in a future release.
 
-See the [list of download servers](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download)
-for alternative download sources.
+See the [list of download
+servers](https://musicbrainz.org/doc/MusicBrainz_Database/Download#Download) for
+alternative download sources.
 
 #### Customize replication schedule
 
@@ -636,7 +650,8 @@ Check your currently checked out version:
 git describe --dirty
 ```
 
-Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for update instructions.
+Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for
+update instructions.
 
 ## Issues
 
