@@ -9,30 +9,30 @@ This repo contains everything needed to run a musicbrainz mirror server with sea
 <!-- toc -->
 
 * [Prerequisites](#prerequisites)
-  * [Recommended hardware/VM](#recommended-hardwarevm)
-  * [Required software](#required-software)
-  * [External documentation](#external-documentation)
+  - [Recommended hardware/VM](#recommended-hardwarevm)
+  - [Required software](#required-software)
+  - [External documentation](#external-documentation)
 * [Components version](#components-version)
 * [Installation](#installation)
-  * [Build Docker images](#build-docker-images)
-  * [Create database](#create-database)
-  * [Build materialized tables](#build-materialized-tables)
-  * [Start website](#start-website)
-  * [Set up search indexes](#set-up-search-indexes)
-  * [Enable replication](#enable-replication)
-  * [Enable live indexing](#enable-live-indexing)
+  - [Build Docker images](#build-docker-images)
+  - [Create database](#create-database)
+  - [Build materialized tables](#build-materialized-tables)
+  - [Start website](#start-website)
+  - [Set up search indexes](#set-up-search-indexes)
+  - [Enable replication](#enable-replication)
+  - [Enable live indexing](#enable-live-indexing)
 * [Advanced configuration](#advanced-configuration)
-  * [Local changes](#local-changes)
-  * [Docker environment variables](#docker-environment-variables)
-  * [Docker Compose overrides](#docker-compose-overrides)
+  - [Local changes](#local-changes)
+  - [Docker environment variables](#docker-environment-variables)
+  - [Docker Compose overrides](#docker-compose-overrides)
 * [Test setup](#test-setup)
 * [Development setup](#development-setup)
-  * [Local development of MusicBrainz Server](#local-development-of-musicbrainz-server)
-  * [Local development of Search Index Rebuilder](#local-development-of-search-index-rebuilder)
-  * [Local development of MusicBrainz Solr](#local-development-of-musicbrainz-solr)
+  - [Local development of MusicBrainz Server](#local-development-of-musicbrainz-server)
+  - [Local development of Search Index Rebuilder](#local-development-of-search-index-rebuilder)
+  - [Local development of MusicBrainz Solr](#local-development-of-musicbrainz-solr)
 * [Helper scripts](#helper-scripts)
-  * [Recreate database](#recreate-database)
-  * [Recreate database with indexed search](#recreate-database-with-indexed-search)
+  - [Recreate database](#recreate-database)
+  - [Recreate database with indexed search](#recreate-database-with-indexed-search)
 * [Update](#update)
 * [Issues](#issues)
 
@@ -570,12 +570,12 @@ There are two directories with helper scripts:
   ```
 
   See also:
-  * [Docker Compose overrides](#docker-compose-overrides) for more
+  - [Docker Compose overrides](#docker-compose-overrides) for more
     information about `admin/configure`.
-  * [Enable live indexing](#enable-live-indexing) for more information
+  - [Enable live indexing](#enable-live-indexing) for more information
     about `admin/create-amqp-extension`
     and `admin/setup-amqp-triggers`.
-  * [Enable replication](#enable-replication) for more information
+  - [Enable replication](#enable-replication) for more information
     about `admin/set-replication-token`.
 
 * [`build/musicbrainz/scripts/`](build/musicbrainz/scripts/) contains
