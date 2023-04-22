@@ -107,10 +107,24 @@ BASE_DOWNLOAD_URL="${BASE_FTP_URL:-$BASE_DOWNLOAD_URL}"
 if [[ $TARGET =~ ^(both|search)$ ]]
 then
 	echo "$(date): Fetching search indexes dump..."
-	"${WGET_CMD[@]}" -nd -nH -N -P "$SEARCH_DUMP_DIR" \
+	PREVIOUS_DUMP_TIMESTAMP=$(
+		if [[ -a "$SEARCH_DUMP_DIR/LATEST" ]]
+		then
+			cat "$SEARCH_DUMP_DIR/LATEST"
+		fi
+	)
+	rm -f "$SEARCH_DUMP_DIR/LATEST"
+	"${WGET_CMD[@]}" -nd -nH -P "$SEARCH_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/LATEST"
 	DUMP_TIMESTAMP=$(cat /media/searchdump/LATEST)
-	"${WGET_CMD[@]}" -nd -nH -N -r -P "$SEARCH_DUMP_DIR" \
+	if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
+	then
+		find "$SEARCH_DUMP_DIR" \
+			! -path "$SEARCH_DUMP_DIR" \
+			! -path "$SEARCH_DUMP_DIR/LATEST" \
+			-delete
+	fi
+	"${WGET_CMD[@]}" -nd -nH -c -r -P "$SEARCH_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
 	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd -
 	if [[ $TARGET == search ]]
@@ -125,6 +139,19 @@ fi
 if [[ $TARGET != search ]]
 then
 	echo "$(date): Fetching database dump..."
+
+	PREVIOUS_DUMP_TIMESTAMP=$(
+		if [[ -a "$DB_DUMP_DIR/LATEST" ]]
+		then
+			cat "$DB_DUMP_DIR/LATEST"
+		fi
+	)
+	rm -f "$DB_DUMP_DIR/LATEST"
+	if [[ -a "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" ]]
+	then
+		PREVIOUS_DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES")
+		rm -f "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES"
+	fi
 fi
 
 case "$TARGET" in
@@ -152,7 +179,8 @@ then
 	# Find latest database dump corresponding to search indexes
 
 	SEARCH_DUMP_DAY="${DUMP_TIMESTAMP/-*}"
-	"${WGET_CMD[@]}" --spider --no-remove-listing -N -P "$DB_DUMP_DIR" \
+	rm -f "$DB_DUMP_DIR/.listing"
+	"${WGET_CMD[@]}" --spider --no-remove-listing -P "$DB_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR"
 	DUMP_TIMESTAMP=$(
 		grep -E "\\s${SEARCH_DUMP_DAY}-\\d*" "$DB_DUMP_DIR/.listing" \
@@ -164,9 +192,23 @@ elif [[ $TARGET != search ]]
 then
 	# Just find latest database dump
 
-	"${WGET_CMD[@]}" -nd -nH -N -P "$DB_DUMP_DIR" \
+	"${WGET_CMD[@]}" -nd -nH -P "$DB_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/LATEST"
 	DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST")
+fi
+
+# Remove previously downloaded files if obsolete
+
+if [[ $TARGET != search ]]
+then
+	if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
+	then
+		find "$DB_DUMP_DIR" \
+			! -path "$DB_DUMP_DIR" \
+			! -path "$DB_DUMP_DIR/LATEST" \
+			! -path "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" \
+			-delete
+	fi
 fi
 
 # Actually fetch database dump
@@ -175,7 +217,7 @@ if [[ $TARGET =~ ^(both|replica)$ ]]
 then
 	for F in MD5SUMS "${DB_DUMP_FILES[@]}"
 	do
-		"${WGET_CMD[@]}" -N -P "$DB_DUMP_DIR" \
+		"${WGET_CMD[@]}" -c -P "$DB_DUMP_DIR" \
 			"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
 	done
 	cd "$DB_DUMP_DIR"
@@ -192,7 +234,7 @@ elif [[ $TARGET == sample ]]
 then
 	for F in "${DB_DUMP_FILES[@]}"
 	do
-		"${WGET_CMD[@]}" -N -P "$DB_DUMP_DIR" \
+		"${WGET_CMD[@]}" -c -P "$DB_DUMP_DIR" \
 			"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
 	done
 fi
