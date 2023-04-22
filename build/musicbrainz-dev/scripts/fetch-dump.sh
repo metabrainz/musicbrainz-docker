@@ -128,7 +128,7 @@ then
 		--accept 'MD5SUMS,*.tar.zst' --no-parent --relative \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
 	echo "$(date): Checking MD5 sums..."
-	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd -
+	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd - >/dev/null
 	if [[ $TARGET == search ]]
 	then
 		echo 'Done fetching search indexes dump'
@@ -238,7 +238,7 @@ then
 			exit 70 # EX_SOFTWARE
 		fi
 	done
-	cd -
+	cd - >/dev/null
 elif [[ $TARGET == sample ]]
 then
 	for F in "${DB_DUMP_FILES[@]}"
