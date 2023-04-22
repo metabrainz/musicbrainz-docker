@@ -116,7 +116,7 @@ then
 	rm -f "$SEARCH_DUMP_DIR/LATEST"
 	"${WGET_CMD[@]}" -nd -nH -P "$SEARCH_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/LATEST"
-	DUMP_TIMESTAMP=$(cat /media/searchdump/LATEST)
+	DUMP_TIMESTAMP=$(cat "$SEARCH_DUMP_DIR/LATEST")
 	if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
 	then
 		find "$SEARCH_DUMP_DIR" \
