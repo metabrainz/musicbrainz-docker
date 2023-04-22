@@ -127,6 +127,7 @@ then
 	"${WGET_CMD[@]}" -nd -nH -c -r -P "$SEARCH_DUMP_DIR" \
 		--accept 'MD5SUMS,*.tar.zst' --no-parent --relative \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
+	echo "$(date): Checking MD5 sums..."
 	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd -
 	if [[ $TARGET == search ]]
 	then
@@ -222,14 +223,20 @@ then
 		"${WGET_CMD[@]}" -c -P "$DB_DUMP_DIR" \
 			"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/$DUMP_TIMESTAMP/$F"
 	done
+	echo "$(date): Checking MD5 sums..."
 	cd "$DB_DUMP_DIR"
 	for F in "${DB_DUMP_FILES[@]}"
 	do
+		echo -n "$F: "
 		MD5SUM=$(md5sum -b "$F")
-		grep -Fqx "$MD5SUM" MD5SUMS || {
-			echo >&2 "$0: unmatched MD5 checksum: $MD5SUM *$F" &&
+		if grep -Fqx "$MD5SUM" MD5SUMS
+		then
+			echo OK
+		else
+			echo FAILED
+			echo >&2 "$0: unmatched MD5 checksum: $MD5SUM *$F"
 			exit 70 # EX_SOFTWARE
-		}
+		fi
 	done
 	cd -
 elif [[ $TARGET == sample ]]
