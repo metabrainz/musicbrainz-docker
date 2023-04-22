@@ -125,6 +125,7 @@ then
 			-delete
 	fi
 	"${WGET_CMD[@]}" -nd -nH -c -r -P "$SEARCH_DUMP_DIR" \
+		--accept 'MD5SUMS,*.tar.zst' --no-parent --relative \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
 	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd -
 	if [[ $TARGET == search ]]
@@ -179,14 +180,15 @@ then
 	# Find latest database dump corresponding to search indexes
 
 	SEARCH_DUMP_DAY="${DUMP_TIMESTAMP/-*}"
-	rm -f "$DB_DUMP_DIR/.listing"
-	"${WGET_CMD[@]}" --spider --no-remove-listing -P "$DB_DUMP_DIR" \
-		"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR"
+	rm -f "$DB_DUMP_DIR/index.html"
+	"${WGET_CMD[@]}" --force-html -O "$DB_DUMP_DIR/index.html" -P "$DB_DUMP_DIR" \
+		"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/"
+	cat "$DB_DUMP_DIR/index.html"
 	DUMP_TIMESTAMP=$(
-		grep -E "\\s${SEARCH_DUMP_DAY}-\\d*" "$DB_DUMP_DIR/.listing" \
-			| sed -e 's/\s*$//' -e 's/.*\s//'
+		sed -n "s#.*href=\"[^\"]*\\($SEARCH_DUMP_DAY-[0-9]*\\).*#\\1#p" \
+			"$DB_DUMP_DIR/index.html" | head -1
 	)
-	rm -f "$DB_DUMP_DIR/.listing"
+	rm -f "$DB_DUMP_DIR/index.html"
 	echo "$DUMP_TIMESTAMP" >> "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES"
 elif [[ $TARGET != search ]]
 then
