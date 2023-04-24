@@ -86,21 +86,24 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
     fetch-dump.sh "${FETCH_OPTIONS[@]}"
 fi
 
-if [[ -a /media/dbdump/"${DUMP_FILES[0]}" ]]; then
-    echo "found existing dumps"
-    dockerize -wait tcp://db:5432 -timeout 60s sleep 0
-
-    update-perl.sh
-
-    mkdir -p $TMP_DIR
-    cd /media/dbdump
-
-    INITDB_OPTIONS='--echo --import'
-    if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
-        INITDB_OPTIONS="--createdb $INITDB_OPTIONS"
+for F in "${DUMP_FILES[@]}"; do
+    if ! [[ -a "/media/dbdump/$F" ]]; then
+        echo "$0: The dump '$F' is missing"
+        exit 1
     fi
-    # shellcheck disable=SC2086
-    /musicbrainz-server/admin/InitDb.pl $INITDB_OPTIONS -- --skip-editor --tmp-dir $TMP_DIR "${DUMP_FILES[@]}"
-else
-    echo "no dumps found or dumps are incomplete"
+done
+
+echo "found existing dumps"
+dockerize -wait tcp://db:5432 -timeout 60s sleep 0
+
+update-perl.sh
+
+mkdir -p $TMP_DIR
+cd /media/dbdump
+
+INITDB_OPTIONS='--echo --import'
+if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
+    INITDB_OPTIONS="--createdb $INITDB_OPTIONS"
 fi
+# shellcheck disable=SC2086
+/musicbrainz-server/admin/InitDb.pl $INITDB_OPTIONS -- --skip-editor --tmp-dir $TMP_DIR "${DUMP_FILES[@]}"
