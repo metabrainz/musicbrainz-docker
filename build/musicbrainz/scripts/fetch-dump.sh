@@ -107,13 +107,12 @@ BASE_DOWNLOAD_URL="${BASE_FTP_URL:-$BASE_DOWNLOAD_URL}"
 if [[ $TARGET =~ ^(both|search)$ ]]
 then
 	echo "$(date): Fetching search indexes dump..."
-	PREVIOUS_DUMP_TIMESTAMP=$(
-		if [[ -a "$SEARCH_DUMP_DIR/LATEST" ]]
-		then
-			cat "$SEARCH_DUMP_DIR/LATEST"
-		fi
-	)
-	rm -f "$SEARCH_DUMP_DIR/LATEST"
+	PREVIOUS_DUMP_TIMESTAMP=''
+	if [[ -a "$SEARCH_DUMP_DIR/LATEST" ]]
+	then
+		PREVIOUS_DUMP_TIMESTAMP=$(cat "$SEARCH_DUMP_DIR/LATEST")
+		rm -f "$SEARCH_DUMP_DIR/LATEST"
+	fi
 	"${WGET_CMD[@]}" -nd -nH -P "$SEARCH_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/data/search-indexes/LATEST"
 	DUMP_TIMESTAMP=$(cat "$SEARCH_DUMP_DIR/LATEST")
@@ -142,13 +141,12 @@ if [[ $TARGET != search ]]
 then
 	echo "$(date): Fetching database dump..."
 
-	PREVIOUS_DUMP_TIMESTAMP=$(
-		if [[ -a "$DB_DUMP_DIR/LATEST" ]]
-		then
-			cat "$DB_DUMP_DIR/LATEST"
-		fi
-	)
-	rm -f "$DB_DUMP_DIR/LATEST"
+	PREVIOUS_DUMP_TIMESTAMP=''
+	if [[ -a "$DB_DUMP_DIR/LATEST" ]]
+	then
+		PREVIOUS_DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST")
+		rm -f "$DB_DUMP_DIR/LATEST"
+	fi
 	if [[ -a "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" ]]
 	then
 		PREVIOUS_DUMP_TIMESTAMP=$(cat "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES")
