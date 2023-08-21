@@ -74,6 +74,7 @@ RUN mkdir -p /usr/local/share/keyrings && \
         language-pack-et \
         language-pack-fi \
         language-pack-fr \
+        language-pack-he \
         language-pack-it \
         language-pack-ja \
         language-pack-nl \
