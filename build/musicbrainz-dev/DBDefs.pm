@@ -432,7 +432,7 @@ sub DEVELOPMENT_SERVER { $ENV{MUSICBRAINZ_DEVELOPMENT_SERVER} == 1 ? 1 : 0 }
 # are not yet properly supported, like right-to-left languages
 sub MB_LANGUAGES { shift->DEVELOPMENT_SERVER()
     ? qw( de el es-es et he fi fr it ja nl en )
-    : qw( de fr nl en )
+    : qw( de fr it nl en )
 }
 
 # Should the site fall back to browser settings when trying to set a language
