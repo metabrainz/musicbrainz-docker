@@ -35,6 +35,7 @@ search and replication in docker.
   - [Recreate database](#recreate-database)
   - [Recreate database with indexed search](#recreate-database-with-indexed-search)
 * [Update](#update)
+* [Cleanup](#cleanup)
 * [Issues](#issues)
 
 <!-- tocstop -->
@@ -651,6 +652,23 @@ git describe --dirty
 
 Check [releases](https://github.com/metabrainz/musicbrainz-docker/releases) for
 update instructions.
+
+## Cleanup
+
+Each time you are rebuilding a new image, for either updating to a new
+release or applying some changes in configuration, the previous image
+is not removed.
+On the one hand, it is convenient as it allows you to quickly restore
+it in case the new image has critical issues.
+On the other hand, it is filling your disk with some GBs over time.
+Thus it is recommended to do a regular cleanup as follows.
+
+:warning: If you are using Docker for anything else than this Compose project,
+the below command will also remove all unused images.
+
+```bash
+sudo docker system prune --all
+```
 
 ## Issues
 
