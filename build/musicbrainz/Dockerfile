@@ -56,7 +56,7 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 
 WORKDIR /musicbrainz-server
 
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=18.17.1
 ARG PGP_SERVERS="keys.openpgp.org keyserver.ubuntu.com pgp.mit.edu"
 RUN cp docker/yarn_pubkey.txt /tmp/yarn-key.asc && \
     cd /tmp && \
@@ -88,7 +88,7 @@ RUN cp docker/yarn_pubkey.txt /tmp/yarn-key.asc && \
     rm -f /tmp/yarn-key.asc /tmp/yarn-keyring.gpg && \
     echo "deb [signed-by=/usr/local/share/keyrings/dl.yarnpkg.com.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarnpkg.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarnpkg.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
-    curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
+    curl -sSLO --retry 5 https://deb.nodesource.com/node_18.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get purge -qy cmdtest && \
     apt-get install --no-install-recommends -qy \
