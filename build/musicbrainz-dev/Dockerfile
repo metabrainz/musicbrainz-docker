@@ -15,7 +15,7 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=18.17.1
 ARG PGP_SERVERS="keys.openpgp.org keyserver.ubuntu.com pgp.mit.edu"
 ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -56,7 +56,7 @@ RUN mkdir -p /usr/local/share/keyrings && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
         python2-minimal && \
-    curl -sSLO --retry 5 https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
+    curl -sSLO --retry 5 https://deb.nodesource.com/node_18.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
