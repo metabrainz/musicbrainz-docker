@@ -113,6 +113,8 @@ services:
         max-size: "10m"
         max-file: "10"
     restart: unless-stopped
+    ulimits:
+      nofile: 65536
     volumes:
       - mqdata:/var/lib/rabbitmq
     expose:
