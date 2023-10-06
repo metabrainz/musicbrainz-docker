@@ -23,6 +23,10 @@ RUN apt-get update && \
         postgresql-server-dev-${POSTGRES_VERSION} \
     && rm -rf /var/lib/apt/lists/*
 
+# Compile en_US.UTF-8 locale specification
+RUN echo en_US.UTF-8 UTF-8 >> /etc/locale.gen \
+    && locale-gen
+
 # There is no tag v0.4.2 (or 0.5.0) yet
 ARG PG_AMQP_GIT_REF="240d477d40c5e7a579b931c98eb29cef4edda164"
 # hadolint ignore=DL3003
