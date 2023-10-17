@@ -566,9 +566,10 @@ depends on any other. Its development rather rely on schema. See
 However, other services depend on it, so it is useful to run a local
 version of `mb-solr` in `search` service for integration tests:
 
-1. Run `build.sh` from your `mb-solr` local working copy to build a
-   an image of `metabrainz/mb-solr` with a custom tag.
-2. Set `MB_SOLR_VERSION` in `.env` to this custom tag.
+1. Run `build.sh` from your `mb-solr` local working copy, which will
+   build an image of `metabrainz/mb-solr` with a local tag reflecting
+   the working tree status of your local clone of `mb-solr`.
+2. Set `MB_SOLR_VERSION` in `.env` to this local tag.
 3. Run `sudo docker-compose up -d`
 
 ## Helper scripts
