@@ -16,44 +16,12 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 COPY keyrings/* /etc/apt/keyrings/
-ARG NODE_VERSION=18.17.1
-ARG PGP_SERVERS="keys.openpgp.org keyserver.ubuntu.com pgp.mit.edu"
+ARG NODE_MAJOR_VERSION=20
 ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    curl -sSL --retry 5 https://dl.yarnpkg.com/debian/pubkey.gpg > /tmp/yarn-key.asc && \
-    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --import /tmp/yarn-key.asc && \
-    \
-    # Refresh Yarn signing keys
-    refreshed_keys=''; \
-    for pgp_server in $(tr ' ' '\n' <<<"$PGP_SERVERS"); do \
-        for attempt in {1..3}; do \
-            gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --keyserver "$pgp_server" --refresh-keys Yarn 2>&1 && \
-            { refreshed_keys='yes'; break; } || \
-            echo "Temporary failure: gpg returned error code '$?' on attempt #$attempt to reach '$pgp_server'."; \
-        done; \
-        if [[ $refreshed_keys == yes ]]; then break; fi; \
-    done; \
-    if [[ $refreshed_keys != yes ]]; then \
-        echo >&2 'Fatal error: Failed all attempts to refresh PGP keys.'; \
-        echo >&2 'Try passing a list of PGP servers that work for you as build argument:'; \
-        echo >&2 ''; \
-        echo >&2 '    docker-compose build --build-arg PGP_SERVERS="LIST" musicbrainz'; \
-        echo >&2 ''; \
-        echo >&2 "Current LIST is \"$PGP_SERVERS\""; \
-        EX_TEMPFAIL=75; \
-        exit $EX_TEMPFAIL; \
-    fi; \
-    unset attempt pgp_server refreshed_keys; \
-    \
-    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --export --output /etc/apt/keyrings/dl.yarnpkg.com.gpg && \
-    rm -f /tmp/yarn-key.asc /tmp/yarn-keyring.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/dl.yarnpkg.com.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarnpkg.list && \
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_${NODE_MAJOR_VERSION}.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
-    apt-get install --no-install-recommends -qy \
-        python2-minimal && \
-    curl -sSLO --retry 5 https://deb.nodesource.com/node_18.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
-    dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
         bash-completion \
@@ -87,6 +55,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/p
         make \
         # Needed for ts
         moreutils \
+        nodejs \
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-${POSTGRES_VERSION} \
@@ -94,10 +63,11 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/p
         scour \
         # Needed to decompress sample data
         xz-utils \
-        yarn \
         # Needed for XML:LibXML
         zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    # Install yarn from nodejs
+    && corepack enable
 
 WORKDIR /musicbrainz-server
 RUN git config --global --add safe.directory /musicbrainz-server
