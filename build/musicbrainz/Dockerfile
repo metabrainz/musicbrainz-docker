@@ -17,12 +17,12 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
 
 ARG POSTGRES_VERSION=12
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN mkdir -p /usr/local/share/keyrings && \
+RUN mkdir -p /etc/apt/keyrings && \
     curl -sSL --retry 5 https://www.postgresql.org/media/keys/ACCC4CF8.asc > /tmp/postgres-key.asc && \
     gpg --no-default-keyring --keyring /tmp/postgres-keyring.gpg --import /tmp/postgres-key.asc && \
-    gpg --no-default-keyring --keyring /tmp/postgres-keyring.gpg --export --output /usr/local/share/keyrings/apt.postgresql.org.gpg && \
+    gpg --no-default-keyring --keyring /tmp/postgres-keyring.gpg --export --output /etc/apt/keyrings/apt.postgresql.org.gpg && \
     rm -f /tmp/postgres-key.asc /tmp/postgres-keyring.gpg && \
-    echo "deb [signed-by=/usr/local/share/keyrings/apt.postgresql.org.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    echo "deb [signed-by=/etc/apt/keyrings/apt.postgresql.org.gpg] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
         cpanminus \
@@ -84,9 +84,9 @@ RUN cp docker/yarn_pubkey.txt /tmp/yarn-key.asc && \
     fi; \
     unset attempt pgp_server refreshed_keys; \
     \
-    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --export --output /usr/local/share/keyrings/dl.yarnpkg.com.gpg && \
+    gpg --no-default-keyring --keyring /tmp/yarn-keyring.gpg --export --output /etc/apt/keyrings/dl.yarnpkg.com.gpg && \
     rm -f /tmp/yarn-key.asc /tmp/yarn-keyring.gpg && \
-    echo "deb [signed-by=/usr/local/share/keyrings/dl.yarnpkg.com.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarnpkg.list && \
+    echo "deb [signed-by=/etc/apt/keyrings/dl.yarnpkg.com.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarnpkg.list && \
     apt-get update -o Dir::Etc::sourcelist="sources.list.d/yarnpkg.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0" && \
     curl -sSLO --retry 5 https://deb.nodesource.com/node_18.x/pool/main/n/nodejs/nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
     dpkg -i nodejs_${NODE_VERSION}-deb-1nodesource1_amd64.deb && \
