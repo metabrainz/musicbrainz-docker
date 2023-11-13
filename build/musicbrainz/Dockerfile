@@ -60,18 +60,13 @@ WORKDIR /musicbrainz-server
 RUN eval "$(perl -Mlocal::lib)" \
     && cpanm --installdeps --notest . \
     && cpanm --notest \
-        Catalyst::Plugin::Cache::HTTP \
         Catalyst::Plugin::StackTrace \
-        Digest::MD5::File \
-        JSON::Any \
-        LWP::Protocol::https \
         Plack::Handler::Starlet \
         Plack::Middleware::Debug::Base \
         Server::Starter \
         Starlet \
         Starlet::Server \
         Term::Size::Any \
-        TURNSTEP/DBD-Pg-3.16.0.tar.gz \
     && rm -rf /root/.cpan* /root/perl5/man/
 
 COPY DBDefs.pm /musicbrainz-server/lib/
