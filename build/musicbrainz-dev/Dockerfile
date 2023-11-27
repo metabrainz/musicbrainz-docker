@@ -83,7 +83,7 @@ ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
 ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 
 ENV BASH_ENV=/noninteractive.bash_env \
-    MUSICBRAINZ_BASE_DOWNLOAD_URL=http://ftp.eu.metabrainz.org/pub/musicbrainz \
+    MUSICBRAINZ_BASE_DOWNLOAD_URL=https://data.metabrainz.org/pub/musicbrainz \
     MUSICBRAINZ_CATALYST_DEBUG=0 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=1 \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr \

@@ -364,7 +364,7 @@ This number can be changed using the Docker environment variable
 #### Customize download server
 
 By default, data dumps and pre-built search indexes are downloaded from
-`http://ftp.eu.metabrainz.org/pub/musicbrainz`.
+`https://data.metabrainz.org/pub/musicbrainz`.
 
 The download server can be changed using the Docker environment variable
 `MUSICBRAINZ_BASE_DOWNLOAD_URL`.
