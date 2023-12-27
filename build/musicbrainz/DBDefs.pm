@@ -54,7 +54,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect to a test database
@@ -80,7 +80,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_READONLY_SERVER}",
         port        => "5432",
     },
     # How to connect for administrative access
@@ -88,7 +88,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "template1",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect when running maintenance scripts located under admin/.
@@ -261,7 +261,7 @@ sub PLUGIN_CACHE_OPTIONS {
     my $self = shift;
     return {
         class => 'MusicBrainz::Server::CacheWrapper::Redis',
-        server => 'redis:6379',
+        server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
         namespace => $self->CACHE_NAMESPACE . 'Catalyst:',
     };
 }
@@ -276,7 +276,7 @@ sub CACHE_MANAGER_OPTIONS {
             external => {
                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
                 options => {
-                    server => 'redis:6379',
+                    server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
                     namespace => $self->CACHE_NAMESPACE,
                 },
             },
@@ -315,7 +315,7 @@ sub DATASTORE_REDIS_ARGS {
     return {
         database => 0,
         namespace => $self->CACHE_NAMESPACE,
-        server => 'redis:6379',
+        server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
         test_database => 1,
     };
 }

@@ -46,5 +46,11 @@ RUN git clone --depth=1 --branch "v${SIR_VERSION}" https://github.com/metabrainz
 
 WORKDIR /code
 
+ENV MUSICBRAINZ_RABBITMQ_SERVER=mq \
+    MUSICBRAINZ_POSTGRES_SERVER=db \
+    MUSICBRAINZ_POSTGRES_READONLY_SERVER=db \
+    MUSICBRAINZ_SEARCH_SERVER=search:8983/solr
+
 ENV POSTGRES_USER=musicbrainz
 ENV POSTGRES_PASSWORD=musicbrainz
+

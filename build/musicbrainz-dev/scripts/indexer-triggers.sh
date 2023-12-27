@@ -12,7 +12,7 @@ fi
 
 INDEXER_SQL_DIR="$1"
 
-dockerize -wait tcp://db:5432 -timeout 60s sleep 0
+dockerize -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s sleep 0
 
 cd /musicbrainz-server
 
