@@ -54,7 +54,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect to a test database
@@ -62,7 +62,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "musicbrainz_test",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect to a Selenium test database. This database is created
@@ -73,7 +73,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         schema      => 'musicbrainz',
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect for read-only access.  See "REPLICATION_TYPE" (below)
@@ -81,7 +81,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "musicbrainz_db",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_READONLY_SERVER}",
         port        => "5432",
     },
     # How to connect for read-only access to the production database in standby mode.
@@ -101,7 +101,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
         database    => "template1",
         username    => "$ENV{POSTGRES_USER}",
         password    => "$ENV{POSTGRES_PASSWORD}",
-        host        => "db",
+        host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
         port        => "5432",
     },
     # How to connect when running maintenance scripts located under admin/.
@@ -111,7 +111,7 @@ MusicBrainz::Server::DatabaseConnectionFactory->register_databases(
 #       database    => "musicbrainz_db",
 #       username    => "$ENV{POSTGRES_USER}",
 #       password    => "$ENV{POSTGRES_PASSWORD}",
-#       host        => "db",
+#       host        => "$ENV{MUSICBRAINZ_POSTGRES_SERVER}",
 #       port        => "5432",
 #   },
     # Fill out only if RAWDATA lives on a different host from the READWRITE server.
