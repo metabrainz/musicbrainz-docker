@@ -69,6 +69,9 @@ RUN eval "$(perl -Mlocal::lib)" \
         Term::Size::Any \
     && rm -rf /root/.cpan* /root/perl5/man/
 
+RUN install -m 0755 \
+    admin/replication/hooks/post-process.sample \
+    admin/replication/hooks/post-process
 COPY DBDefs.pm /musicbrainz-server/lib/
 COPY scripts/* /usr/local/bin/
 RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
