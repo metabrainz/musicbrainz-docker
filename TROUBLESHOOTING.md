@@ -8,6 +8,7 @@
 - [Resolving name failed](#resolving-name-failed)
 - [Loadable library and perl binaries are mismatched](#loadable-library-and-perl-binaries-are-mismatched)
 - [ImportError: No module named](#importerror-no-module-named)
+- [Unknown error executing apt-key](#unknown-error-executing-apt-key)
 
 <!-- tocstop -->
 
@@ -109,3 +110,28 @@ sudo docker-compose restart indexer
 
 Python packages are downloaded again and installed again when the
 service `indexer` restarts.
+
+## Unknown error executing apt-key
+
+When building Docker image for the service `musicbrainz`:
+
+``` log
+Err:1 https://deb.nodesource.com/node_20.x nodistro InRelease
+  Unknown error executing apt-key
+[...]
+W: GPG error: https://deb.nodesource.com/node_20.x nodistro InRelease: Unknown error executing apt-key
+E: The repository 'https://deb.nodesource.com/node_20.x nodistro InRelease' is not signed.
+```
+
+This may happen if your system is hindering file permissions.
+You can find it out by adding `RUN ls -l file` commands in the
+Dockerfile.
+
+Solution:
+
+Configure your system to keep the file permissions defined in the Git repository
+and to preserve the permissions of the files copied through Docker.
+
+If it isn’t possible, for example with Unraid operating system,
+run additional `chmod` commands in the Dockerfile; See issue #263.
+
