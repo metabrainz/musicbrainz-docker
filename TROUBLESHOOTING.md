@@ -133,5 +133,6 @@ Configure your system to keep the file permissions defined in the Git repository
 and to preserve the permissions of the files copied through Docker.
 
 If it isn’t possible, for example with the Unraid operating system,
-run additional `chmod` commands in the Dockerfile; See issue #263.
+run additional `chmod` commands in the Dockerfile; See comments to the
+issue [#263](https://github.com/metabrainz/musicbrainz-docker/pull/263).
 
