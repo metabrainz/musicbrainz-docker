@@ -132,6 +132,6 @@ Solution:
 Configure your system to keep the file permissions defined in the Git repository
 and to preserve the permissions of the files copied through Docker.
 
-If it isn’t possible, for example with Unraid operating system,
+If it isn’t possible, for example with the Unraid operating system,
 run additional `chmod` commands in the Dockerfile; See issue #263.
 
