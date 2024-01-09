@@ -124,7 +124,7 @@ E: The repository 'https://deb.nodesource.com/node_20.x nodistro InRelease' is n
 ```
 
 This may happen if your system is hindering file permissions.
-You can find it out by adding `RUN ls -l file` commands in the
+You can find out by adding `RUN ls -l file` commands in the
 Dockerfile.
 
 Solution:
