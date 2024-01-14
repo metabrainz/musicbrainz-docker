@@ -1,5 +1,5 @@
-ARG PYTHON_VERSION=3.10
-ARG BASE_IMAGE_DATE=20220315
+ARG PYTHON_VERSION=3.11
+ARG BASE_IMAGE_DATE=20231006
 FROM metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
 
 ARG PYTHON_VERSION
@@ -36,7 +36,7 @@ RUN apt-get update \
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=py310-stage1
+ARG SIR_VERSION=py311-stage1
 
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
