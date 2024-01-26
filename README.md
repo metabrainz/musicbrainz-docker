@@ -401,6 +401,21 @@ This can be changed by creating a custom configuration file under
 [and finally](https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag)
 setting the Docker environment variable `SIR_CONFIG_PATH` to its path.
 
+#### Customize backend postgres server
+
+By default, musicbrainz is trying to connect to the host `db` (for both read-only and write host) but the hosts can
+be customized using the `MUSICBRAINZ_POSTGRES_SERVER` and `MUSICBRAINZ_POSTGRES_READONLY_SERVER` environment variables
+
+#### Customize backend rabbitmq server
+
+By default, musicbrainz is trying to connect to the host `mq` but the host can be customized using the `MUSICBRAINZ_RABBITMQ_SERVER`
+environment variable
+
+#### Customize backend redis server
+
+By default, musicbrainz is trying to connect to the host `redis` but the host can be customized using the `MUSICBRAINZ_REDIS_SERVER`
+environment variable
+
 ### Docker Compose overrides
 
 In Docker Compose, it is possible to override the base configuration using
