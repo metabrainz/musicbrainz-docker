@@ -1,8 +1,10 @@
 ARG POSTGRES_VERSION=12
-FROM postgres:${POSTGRES_VERSION}
+ARG POSTGRES_IMAGE_VARIANT=bookworm
+ARG POSTGRES_IMAGE_TAG=${POSTGRES_VERSION}-${POSTGRES_IMAGE_VARIANT}
+FROM postgres:${POSTGRES_IMAGE_TAG}
 
 ARG POSTGRES_VERSION
-LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_VERSION}"
+LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_IMAGE_TAG}"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -33,6 +35,6 @@ ARG PG_AMQP_GIT_REF="240d477d40c5e7a579b931c98eb29cef4edda164"
 RUN git clone https://github.com/omniti-labs/pg_amqp.git /tmp/pg_amqp \
     && cd /tmp/pg_amqp \
     && git checkout "$PG_AMQP_GIT_REF" \
-    && make \
+    && make PG_CPPFLAGS=-Wno-error=implicit-int \
     && make install \
     && rm -R /tmp/*
