@@ -106,7 +106,8 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     corepack enable
 
 WORKDIR /musicbrainz-server
-RUN git config --global --add safe.directory /musicbrainz-server
+RUN git config --global --add safe.directory /musicbrainz-server && \
+    ln -s /root/.bash_history.d/bash_history ~/.bash_history
 
 COPY DBDefs.pm /
 COPY scripts/* /usr/local/bin/

@@ -2,6 +2,9 @@
 # See https://docs.docker.com/compose/environment-variables/#the-env-file
 /.env
 
+# Bash history of musicbrainz container in development mode
+/.musicbrainz-dev.bash_history.d/
+
 # File created and managed by the script admin/create-amqp-extension
 /admin/.create-amqp-extension.sql
 
