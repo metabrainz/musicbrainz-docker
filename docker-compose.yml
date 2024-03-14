@@ -41,6 +41,8 @@ services:
       context: build/musicbrainz
       args:
         - POSTGRES_VERSION=${POSTGRES_VERSION:-12}
+    sysctls:
+      - net.ipv4.tcp_max_tw_buckets=10000
     logging:
       driver: "json-file"
       options:
