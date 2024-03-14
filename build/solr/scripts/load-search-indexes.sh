@@ -3,7 +3,7 @@
 set -e -o pipefail -u
 
 DUMP_DIR=/media/searchdump
-DATA_DIR=/opt/solr/server/solr/data
+DATA_DIR=/var/solr/data/data
 OVERWRITE_FLAG=0
 
 SCRIPT_NAME=$(basename "$0")
