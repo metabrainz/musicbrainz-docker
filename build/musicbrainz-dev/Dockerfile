@@ -47,7 +47,6 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         libdb-dev \
         libexpat1-dev \
         libicu-dev \
-        liblocal-lib-perl \
         libpq-dev \
         libssl-dev \
         # Needed for XML::LibXML
@@ -67,6 +66,9 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         zlib1g-dev \
         && \
     rm -rf /var/lib/apt/lists/* && \
+    # Install local::lib (needed to persistently update Perl modules)
+    cpanm local::lib && \
+    rm -fr /root/.cpanm && \
     # Install yarn from nodejs
     corepack enable
 
