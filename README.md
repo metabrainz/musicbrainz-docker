@@ -401,20 +401,39 @@ This can be changed by creating a custom configuration file under
 [and finally](https://docs.docker.com/storage/bind-mounts/#choose-the--v-or---mount-flag)
 setting the Docker environment variable `SIR_CONFIG_PATH` to its path.
 
-#### Customize backend postgres server
+#### Customize backend Postgres server
 
-By default, musicbrainz is trying to connect to the host `db` (for both read-only and write host) but the hosts can
-be customized using the `MUSICBRAINZ_POSTGRES_SERVER` and `MUSICBRAINZ_POSTGRES_READONLY_SERVER` environment variables
+By default, the services `indexer` and `musicbrainz` are trying to connect to the host `db` (for both read-only and write host) but the hosts can
+be customized using the `MUSICBRAINZ_POSTGRES_SERVER` and `MUSICBRAINZ_POSTGRES_READONLY_SERVER` environment variables.
 
-#### Customize backend rabbitmq server
+Notes:
+* After switching to another Postgres server:
+  * If not transferring data, it is needed to create the database again.
+  * For live indexing, the RabbitMQ server has to still be reachable from the Postgres server.
+* The helper scripts `check-search-indexes` and `create-amqp-extension` won’t work anymore.
+* The service `db` will still be up even if unused.
 
-By default, musicbrainz is trying to connect to the host `mq` but the host can be customized using the `MUSICBRAINZ_RABBITMQ_SERVER`
-environment variable
+#### Customize backend RabbitMQ server
 
-#### Customize backend redis server
+By default, the services `db`, `indexer` and `musicbrainz` are trying to connect to the host `mq`
+but the host can be customized using the `MUSICBRAINZ_RABBITMQ_SERVER` environment variable.
 
-By default, musicbrainz is trying to connect to the host `redis` but the host can be customized using the `MUSICBRAINZ_REDIS_SERVER`
-environment variable
+Notes:
+* After switching to another RabbitMQ server:
+  - Live indexing requires to go through AMQP Setup again.
+  - If not transferring data, it might be needed to build search indexes again.
+* The helper script `purge-message-queues` won’t work anymore.
+* The service `mq` will still be up even if unused.
+
+#### Customize backend Redis server
+
+By default, the service `musicbrainz` is trying to connect to the host `redis`
+but the host can be customized using the `MUSICBRAINZ_REDIS_SERVER` environment variable.
+
+Notes:
+* After switching to another Redis server:
+  - If not transferring data, MusicBrainz user sessions will be reset.
+* The service `redis` will still be running even if unused.
 
 ### Docker Compose overrides
 
