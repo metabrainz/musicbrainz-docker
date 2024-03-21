@@ -94,7 +94,7 @@ for F in "${DUMP_FILES[@]}"; do
 done
 
 echo "found existing dumps"
-dockerize -wait tcp://db:5432 -timeout 60s sleep 0
+dockerize -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s sleep 0
 
 mkdir -p $TMP_DIR
 cd /media/dbdump
