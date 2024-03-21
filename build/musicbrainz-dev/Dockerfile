@@ -52,8 +52,6 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         # Needed for XML::LibXML
         libxml2-dev \
         make \
-        # Needed for ts
-        moreutils \
         nodejs \
         # Needed for Unicode::ICU::Collator
         pkg-config \
@@ -69,6 +67,10 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     # Install local::lib (needed to persistently update Perl modules)
     cpanm local::lib && \
     rm -fr /root/.cpanm && \
+    # Install ts (needed to run admin background task scripts locally)
+    curl -sSL https://git.joeyh.name/index.cgi/moreutils.git/plain/ts?h=0.69 -o /usr/local/bin/ts && \
+    echo '01b67f3d81e6205f01cc0ada87039293ebc56596955225300dd69ec1257124f5 */usr/local/bin/ts' | sha256sum --strict --check - && \
+    chmod +x /usr/local/bin/ts && \
     # Install yarn from nodejs
     corepack enable
 
