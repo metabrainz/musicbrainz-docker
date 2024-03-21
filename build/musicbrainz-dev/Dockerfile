@@ -65,18 +65,19 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         xz-utils \
         # Needed for XML:LibXML
         zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/* \
+        && \
+    rm -rf /var/lib/apt/lists/* && \
     # Install yarn from nodejs
-    && corepack enable
+    corepack enable
 
 WORKDIR /musicbrainz-server
 RUN git config --global --add safe.directory /musicbrainz-server
 
 COPY DBDefs.pm /
 COPY scripts/* /usr/local/bin/
-RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc \
-    && rm /usr/local/bin/snippet.perllocallib.bashrc \
-    && ln -s /usr/local/bin/docker-entrypoint.sh /
+RUN cat /usr/local/bin/snippet.perllocallib.bashrc >> ~/.bashrc && \
+    rm /usr/local/bin/snippet.perllocallib.bashrc && \
+    ln -s /usr/local/bin/docker-entrypoint.sh /
 
 # Postgres user/password would be solely needed to compile tests
 ARG POSTGRES_USER=doesntmatteraslongasyoudontcompiletests
