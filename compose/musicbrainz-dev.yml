@@ -8,6 +8,7 @@ services:
       context: build/musicbrainz-dev
     volumes:
       - ${MUSICBRAINZ_SERVER_LOCAL_ROOT:?Missing path of MusicBrainz Server working copy}:/musicbrainz-server
+      - ./.musicbrainz-dev.bash_history.d/:/root/.bash_history.d/:z
     environment:
       - MUSICBRAINZ_CATALYST_DEBUG=${MUSICBRAINZ_CATALYST_DEBUG:-0}
       - MUSICBRAINZ_DEVELOPMENT_SERVER=${MUSICBRAINZ_DEVELOPMENT_SERVER:-1}
