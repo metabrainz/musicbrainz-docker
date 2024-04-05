@@ -47,7 +47,7 @@ search and replication in docker.
 
 * CPU: 16 threads (or 2 without indexed search), x86-64 architecture
 * RAM: 16 GB (or 4 without indexed search)
-* Disk Space: 200 GB (or 100 without indexed search)
+* Disk Space: 250 GB (or 100 without indexed search)
 
 ### Required software
 
