@@ -15,6 +15,9 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+ARG PERL_VERSION=5.38.2
+ARG PERL_SRC_SUM=a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e
+
 ARG CPANMINUS_VERSION=1.7047
 ARG CPANMINUS_SRC_SUM=963e63c6e1a8725ff2f624e9086396ae150db51dd0a337c3781d09a994af05a5
 
@@ -26,6 +29,8 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -qy \
+        # Needed for building perl
+        build-essential \
         bzip2 \
         gettext \
         g++ \
@@ -50,6 +55,23 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         zlib1g-dev \
         && \
     rm -rf /var/lib/apt/lists/* && \
+    # Install perl (in a more recent version than available with apt)
+    cd /usr/src && \
+    curl -sSLO https://cpan.metacpan.org/authors/id/P/PE/PEVANS/perl-$PERL_VERSION.tar.gz && \
+    echo "$PERL_SRC_SUM *perl-$PERL_VERSION.tar.gz" | sha256sum --strict --check - && \
+    tar -xzf perl-$PERL_VERSION.tar.gz && \
+    cd perl-$PERL_VERSION && \
+    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && \
+    archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" && \
+    archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" && \
+    ./Configure \
+        -Darchname="$gnuArch" "$archFlag" \
+        -Duselargefiles -Duseshrplib -Dusethreads \
+        -Dvendorprefix=/usr/local -Dman1dir=none -Dman3dir=none \
+        -des && \
+    make -j$(nproc) && \
+    make install && \
+    rm -fr /usr/src/perl-$PERL_VERSION* && \
     # Install cpanm (needed to help with updating Perl modules)
     cd /usr/src && \
     curl -sSLO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-$CPANMINUS_VERSION.tar.gz && \
@@ -63,7 +85,10 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     cpanm local::lib && \
     rm -fr /root/.cpanm && \
     # Install yarn from nodejs
-    corepack enable
+    corepack enable && \
+    # Clean up perl build dependencies
+    apt-get purge --auto-remove -y \
+        build-essential
 
 ARG MUSICBRAINZ_SERVER_VERSION=v-2024-04-09
 LABEL org.metabrainz.musicbrainz-server.version="${MUSICBRAINZ_SERVER_VERSION}"
