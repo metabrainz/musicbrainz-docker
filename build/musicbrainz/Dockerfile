@@ -97,7 +97,8 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 WORKDIR /musicbrainz-server
 
 RUN eval "$(perl -Mlocal::lib)" && \
-    cpanm --installdeps --notest . && \
+    cpanm Carton && \
+    carton install --deployment && \
     cpanm --notest \
         Catalyst::Plugin::StackTrace \
         Plack::Handler::Starlet \
@@ -138,13 +139,14 @@ ENV BASH_ENV=/noninteractive.bash_env \
     MUSICBRAINZ_WEB_SERVER_PORT=5000 \
     # Needed for yarn to install production dependencies only
     NODE_ENV=production \
+    PERL_CARTON_CPANFILE=/musicbrainz-server/cpanfile \
     POSTGRES_USER=musicbrainz \
     POSTGRES_PASSWORD=musicbrainz
 
 RUN yarn install && \
     yarn cache clean && \
     eval "$(perl -Mlocal::lib)" && \
-    /musicbrainz-server/script/compile_resources.sh
+    carton exec -- /musicbrainz-server/script/compile_resources.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["start.sh"]
