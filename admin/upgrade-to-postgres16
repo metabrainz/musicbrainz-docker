@@ -8,7 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME [--help]
 
-Upgrade database from Postgres 9.5 to Postgres 12.
+Upgrade database from Postgres 12 to Postgres 16.
 EOH
 )
 
@@ -26,49 +26,40 @@ fi
 $DOCKER_COMPOSE_CMD down
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
-    -f admin/lib/upgrade-to-postgres12/pg-9.5-stopped.yml \
+    -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
     up -d
-$DOCKER_COMPOSE_CMD stop indexer search mq redis
+$DOCKER_COMPOSE_CMD stop indexer search mq musicbrainz redis
 
 $DOCKER_COMPOSE_CMD exec db apt-get update
 $DOCKER_COMPOSE_CMD exec db apt-get install \
     --no-install-suggests \
     --no-install-recommends \
     -y \
-    postgresql-12 \
-    postgresql-client-12 \
-    postgresql-server-dev-12 \
+    postgresql-16 \
+    postgresql-client-16 \
+    postgresql-server-dev-16 \
     sudo
 
 PGDATA=/var/lib/postgresql/data
 $DOCKER_COMPOSE_CMD exec db \
-    sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl start -w -D "$PGDATA"
+    sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl start -w -D "$PGDATA"
 sleep 5
 
 CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -c 'SHOW server_version_num')
-if echo "$CURRENT_PG_VERSION" | grep -v '^905'; then
-    echo "Error: Current postgres version should be < 90600, not $CURRENT_PG_VERSON"
+if echo "$CURRENT_PG_VERSION" | grep -v '^12'; then
+    echo "Error: Current postgres version should be < 13, not $CURRENT_PG_VERSON"
     exit 1
 fi
-
-$DOCKER_COMPOSE_CMD exec musicbrainz git fetch --depth=1 --update-shallow origin '+refs/heads/pg12:refs/remotes/origin/pg12'
-$DOCKER_COMPOSE_CMD exec musicbrainz git reset --hard origin/pg12
-
-$DOCKER_COMPOSE_CMD exec musicbrainz \
-    sh -c 'eval "$(perl -Mlocal::lib)"; cd admin; ./psql --system READWRITE < sql/updates/20200518-pg12-before-upgrade.sql 2>&1'
 
 $DOCKER_COMPOSE_CMD stop db
 
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
-    -f admin/lib/upgrade-to-postgres12/pg-9.5-stopped.yml \
+    -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
     up -d db
 
-$DOCKER_CMD cp admin/lib/upgrade-to-postgres12/do-pg_upgrade.sh musicbrainz-docker_db_1:/tmp/
+$DOCKER_CMD cp admin/lib/upgrade-to-postgres16/do-pg_upgrade.sh musicbrainz-docker_db_1:/tmp/
 $DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/do-pg_upgrade.sh
-
-$DOCKER_COMPOSE_CMD exec musicbrainz \
-    sh -c 'eval "$(perl -Mlocal::lib)"; cd admin; ./psql --system READWRITE < sql/updates/20200518-pg12-after-upgrade.sql 2>&1'
 
 $DOCKER_COMPOSE_CMD exec db sudo -u postgres "$PGDATA"/analyze_new_cluster.sh
 $DOCKER_COMPOSE_CMD exec db rm "$PGDATA"/analyze_new_cluster.sh

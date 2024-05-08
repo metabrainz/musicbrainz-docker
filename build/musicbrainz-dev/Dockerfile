@@ -23,7 +23,7 @@ ARG CPANMINUS_SRC_SUM=963e63c6e1a8725ff2f624e9086396ae150db51dd0a337c3781d09a994
 
 COPY keyrings/* /etc/apt/keyrings/
 ARG NODE_MAJOR_VERSION=20
-ARG POSTGRES_VERSION=12
+ARG POSTGRES_VERSION=16
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_${NODE_MAJOR_VERSION}.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
     echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
