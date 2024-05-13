@@ -17,9 +17,7 @@ volumes:
 services:
   db:
     build:
-      context: build/postgres
-      args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION:-16}
+      context: build/postgres-prebuilt
     image: musicbrainz-docker_db:${POSTGRES_VERSION:-16}
     logging:
       driver: "json-file"
