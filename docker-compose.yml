@@ -38,9 +38,7 @@ services:
 
   musicbrainz:
     build:
-      context: build/musicbrainz
-      args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION:-16}
+      context: build/musicbrainz-prebuilt
     logging:
       driver: "json-file"
       options:
