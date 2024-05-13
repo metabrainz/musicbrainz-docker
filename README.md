@@ -87,8 +87,8 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Components version
 
-* Current MB Branch: [v-2024-04-09](build/musicbrainz/Dockerfile#L88)
-* Current DB_SCHEMA_SEQUENCE: [28](build/musicbrainz/Dockerfile#L123)
+* Current MB Branch: [v-2024-05-13-schema-change](build/musicbrainz/Dockerfile#L88)
+* Current DB_SCHEMA_SEQUENCE: [29](build/musicbrainz/Dockerfile#L125)
 * Postgres Version: [16](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
 * MB Solr search server: [3.4.2](docker-compose.yml#L88)
