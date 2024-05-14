@@ -59,7 +59,8 @@ $DOCKER_COMPOSE_CMD \
     -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
     up -d db
 
-$DOCKER_CMD cp admin/lib/upgrade-to-postgres16/do-pg_upgrade.sh musicbrainz-docker_db_1:/tmp/
+DB_CONTAINER_ID=$($DOCKER_COMPOSE_CMD ps -q db)
+$DOCKER_CMD cp admin/lib/upgrade-to-postgres16/do-pg_upgrade.sh "$DB_CONTAINER_ID":/tmp/
 $DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/do-pg_upgrade.sh
 
 $DOCKER_COMPOSE_CMD exec db sudo -u postgres "$PGDATA"/analyze_new_cluster.sh
