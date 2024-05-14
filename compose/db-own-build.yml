@@ -1,0 +1,10 @@
+version: '3.1'
+
+# Description: Build own image of Postgres with AMQP support for release
+
+services:
+  db:
+    build:
+      context: build/postgres
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-16}
