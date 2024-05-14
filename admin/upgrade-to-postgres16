@@ -63,9 +63,15 @@ DB_CONTAINER_ID=$($DOCKER_COMPOSE_CMD ps -q db)
 $DOCKER_CMD cp admin/lib/upgrade-to-postgres16/do-pg_upgrade.sh "$DB_CONTAINER_ID":/tmp/
 $DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/do-pg_upgrade.sh
 
-$DOCKER_COMPOSE_CMD exec db sudo -u postgres "$PGDATA"/analyze_new_cluster.sh
-$DOCKER_COMPOSE_CMD exec db rm "$PGDATA"/analyze_new_cluster.sh
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl start -w -D "$PGDATA"
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/pg_isready -t 60
 
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/vacuumdb -U musicbrainz --all --analyze-in-stages
+
+$DOCKER_COMPOSE_CMD stop db
 $DOCKER_COMPOSE_CMD rm --stop --force db
 $DOCKER_COMPOSE_CMD up --build -d
 
