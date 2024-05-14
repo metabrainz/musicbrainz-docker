@@ -43,9 +43,10 @@ $DOCKER_COMPOSE_CMD exec db apt-get install \
 PGDATA=/var/lib/postgresql/data
 $DOCKER_COMPOSE_CMD exec db \
     sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl start -w -D "$PGDATA"
-sleep 5
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/12/bin/pg_isready -t 60
 
-CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -c 'SHOW server_version_num')
+CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -P pager=off -c 'SHOW server_version_num')
 if echo "$CURRENT_PG_VERSION" | grep -v '^12'; then
     echo "Error: Current postgres version should be < 13, not $CURRENT_PG_VERSON"
     exit 1
