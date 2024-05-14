@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set -e -o pipefail -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME [--help]
+
+Upgrade database from Postgres 12 to Postgres 16.
+EOH
+)
+
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+$DOCKER_COMPOSE_CMD down
+$DOCKER_COMPOSE_CMD \
+    -f docker-compose.yml \
+    -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
+    up -d
+$DOCKER_COMPOSE_CMD stop indexer search mq musicbrainz redis
+
+$DOCKER_COMPOSE_CMD exec db apt-get update
+$DOCKER_COMPOSE_CMD exec db apt-get install \
+    --no-install-suggests \
+    --no-install-recommends \
+    -y \
+    postgresql-16 \
+    postgresql-client-16 \
+    postgresql-server-dev-16 \
+    sudo
+
+PGDATA=/var/lib/postgresql/data
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl start -w -D "$PGDATA"
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/12/bin/pg_isready -t 60
+
+CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -P pager=off -c 'SHOW server_version_num')
+if echo "$CURRENT_PG_VERSION" | grep -v '^12'; then
+    echo "Error: Current postgres version should be < 13, not $CURRENT_PG_VERSON"
+    exit 1
+fi
+
+$DOCKER_COMPOSE_CMD stop db
+
+$DOCKER_COMPOSE_CMD \
+    -f docker-compose.yml \
+    -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
+    up -d db
+
+DB_CONTAINER_ID=$($DOCKER_COMPOSE_CMD ps -q db)
+$DOCKER_CMD cp admin/lib/upgrade-to-postgres16/do-pg_upgrade.sh "$DB_CONTAINER_ID":/tmp/
+$DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/do-pg_upgrade.sh
+
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl start -w -D "$PGDATA"
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/pg_isready -t 60
+
+$DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tA -P pager=off -f "$PGDATA"/update_extensions.sql
+$DOCKER_COMPOSE_CMD exec db rm "$PGDATA"/update_extensions.sql
+
+$DOCKER_COMPOSE_CMD exec db \
+    sudo -u postgres /usr/lib/postgresql/16/bin/vacuumdb -U musicbrainz --all --analyze-in-stages
+
+$DOCKER_COMPOSE_CMD stop db
+$DOCKER_COMPOSE_CMD rm --stop --force db
+$DOCKER_COMPOSE_CMD up --build -d
+
+echo 'Upgrade complete!'

@@ -4,8 +4,8 @@ services:
   db:
     build:
       args:
-        - POSTGRES_VERSION=9.5
-    image: musicbrainz-docker_db:9.5
+        - POSTGRES_VERSION=12
+    image: musicbrainz-docker_db:12
     command: /bin/sleep infinity
 
   musicbrainz:
