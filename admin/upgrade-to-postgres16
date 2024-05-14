@@ -68,6 +68,9 @@ $DOCKER_COMPOSE_CMD exec db \
 $DOCKER_COMPOSE_CMD exec db \
     sudo -u postgres /usr/lib/postgresql/16/bin/pg_isready -t 60
 
+$DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tA -P pager=off -f "$PGDATA"/update_extensions.sql
+$DOCKER_COMPOSE_CMD exec db rm "$PGDATA"/update_extensions.sql
+
 $DOCKER_COMPOSE_CMD exec db \
     sudo -u postgres /usr/lib/postgresql/16/bin/vacuumdb -U musicbrainz --all --analyze-in-stages
 
