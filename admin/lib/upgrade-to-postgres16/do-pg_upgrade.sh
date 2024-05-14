@@ -48,9 +48,12 @@ sudo -u postgres /usr/lib/postgresql/16/bin/initdb \
 	--username musicbrainz \
 	"$PGDATA_NEW"
 
-git clone -b "v0.4.1" --depth=1 https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
+# There is no tag v0.4.2 (or 0.5.0) yet
+PG_AMQP_GIT_REF="240d477d40c5e7a579b931c98eb29cef4edda164"
+git clone https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
 cd "$PGAMQP_DIR"
-make PG_CONFIG=/usr/lib/postgresql/16/bin/pg_config
+git checkout "$PG_AMQP_GIT_REF"
+make PG_CONFIG=/usr/lib/postgresql/16/bin/pg_config PG_CPPFLAGS=-Wno-error=implicit-int
 make install
 cd "$PGDATA"
 
