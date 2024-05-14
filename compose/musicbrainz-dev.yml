@@ -6,6 +6,8 @@ services:
   musicbrainz:
     build:
       context: build/musicbrainz-dev
+      args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-16}
     volumes:
       - ${MUSICBRAINZ_SERVER_LOCAL_ROOT:?Missing path of MusicBrainz Server working copy}:/musicbrainz-server
       - ./.musicbrainz-dev.bash_history.d/:/root/.bash_history.d/:z

@@ -4,8 +4,8 @@ set -e
 shopt -s extglob
 
 PGDATA=/var/lib/postgresql/data
-PGDATA_OLD="$PGDATA"/9.5
-PGDATA_NEW="$PGDATA"/12
+PGDATA_OLD="$PGDATA"/12
+PGDATA_NEW="$PGDATA"/16
 PGAMQP_DIR=/tmp/pg_amqp
 
 function cleanup() {
@@ -15,8 +15,8 @@ function cleanup() {
 	fi
 
 	if [[ -d "$PGDATA_OLD" ]]; then
-		echo "Clean $PG_DATA_OLD off but 9.5 data"
-		rm -rf "$PGDATA"/!(9.5)
+		echo "Clean $PG_DATA_OLD off but 12 data"
+		rm -rf "$PGDATA"/!(12)
 		mv -v "$PGDATA_OLD"/* "$PGDATA"
 		rmdir "$PGDATA_OLD"
 	fi
@@ -28,35 +28,38 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl stop -w -D "$PGDATA" \
+sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl stop -w -D "$PGDATA" 2>/dev/null \
 	|| echo 'Assuming server is stopped...'
 
 # We use the --link flag on pg_upgrade below to make hard links instead of
 # copying files, drastically improving the speed of the upgrade. Hard links,
 # of course, require the linked files to be on the same file system, but
 # $PGDATA is the volume *root*. To work around that, we have to move the
-# existing v9.5 cluster to a '9.5' subdir, and create the new v12 cluster in
-# a '12' subdir. Once we're finished, we'll move the new cluster's files
+# existing v12 cluster to a '12' subdir, and create the new v16 cluster in
+# a '16' subdir. Once we're finished, we'll move the new cluster's files
 # back into $PGDATA.
 cd "$PGDATA"
-sudo -u postgres mkdir -p 9.5 12
-chmod 700 9.5 12
-sudo -u postgres mv !(9.5|12) 9.5
+sudo -u postgres mkdir -p 12 16
+chmod 700 12 16
+sudo -u postgres mv !(12|16) 12
 
-sudo -u postgres /usr/lib/postgresql/12/bin/initdb \
+sudo -u postgres /usr/lib/postgresql/16/bin/initdb \
 	--encoding utf8 \
 	--username musicbrainz \
 	"$PGDATA_NEW"
 
-git clone -b "v0.4.1" --depth=1 https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
+# There is no tag v0.4.2 (or 0.5.0) yet
+PG_AMQP_GIT_REF="240d477d40c5e7a579b931c98eb29cef4edda164"
+git clone https://github.com/omniti-labs/pg_amqp.git "$PGAMQP_DIR"
 cd "$PGAMQP_DIR"
-make PG_CONFIG=/usr/lib/postgresql/12/bin/pg_config
+git checkout "$PG_AMQP_GIT_REF"
+make PG_CONFIG=/usr/lib/postgresql/16/bin/pg_config PG_CPPFLAGS=-Wno-error=implicit-int
 make install
 cd "$PGDATA"
 
-sudo -u postgres /usr/lib/postgresql/12/bin/pg_upgrade \
-	--old-bindir=/usr/lib/postgresql/9.5/bin/ \
-	--new-bindir=/usr/lib/postgresql/12/bin/ \
+sudo -u postgres /usr/lib/postgresql/16/bin/pg_upgrade \
+	--old-bindir=/usr/lib/postgresql/12/bin/ \
+	--new-bindir=/usr/lib/postgresql/16/bin/ \
 	--old-datadir="$PGDATA_OLD" \
 	--new-datadir="$PGDATA_NEW" \
 	--jobs=3 \
@@ -71,10 +74,6 @@ sudo -u postgres /usr/lib/postgresql/12/bin/pg_upgrade \
 mv "$PGDATA_NEW"/* "$PGDATA"/
 rmdir "$PGDATA_NEW"
 cp -a "$PGDATA_OLD"/{postgresql.conf,pg_hba.conf} .
-
-# Start the new cluster in the background, so we can apply
-# 20200518-pg12-after-upgrade.sql via the website container.
-sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl start -w -D "$PGDATA"
 
 ./delete_old_cluster.sh
 rm delete_old_cluster.sh

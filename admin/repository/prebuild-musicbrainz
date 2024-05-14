@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME
+   or: $SCRIPT_NAME --help
+
+Build a new image for the musicbrainz service
+from the MusicBrainz Server source code repository
+and push it as metabrainz/musicbrainz-docker-musicbrainz:<tag>
+where tag is based on MusicBrainz Server version and a build sequence number.
+
+Prerequisites:
+
+    The version of MusicBrainz Server must be up-to-date in:
+        README.md
+        build/musicbrainz/Dockerfile
+        build/musicbrainz-prebuilt/Dockerfile
+
+    The build sequence must be incremented, if image tag exists already
+    (for example when only files under build/musicbrainz/ have changed), in:
+        build/musicbrainz-prebuilt/Dockerfile
+EOH
+)
+
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+# Retrieve destination image tag from the default Dockerfile
+
+MUSICBRAINZ_SERVER_VERSION=$(sed -n 's/^ARG MUSICBRAINZ_SERVER_VERSION=\([^ ]*\).*$/\1/p' build/musicbrainz-prebuilt/Dockerfile)
+# shellcheck disable=SC2034 # as it used in eval below
+MUSICBRAINZ_BUILD_SEQUENCE=$(sed -n 's/^ARG MUSICBRAINZ_BUILD_SEQUENCE=\([^ ]*\).*$/\1/p' build/musicbrainz-prebuilt/Dockerfile)
+DEST_IMAGE_TAG=$(eval echo "$(sed -n 's/^FROM \([^ ]*\).*$/\1/p' build/musicbrainz-prebuilt/Dockerfile)")
+
+# Check that the MusicBrainz Server version is the same in all other files
+
+README_MUSICBRAINZ_SERVER_VERSION=$(sed -n 's/^.*Current MB Branch: \[\([^]]*\)\].*$/\1/p' README.md)
+
+if [[ $MUSICBRAINZ_SERVER_VERSION != "$README_MUSICBRAINZ_SERVER_VERSION" ]]
+then
+  echo >&2 "$SCRIPT_NAME: File differs in MusicBrainz Server version:"
+  echo >&2 "$SCRIPT_NAME: * build/musicbrainz-prebuilt/Dockerfile: '$MUSICBRAINZ_SERVER_VERSION'"
+  echo >&2 "$SCRIPT_NAME: * README.md:                             '$README_MUSICBRAINZ_SERVER_VERSION'"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 65 # EX_DATAERR
+fi
+
+SOURCE_MUSICBRAINZ_SERVER_VERSION=$(sed -n 's/^ARG MUSICBRAINZ_SERVER_VERSION=\([^ ]*\).*$/\1/p' build/musicbrainz/Dockerfile)
+
+if [[ $MUSICBRAINZ_SERVER_VERSION != "$SOURCE_MUSICBRAINZ_SERVER_VERSION" ]]
+then
+  echo >&2 "$SCRIPT_NAME: File differs in MusicBrainz Server version:"
+  echo >&2 "$SCRIPT_NAME: * build/musicbrainz-prebuilt/Dockerfile: '$MUSICBRAINZ_SERVER_VERSION'"
+  echo >&2 "$SCRIPT_NAME: * build/musicbrainz/Dockerfile:          '$SOURCE_MUSICBRAINZ_SERVER_VERSION'"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 65 # EX_DATAERR
+fi
+
+# Check that the image tag doesn’t exist already
+
+if $DOCKER_CMD image pull "$DEST_IMAGE_TAG" 2>/dev/null \
+  || $DOCKER_CMD image ls "$DEST_IMAGE_TAG" 2>/dev/null | grep -Eq "$DEST_IMAGE_TAG"
+then
+  echo >&2 "$SCRIPT_NAME: image tag exists already: $DEST_IMAGE_TAG"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 65 # EX_DATAERR
+fi
+
+# Do the thing
+
+echo Building...
+
+DOCKER_COMPOSE_OPTS='-f docker-compose.yml -f compose/musicbrainz-own-build.yml'
+
+# shellcheck disable=SC2086 # intentional word splitting of options
+$DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_OPTS build --progress=plain --pull musicbrainz
+
+echo Tagging...
+
+# shellcheck disable=SC2086 # intentional word splitting of options
+LOCAL_IMAGE_TAG=$($DOCKER_COMPOSE_CMD $DOCKER_COMPOSE_OPTS config --images | grep -o '[^ ]*musicbrainz$')
+
+$DOCKER_CMD tag "$LOCAL_IMAGE_TAG" "$DEST_IMAGE_TAG"
+
+echo Pushing...
+
+$DOCKER_CMD push "$DEST_IMAGE_TAG"
+
+echo Done.
+
+# vi: set et sts=2 sw=2 ts=2 :

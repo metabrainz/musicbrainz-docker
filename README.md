@@ -87,9 +87,9 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Components version
 
-* Current MB Branch: [v-2024-04-09](build/musicbrainz/Dockerfile#L54)
-* Current DB_SCHEMA_SEQUENCE: [28](build/musicbrainz/Dockerfile#L85)
-* Postgres Version: [12](docker-compose.yml)
+* Current MB Branch: [v-2024-05-13-schema-change](build/musicbrainz/Dockerfile#L88)
+* Current DB_SCHEMA_SEQUENCE: [29](build/musicbrainz/Dockerfile#L125)
+* Postgres Version: [16](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
 * MB Solr search server: [3.4.2](docker-compose.yml#L88)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
@@ -152,7 +152,7 @@ tables, the server will generally fall back to slower queries in their place.
 If you wish to configure the materialized tables, you can run:
 
 ```bash
-sudo docker-compose exec musicbrainz bash -c './admin/BuildMaterializedTables --database=MAINTENANCE all'
+sudo docker-compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
 ```
 
 ### Start website
