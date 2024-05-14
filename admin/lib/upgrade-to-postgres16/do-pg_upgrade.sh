@@ -28,7 +28,7 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl stop -w -D "$PGDATA" \
+sudo -u postgres /usr/lib/postgresql/12/bin/pg_ctl stop -w -D "$PGDATA" 2>/dev/null \
 	|| echo 'Assuming server is stopped...'
 
 # We use the --link flag on pg_upgrade below to make hard links instead of
