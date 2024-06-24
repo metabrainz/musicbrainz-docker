@@ -35,6 +35,11 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         gettext \
         g++ \
         git \
+        # NOTE-LANGUAGES-1: These language packs must match the definition of MB_LANGUAGES in DBDefs.pm
+        language-pack-de \
+        language-pack-fr \
+        language-pack-it \
+        language-pack-nl \
         # Needed for Cache in DB_File
         libdb-dev \
         libexpat1-dev \
