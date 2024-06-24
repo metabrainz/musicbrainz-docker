@@ -35,6 +35,11 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         gettext \
         g++ \
         git \
+        # NOTE-LANGUAGES-1: These language packs must match the definition of MB_LANGUAGES in DBDefs.pm
+        language-pack-de \
+        language-pack-fr \
+        language-pack-it \
+        language-pack-nl \
         # Needed for Cache in DB_File
         libdb-dev \
         libexpat1-dev \
@@ -90,7 +95,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     apt-get purge --auto-remove -y \
         build-essential
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2024-05-13-schema-change
+ARG MUSICBRAINZ_SERVER_VERSION=v-2024-06-24
 LABEL org.metabrainz.musicbrainz-server.version="${MUSICBRAINZ_SERVER_VERSION}"
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 

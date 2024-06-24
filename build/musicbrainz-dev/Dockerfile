@@ -37,6 +37,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         git \
         # Needed to generate SVG from database schema DOT diagrams
         graphviz \
+        # NOTE-LANGUAGES-1: These language packs must match the definition of MB_LANGUAGES in DBDefs.pm
         language-pack-de \
         language-pack-el \
         language-pack-es \
