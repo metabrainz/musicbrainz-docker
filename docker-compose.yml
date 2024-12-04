@@ -99,7 +99,7 @@ services:
     volumes:
       - solrdata:/var/solr/data/data
       - searchdump:/media/searchdump
-    command: solr-foreground -c
+    command: solr-foreground --cloud
 
   mq:
     build: build/rabbitmq
