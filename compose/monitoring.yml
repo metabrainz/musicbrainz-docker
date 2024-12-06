@@ -1,0 +1,46 @@
+version: '3.1'
+
+# Description: Build and run monitoring features (Prometheus/Grafana)
+
+services:
+  db:
+    command: postgres -c "shared_buffers=2048MB" -c "shared_preload_libraries=pg_amqp.so, pg_stat_statements" -c pg_stat_statements.track=all
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9091:9090"
+    command: --config.file=/etc/prometheus/prometheus.yaml
+    volumes:
+      - ./build/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - '3050:3000'
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./build/grafana:/etc/grafana/provisioning
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    container_name: postgres-exporter
+    ports:
+      - "9187:9187"
+    command: --config.file=/etc/postgres-exporter/postgres-exporter.yml
+    volumes:
+      - ./build/postgres-exporter/postgres-exporter.yml:/etc/postgres-exporter/postgres-exporter.yml
+    environment:
+      DATA_SOURCE_NAME: "postgres://musicbrainz:musicbrainz@db:5432/musicbrainz_db?sslmode=disable"
+    depends_on:
+      prometheus:
+        condition: service_started
+      db:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  grafana-storage: {}
