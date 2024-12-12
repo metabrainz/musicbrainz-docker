@@ -26,6 +26,7 @@ services:
       - grafana-storage:/var/lib/grafana
       - ./default/grafana-provisioning:/etc/grafana/provisioning
     depends_on:
+      - postgres-exporter
       - prometheus
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
