@@ -8,8 +8,8 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
-    ports:
-      - "9091:9090"
+    expose:
+      - 9090
     command: --config.file=/etc/prometheus/prometheus.yaml
     volumes:
       - ./build/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
@@ -20,7 +20,7 @@ services:
     container_name: grafana
     restart: always
     ports:
-      - '3050:3000'
+      - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}3050:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
@@ -32,8 +32,8 @@ services:
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres-exporter
-    ports:
-      - "9187:9187"
+    expose:
+      - 9187
     command: --config.file=/etc/postgres-exporter/postgres-exporter.yml
     volumes:
       - ./build/postgres-exporter/postgres-exporter.yml:/etc/postgres-exporter/postgres-exporter.yml
