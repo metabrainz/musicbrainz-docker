@@ -13,6 +13,8 @@ services:
     command: --config.file=/etc/prometheus/prometheus.yaml
     volumes:
       - ./build/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    depends_on:
+      - postgres-exporter
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -25,6 +27,8 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./build/grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres-exporter
