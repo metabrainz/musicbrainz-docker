@@ -1,0 +1,8 @@
+auth_modules:
+  first:
+    type: userpass
+    userpass:
+      username: musicbrainz
+      password: musicbrainz
+    options:
+      sslmode: disable
