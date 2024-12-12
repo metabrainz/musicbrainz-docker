@@ -26,7 +26,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ./build/grafana:/etc/grafana/provisioning
+      - ./default/grafana-provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
   postgres-exporter:
