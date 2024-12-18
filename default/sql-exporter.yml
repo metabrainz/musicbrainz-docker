@@ -1,0 +1,157 @@
+# Global settings and defaults.
+global:
+  # Subtracted from Prometheus' scrape_timeout to give us some headroom and prevent Prometheus from
+  # timing out first.
+  scrape_timeout_offset: 500ms
+  # Minimum interval between collector runs: by default (0s) collectors are executed on every scrape.
+  min_interval: 0s
+  # Maximum number of open connections to any one target. Metric queries will run concurrently on
+  # multiple connections.
+  max_connections: 3
+  # Maximum number of idle connections to any one target.
+  max_idle_connections: 3
+  # Maximum amount of time a connection may be reused to any one target. Infinite by default.
+  max_connection_lifetime: 10m
+
+# The target to monitor and the list of collectors to execute on it.
+target:
+  # Data source name always has a URI schema that matches the driver name. In some cases (e.g. MySQL)
+  # the schema gets dropped or replaced to match the driver expected DSN format.
+  data_source_name: 'postgres://musicbrainz:musicbrainz@db:5432/musicbrainz_db?sslmode=disable'
+
+  # Collectors (referenced by name) to execute on the target.
+  collectors: [entity_counts]
+
+# A collector is a named set of related metrics that are collected together. It can be referenced by name, possibly
+# along with other collectors.
+#
+# Collectors may be defined inline (under `collectors`) or loaded from `collector_files` (one collector per file).
+collectors:
+  # A collector defining standard metrics for Microsoft SQL Server.
+  - collector_name: entity_counts
+
+    # Similar to global.min_interval, but applies to this collector only.
+    #min_interval: 0s
+
+    # A metric is a Prometheus metric with name, type, help text and (optional) additional labels, paired with exactly
+    # one query to populate the metric labels and values from.
+    #
+    # The result columns conceptually fall into two categories:
+    #  * zero or more key columns: their values will be directly mapped to labels of the same name;
+    #  * one or more value columns:
+    #     * if exactly one value column, the column name is ignored and its value becomes the metric value
+    #     * with multiple value columns, a `value_label` must be defined; the column name will populate this label and
+    #       the column value will populate the metric value.
+    metrics:
+      # The metric name, type and help text, as exported to /metrics.
+      - metric_name: area_count
+        type: gauge
+        help: 'Total number of rows in the area table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM area
+
+      - metric_name: artist_count
+        type: gauge
+        help: 'Total number of rows in the artist table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM artist
+
+      - metric_name: cd_stub_count
+        type: gauge
+        help: 'Total number of rows in the release_raw (cd stub) table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM release_raw
+
+      - metric_name: editor_count
+        type: gauge
+        help: 'Total number of rows in the editor table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM editor
+
+      - metric_name: event_count
+        type: gauge
+        help: 'Total number of rows in the event table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM event
+
+      - metric_name: genre_count
+        type: gauge
+        help: 'Total number of rows in the genre table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM genre
+
+      - metric_name: instrument_count
+        type: gauge
+        help: 'Total number of rows in the instrument table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM instrument
+
+      - metric_name: label_count
+        type: gauge
+        help: 'Total number of rows in the label table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM label
+
+      - metric_name: place_count
+        type: gauge
+        help: 'Total number of rows in the place table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM place
+
+      - metric_name: recording_count
+        type: gauge
+        help: 'Total number of rows in the recording table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM recording
+
+      - metric_name: release_count
+        type: gauge
+        help: 'Total number of rows in the release table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM release
+
+      - metric_name: release_group_count
+        type: gauge
+        help: 'Total number of rows in the release_group table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM release_group
+
+      - metric_name: series_count
+        type: gauge
+        help: 'Total number of rows in the series table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM series
+
+      - metric_name: tag_count
+        type: gauge
+        help: 'Total number of rows in the tag table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM tag
+
+      - metric_name: url_count
+        type: gauge
+        help: 'Total number of rows in the url table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM url
+
+      - metric_name: work_count
+        type: gauge
+        help: 'Total number of rows in the work table.'
+        # This query returns exactly one value per row, in the `count` column.
+        values: [count]
+        query: SELECT count(*) AS count FROM work
