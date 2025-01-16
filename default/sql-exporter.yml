@@ -4,7 +4,7 @@ global:
   # timing out first.
   scrape_timeout_offset: 500ms
   # Minimum interval between collector runs: by default (0s) collectors are executed on every scrape.
-  min_interval: 0s
+  min_interval: 300s
   # Maximum number of open connections to any one target. Metric queries will run concurrently on
   # multiple connections.
   max_connections: 3
