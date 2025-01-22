@@ -86,8 +86,8 @@ services:
     build:
       context: build/solr
       args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.4.2}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.4.2}
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-solr-9.7.0}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-solr-9.7.0}
     logging:
       driver: "json-file"
       options:
@@ -100,7 +100,7 @@ services:
     expose:
       - "8983"
     volumes:
-      - solrdata:/opt/solr/server/solr/data
+      - solrdata:/var/solr
       - searchdump:/media/searchdump
     healthcheck:
       test: ["CMD-SHELL", "perl /usr/local/bin/solr-healthcheck.pl"]
@@ -108,6 +108,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 10
+    command: start-musicbrainz-solrcloud
 
   mq:
     build: build/rabbitmq
