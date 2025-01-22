@@ -75,9 +75,12 @@ services:
     volumes:
       - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
-      - db
-      - mq
-      - search
+      db:
+        condition: service_started
+      mq:
+        condition: service_started
+      search:
+        condition: service_healthy
 
   search:
     build:
@@ -99,6 +102,12 @@ services:
     volumes:
       - solrdata:/opt/solr/server/solr/data
       - searchdump:/media/searchdump
+    healthcheck:
+      test: ["CMD-SHELL", "perl /usr/local/bin/solr-healthcheck.pl"]
+      start_period: 3m
+      interval: 15s
+      timeout: 10s
+      retries: 10
 
   mq:
     build: build/rabbitmq
