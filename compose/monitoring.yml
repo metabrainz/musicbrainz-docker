@@ -28,6 +28,7 @@ services:
     depends_on:
       - postgres-exporter
       - prometheus
+      - sql-exporter
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres-exporter
