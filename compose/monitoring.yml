@@ -5,6 +5,11 @@ version: '3.1'
 services:
   db:
     command: postgres -c "shared_buffers=2048MB" -c "shared_preload_libraries=pg_amqp.so, pg_stat_statements" -c pg_stat_statements.track=all
+
+  search:
+    expose:
+      - 9983
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -26,9 +31,11 @@ services:
       - grafana-storage:/var/lib/grafana
       - ./default/grafana-provisioning:/etc/grafana/provisioning
     depends_on:
+      - solr-exporter
       - postgres-exporter
       - prometheus
       - sql-exporter
+
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres-exporter
@@ -60,6 +67,23 @@ services:
         condition: service_started
     restart: unless-stopped
     
+
+  solr-exporter:
+    build:
+      context: build/solr
+      args:
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-solr-9.7.0}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-solr-9.7.0}
+    container_name: solr-exporter
+    expose:
+      - 9854
+    command: sh -c 'cd /opt/solr-9.7.0/contrib/prometheus-exporter; exec bin/solr-exporter -p 9854 -z search:9983 -f conf/solr-exporter-config.xml'
+    depends_on:
+      prometheus:
+        condition: service_started
+      search:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   grafana-storage: {}
