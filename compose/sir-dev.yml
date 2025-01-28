@@ -4,7 +4,12 @@ version: '3.1'
 
 services:
   indexer:
-    build: build/sir-dev
+    build:
+      context: build/sir-dev
+      args:
+        - PYTHON_VERSION=${SIR_DEV_PYTHON_VERSION:-2.7}
+        - BASE_IMAGE_DATE=${SIR_DEV_BASE_IMAGE_DATE:-20220421}
+        - SIR_VERSION=${SIR_DEV_VERSION:-py27-stage1}
     env_file:
       - ./default/postgres.env
     volumes:
