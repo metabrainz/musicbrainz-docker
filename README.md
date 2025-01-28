@@ -580,7 +580,9 @@ Simply restart the container when checking out a new branch.
 
 This is very similar to the above but for Search Index Rebuilder (SIR):
 
-1. Set the variable `SIR_LOCAL_ROOT` in the `.env` file
+1. Optionally set the variable `SIR_LOCAL_ROOT` in the `.env` file
+   (Default: `../sir` assuming that `musicbrainz-docker` and `sir`
+   have been cloned under the same parent directory)
 2. Run `admin/configure add sir-dev`
 3. Run `sudo docker-compose up -d`
 

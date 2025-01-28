@@ -8,7 +8,7 @@ services:
     env_file:
       - ./default/postgres.env
     volumes:
-      - ${SIR_LOCAL_ROOT:?Missing path of sir working copy}:/code
+      - ${SIR_LOCAL_ROOT:-../sir}:/code
       - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
       - db
