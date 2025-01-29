@@ -455,6 +455,16 @@ Try `admin/configure help` for more information.
 
 #### Publish ports of all services
 
+:warning: The service `search` is currently running Solr 7 in
+standalone mode which is vulnerable to privilege escalation.
+See [CVE-2025-24814](https://lists.apache.org/thread/gl291pn8x9f9n52ys5l0pc0b6qtf0qw1) for details.
+We are working on upgrading to Solr 9 in SolrCloud mode.
+See [SEARCH-685](https://tickets.metabrainz.org/browse/SEARCH-685) for follow-up.
+In general, Solr is strongly recommended to be accessible to your own clients only.
+See [Solr Security](https://cwiki.apache.org/confluence/display/SOLR/SolrSecurity) for details.
+Similarly, other services have not been configured to be safely publicly accessible either.
+Take this warning in consideration when publishing their ports.
+
 To publish ports of services `db`, `mq`, `redis` and `search`
 (additionally to `musicbrainz`) on the host, simply run:
 
