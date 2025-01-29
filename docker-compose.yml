@@ -83,8 +83,8 @@ services:
     build:
       context: build/solr
       args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.4.2}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.4.2}
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-4.0.0-alpha3}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-4.0.0-alpha3}
     logging:
       driver: "json-file"
       options:
@@ -97,8 +97,9 @@ services:
     expose:
       - "8983"
     volumes:
-      - solrdata:/opt/solr/server/solr/data
+      - solrdata:/var/solr
       - searchdump:/media/searchdump
+    command: start-musicbrainz-solrcloud
 
   mq:
     build: build/rabbitmq
