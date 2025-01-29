@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 8,
+  "id": 3,
   "links": [],
   "panels": [
     {
@@ -53,6 +53,7 @@
         "y": 0
       },
       "id": 2,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -75,8 +76,8 @@
           "datasource": {
             "uid": "prometheusdatasource"
           },
-          "dsType": "prometheus",
           "disableTextWrap": false,
+          "dsType": "prometheus",
           "editorMode": "builder",
           "exemplar": false,
           "expr": "area_count",
@@ -123,6 +124,7 @@
         "y": 0
       },
       "id": 1,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -145,8 +147,8 @@
           "datasource": {
             "uid": "prometheusdatasource"
           },
-          "dsType": "prometheus",
           "disableTextWrap": false,
+          "dsType": "prometheus",
           "editorMode": "builder",
           "expr": "artist_count",
           "format": "time_series",
@@ -192,6 +194,7 @@
         "y": 0
       },
       "id": 3,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -259,6 +262,7 @@
         "y": 0
       },
       "id": 4,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -326,6 +330,7 @@
         "y": 7
       },
       "id": 8,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -391,6 +396,7 @@
         "y": 7
       },
       "id": 7,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -458,6 +464,7 @@
         "y": 7
       },
       "id": 6,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -525,6 +532,7 @@
         "y": 7
       },
       "id": 5,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -592,6 +600,7 @@
         "y": 14
       },
       "id": 9,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -657,6 +666,7 @@
         "y": 14
       },
       "id": 10,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -724,6 +734,7 @@
         "y": 14
       },
       "id": 11,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -791,6 +802,7 @@
         "y": 14
       },
       "id": 12,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -858,6 +870,7 @@
         "y": 21
       },
       "id": 13,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -923,6 +936,7 @@
         "y": 21
       },
       "id": 14,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -991,6 +1005,7 @@
         "y": 21
       },
       "id": 15,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -1058,6 +1073,7 @@
         "y": 21
       },
       "id": 16,
+      "interval": "5m",
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -1109,6 +1125,6 @@
   "timezone": "browser",
   "title": "Table Row Counts",
   "uid": "cea3e99siyr5sa",
-  "version": 6,
+  "version": 3,
   "weekStart": ""
 }
