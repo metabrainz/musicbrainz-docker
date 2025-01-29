@@ -6,6 +6,9 @@ scrape_configs:
 - job_name: postgres
   static_configs:
   - targets: ['postgres-exporter:9187']
+
 - job_name: 'sql_exporter'
+  scrape_interval: 5m
+  scrape_timeout: 10s
   static_configs:
   - targets: ['sql-exporter:9399']
