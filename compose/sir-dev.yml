@@ -4,12 +4,17 @@ version: '3.1'
 
 services:
   indexer:
-    build: build/sir-dev
+    build:
+      context: build/sir-dev
+      args:
+        - PYTHON_VERSION=${SIR_DEV_PYTHON_VERSION:-2.7}
+        - BASE_IMAGE_DATE=${SIR_DEV_BASE_IMAGE_DATE:-20220421}
+        - SIR_VERSION=${SIR_DEV_VERSION:-py27-stage1}
     env_file:
       - ./default/postgres.env
     volumes:
-      - ${SIR_LOCAL_ROOT:?Missing path of sir working copy}:/code
-      - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
+      - ${SIR_DEV_LOCAL_ROOT:-../sir}:/code
+      - ${SIR_DEV_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
       - db
       - mq
