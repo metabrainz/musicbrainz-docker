@@ -28,6 +28,7 @@ services:
     depends_on:
       - postgres-exporter
       - prometheus
+      - sql-exporter
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter
     container_name: postgres-exporter
@@ -44,6 +45,21 @@ services:
       db:
         condition: service_started
     restart: unless-stopped
+  sql-exporter:
+    image: burningalchemist/sql_exporter
+    container_name: sql-exporter
+    expose:
+      - 9399
+    command: --config.file=/etc/sql-exporter/sql-exporter.yml
+    volumes:
+      - ./default/sql-exporter.yml:/etc/sql-exporter/sql-exporter.yml
+    depends_on:
+      prometheus:
+        condition: service_started
+      db:
+        condition: service_started
+    restart: unless-stopped
+    
 
 volumes:
   grafana-storage: {}
