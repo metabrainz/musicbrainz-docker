@@ -12,3 +12,7 @@ scrape_configs:
   scrape_timeout: 10s
   static_configs:
   - targets: ['sql-exporter:9399']
+
+- job_name: solr
+  static_configs:
+  - targets: ['solr-exporter:9854']
