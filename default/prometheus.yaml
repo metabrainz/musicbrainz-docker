@@ -20,3 +20,7 @@ scrape_configs:
 - job_name: 'node-exporter'
   static_configs:
   - targets: ['node-exporter:9100']
+
+- job_name: 'rabbitmq-exporter'
+  static_configs:
+  - targets: ['rabbitmq-exporter:9419']

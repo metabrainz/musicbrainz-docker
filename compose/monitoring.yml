@@ -102,6 +102,17 @@ services:
       - --collector.mountstats
       - --collector.textfile.directory=/textfile-collector-directory
 
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    container_name: rabbitmq-exporter
+    restart: unless-stopped
+    expose:
+      - 9419
+    environment:
+      RABBIT_URL: http://mq:15672
+      RABBIT_USER: sir
+      RABBIT_PASSWORD: sir
+
 volumes:
   grafana-storage: {}
   node-exporter-textfile-collector: {}

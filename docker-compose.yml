@@ -125,6 +125,7 @@ services:
       - mqdata:/var/lib/rabbitmq
     expose:
       - "5672"
+      - "15672"
 
   redis:
     image: redis:3-alpine
