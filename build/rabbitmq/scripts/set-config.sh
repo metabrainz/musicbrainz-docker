@@ -24,9 +24,9 @@ then
 fi
 
 if ! (rabbitmqctl list_users \
-  | grep -q '^sir\s\+\[management\]$')
+  | grep -q '^sir\s\+\[management,\s\+monitoring\]$')
 then
-  rabbitmqctl set_user_tags sir management
+  rabbitmqctl set_user_tags sir management monitoring
 fi
 
 if ! (rabbitmqctl list_vhosts \
