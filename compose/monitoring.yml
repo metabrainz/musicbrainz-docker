@@ -85,5 +85,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    expose:
+      - 9100
+    volumes:
+      - "/:/host:ro,rslave"
+      - node-exporter-textfile-collector:/textfile-collector-directory
+    command:
+      - --path.rootfs=/host
+      #- --collector.filesystem.fs-types-exclude="^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|nsfs|tmpfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$"
+      #- --collector.filesystem.mount-points-exclude="^/(dev|proc|sys|var/lib/docker/.+)($|/)"
+      - --no-collector.filesystem
+      - --collector.mountstats
+      - --collector.textfile.directory=/textfile-collector-directory
+
 volumes:
   grafana-storage: {}
+  node-exporter-textfile-collector: {}
