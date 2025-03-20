@@ -81,6 +81,8 @@ services:
         condition: service_started
       search:
         condition: service_healthy
+    cpu_count: 8
+    mem_limit: "8gb"
 
   search:
     build:
@@ -109,6 +111,8 @@ services:
       timeout: 10s
       retries: 10
     command: start-musicbrainz-solrcloud
+    cpu_count: 8
+    mem_limit: "8gb"
 
   mq:
     build: build/rabbitmq
@@ -126,6 +130,8 @@ services:
     expose:
       - "5672"
       - "15672"
+    cpu_count: 8
+    mem_limit: "8gb"
 
   redis:
     image: redis:3-alpine
