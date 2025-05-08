@@ -35,11 +35,11 @@ RUN apt-get update \
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=3.0.1
+ARG SIR_VERSION=SEARCH-738
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003
-RUN git clone --depth=1 --branch "v${SIR_VERSION}" https://github.com/metabrainz/sir.git /code \
+RUN git clone --depth=1 --branch "${SIR_VERSION}" https://github.com/metabrainz/sir.git /code \
     && cd /code \
     && pip install -r requirements.txt \
     && rm -f /code/config.ini \
