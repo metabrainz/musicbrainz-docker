@@ -13,13 +13,12 @@ SCRIPT_NAME=$(basename "$0")
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME [<options>] <target>
 
-Fetch dump files of the MusicBrainz database and/or search indexes.
+Fetch dump files of the MusicBrainz Postgres database.
 
 Targets:
-  both          Fetch latest search dump with replica dump of the same day.
+  indexed       Fetch latest database's replicated tables with Solr backups available.
   replica       Fetch latest database's replicated tables only.
   sample        Fetch latest database's sample only.
-  search        Fetch latest search indexes only.
 
 Options:
   --base-download-url <url>     Specify URL of a MetaBrainz/MusicBrainz download server.
@@ -40,7 +39,7 @@ EOH
 while [[ $# -gt 0 ]]
 do
 	case "$1" in
-		both | replica | sample | search )
+		indexed | replica | sample )
 			if [[ -n $TARGET ]]
 			then
 				echo >&2 "$SCRIPT_NAME: only one target argument can be given"
@@ -102,7 +101,9 @@ fi
 
 if [[ $TARGET != sample &&
 	! -a "$DB_DUMP_DIR/.for-commercial-use" &&
-	! -a  "$DB_DUMP_DIR/.for-non-commercial-use"
+	! -a  "$DB_DUMP_DIR/.for-non-commercial-use" &&
+	! -a "$SEARCH_DUMP_DIR/.for-commercial-use" &&
+	! -a  "$SEARCH_DUMP_DIR/.for-non-commercial-use"
 ]]
 then
 	prompt=$(cat <<-EOQ
@@ -155,62 +156,24 @@ fi
 
 BASE_DOWNLOAD_URL="${BASE_FTP_URL:-$BASE_DOWNLOAD_URL}"
 
-# Fetch latest search indexes
-
-if [[ $TARGET =~ ^(both|search)$ ]]
-then
-	echo "$(date): Fetching search indexes dump..."
-	PREVIOUS_DUMP_TIMESTAMP=''
-	if [[ -a "$SEARCH_DUMP_DIR/LATEST" ]]
-	then
-		PREVIOUS_DUMP_TIMESTAMP=$(<"$SEARCH_DUMP_DIR/LATEST")
-		rm -f "$SEARCH_DUMP_DIR/LATEST"
-	fi
-	"${WGET_CMD[@]}" -nd -nH -P "$SEARCH_DUMP_DIR" \
-		"${BASE_DOWNLOAD_URL}/data/search-indexes/LATEST"
-	DUMP_TIMESTAMP=$(<"$SEARCH_DUMP_DIR/LATEST")
-	if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
-	then
-		find "$SEARCH_DUMP_DIR" \
-			! -path "$SEARCH_DUMP_DIR" \
-			! -path "$DB_DUMP_DIR/.for-commercial-use" \
-			! -path "$DB_DUMP_DIR/.for-non-commercial-use" \
-			! -path "$SEARCH_DUMP_DIR/LATEST" \
-			-delete
-	fi
-	"${WGET_CMD[@]}" -nd -nH -c -r -P "$SEARCH_DUMP_DIR" \
-		--accept 'MD5SUMS,*.tar.zst' --no-parent --relative \
-		"${BASE_DOWNLOAD_URL}/data/search-indexes/$DUMP_TIMESTAMP/"
-	echo "$(date): Checking MD5 sums..."
-	cd "$SEARCH_DUMP_DIR" && md5sum -c MD5SUMS && cd - >/dev/null
-	if [[ $TARGET == search ]]
-	then
-		echo 'Done fetching search indexes dump'
-		exit 0 # EX_OK
-	fi
-fi
-
 # Prepare to fetch database dump
 
-if [[ $TARGET != search ]]
-then
-	echo "$(date): Fetching database dump..."
+echo "$(date): Fetching database dump..."
 
-	PREVIOUS_DUMP_TIMESTAMP=''
-	if [[ -a "$DB_DUMP_DIR/LATEST" ]]
-	then
-		PREVIOUS_DUMP_TIMESTAMP=$(<"$DB_DUMP_DIR/LATEST")
-		rm -f "$DB_DUMP_DIR/LATEST"
-	fi
-	if [[ -a "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" ]]
-	then
-		PREVIOUS_DUMP_TIMESTAMP=$(<"$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES")
-		rm -f "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES"
-	fi
+PREVIOUS_DUMP_TIMESTAMP=''
+if [[ -a "$DB_DUMP_DIR/LATEST" ]]
+then
+	PREVIOUS_DUMP_TIMESTAMP=$(<"$DB_DUMP_DIR/LATEST")
+	rm -f "$DB_DUMP_DIR/LATEST"
+fi
+if [[ -a "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" ]]
+then
+	PREVIOUS_DUMP_TIMESTAMP=$(<"$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES")
+	rm -f "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES"
 fi
 
 case "$TARGET" in
-	both | replica )
+	indexed | replica )
 		DB_DUMP_REMOTE_DIR=data/fullexport
 		DB_DUMP_FILES=(
 			mbdump.tar.bz2
@@ -229,11 +192,15 @@ case "$TARGET" in
 		;;
 esac
 
-if [[ $TARGET == both ]]
+if [[ $TARGET == indexed ]]
 then
 	# Find latest database dump corresponding to search indexes
 
-	SEARCH_DUMP_DAY="${DUMP_TIMESTAMP/-*}"
+	SEARCH_DUMP_TIMESTAMP=$(
+		"${WGET_CMD[@]}" -q -O - \
+			"${BASE_DOWNLOAD_URL}/data/solr-backups/LATEST"
+	)
+	SEARCH_DUMP_DAY="${SEARCH_DUMP_TIMESTAMP/-*}"
 	rm -f "$DB_DUMP_DIR/index.html"
 	"${WGET_CMD[@]}" --force-html -O "$DB_DUMP_DIR/index.html" -P "$DB_DUMP_DIR" \
 		"${BASE_DOWNLOAD_URL}/$DB_DUMP_REMOTE_DIR/"
@@ -244,8 +211,7 @@ then
 	)
 	rm -f "$DB_DUMP_DIR/index.html"
 	echo "$DUMP_TIMESTAMP" >> "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES"
-elif [[ $TARGET != search ]]
-then
+else
 	# Just find latest database dump
 
 	"${WGET_CMD[@]}" -nd -nH -P "$DB_DUMP_DIR" \
@@ -255,23 +221,20 @@ fi
 
 # Remove previously downloaded files if obsolete
 
-if [[ $TARGET != search ]]
+if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
 then
-	if [[ $PREVIOUS_DUMP_TIMESTAMP != "$DUMP_TIMESTAMP" ]]
-	then
-		find "$DB_DUMP_DIR" \
-			! -path "$DB_DUMP_DIR" \
-			! -path "$DB_DUMP_DIR/.for-commercial-use" \
-			! -path "$DB_DUMP_DIR/.for-non-commercial-use" \
-			! -path "$DB_DUMP_DIR/LATEST" \
-			! -path "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" \
-			-delete
-	fi
+	find "$DB_DUMP_DIR" \
+		! -path "$DB_DUMP_DIR" \
+		! -path "$DB_DUMP_DIR/.for-commercial-use" \
+		! -path "$DB_DUMP_DIR/.for-non-commercial-use" \
+		! -path "$DB_DUMP_DIR/LATEST" \
+		! -path "$DB_DUMP_DIR/LATEST-WITH-SEARCH-INDEXES" \
+		-delete
 fi
 
 # Actually fetch database dump
 
-if [[ $TARGET =~ ^(both|replica)$ ]]
+if [[ $TARGET =~ ^(indexed|replica)$ ]]
 then
 	for F in MD5SUMS "${DB_DUMP_FILES[@]}"
 	do
