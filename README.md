@@ -678,7 +678,8 @@ admin/configure rm replication-cron # if replication is enabled
 sudo docker-compose stop
 sudo docker-compose run --rm musicbrainz fetch-dump.sh both
 admin/purge-message-queues
-sudo docker-compose run --rm search load-search-indexes.sh --force
+sudo docker-compose run --rm search fetch-backup-archives
+sudo docker-compose run --rm search load-backup-archives
 sudo docker-compose run --rm musicbrainz recreatedb.sh
 sudo docker-compose up -d
 admin/setup-amqp-triggers install
