@@ -61,7 +61,7 @@ when `musicbrainz` service doesn’t work as expected,
 and after retrieving its logs as follows:
 
 ```bash
-sudo docker compose logs --timestamps musicbrainz
+docker compose logs --timestamps musicbrainz
 ```
 
 returned logs contain the following error message:
@@ -82,7 +82,7 @@ It will automatically reinstall them all using current Perl version:
 
 ```bash
 sudo rm -fr "$MUSICBRAINZ_SERVER_LOCAL_ROOT/perl_modules/
-sudo docker compose restart musicbrainz
+docker compose restart musicbrainz
 ```
 
 ## ImportError: No module named
@@ -104,8 +104,8 @@ Solution:
 Remove all installed Python packages and installation cache as follows:
 
 ```bash
-sudo docker compose exec indexer rm -fr /code/.cache /code/venv-musicbrainz-docker
-sudo docker compose restart indexer
+docker compose exec indexer rm -fr /code/.cache /code/venv-musicbrainz-docker
+docker compose restart indexer
 ```
 
 Python packages are downloaded again and installed again when the

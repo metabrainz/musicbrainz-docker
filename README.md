@@ -118,7 +118,7 @@ admin/configure with alt-db-only-mirror
 Docker images for composed services should be built once using:
 
 ```bash
-sudo docker compose build
+docker compose build
 ```
 
 ### Create database
@@ -131,7 +131,7 @@ sufficient amount of ram, otherwise your database could run very slowly.
 Download latest full data dumps and create the database with:
 
 ```bash
-sudo docker compose run --rm musicbrainz createdb.sh -fetch
+docker compose run --rm musicbrainz createdb.sh -fetch
 ```
 
 <!-- TODO: document available FTP servers -->
@@ -150,7 +150,7 @@ tables, the server will generally fall back to slower queries in their place.
 If you wish to configure the materialized tables, you can run:
 
 ```bash
-sudo docker compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
+docker compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
 ```
 
 ### Start website
@@ -158,7 +158,7 @@ sudo docker compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMateri
 Make the local website available at <http://localhost:5000> with:
 
 ```bash
-sudo docker compose up -d
+docker compose up -d
 ```
 
 At this point the local website will show data loaded from the dumps
@@ -171,7 +171,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 * Either build search indexes manually from the installed database:
 
   ```bash
-  sudo docker compose exec indexer python -m sir reindex
+  docker compose exec indexer python -m sir reindex
   ```
 
   :gear: Java heap for Solr is set to 2GB by default.
@@ -182,15 +182,15 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
   (This option is known to take 4½ hours with 16 CPU threads and 16 GB RAM.)
 
   To index cores individually, rather than all at once, add `--entity-type CORE`
-  (any number of times) to the command above. For example `sudo docker compose
+  (any number of times) to the command above. For example `docker compose
   exec indexer python -m sir reindex --entity-type artist --entity-type release`
 
 * Or download pre-built search indexes based on the latest data dump:
 
   ```bash
-  sudo docker compose up -d musicbrainz search
-  sudo docker compose exec search fetch-backup-archives
-  sudo docker compose exec search load-backup-archives
+  docker compose up -d musicbrainz search
+  docker compose exec search fetch-backup-archives
+  docker compose exec search load-backup-archives
   ```
 
   (This option downloads 60 GB of Zstandard-compressed MB Solr backup archives.)
@@ -233,7 +233,7 @@ Then, grant access to the token for replication with:
 
 ```bash
 admin/configure add replication-token
-sudo docker compose up -d
+docker compose up -d
 ```
 
 #### Run replication once
@@ -241,8 +241,8 @@ sudo docker compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-sudo bash -c 'docker compose exec musicbrainz replication.sh &' && \
-sudo docker compose exec musicbrainz /usr/bin/tail -f mirror.log
+bash -c 'docker compose exec musicbrainz replication.sh &' && \
+docker compose exec musicbrainz /usr/bin/tail -f mirror.log
 ```
 
 <!-- TODO: estimate replication time per missing day -->
@@ -254,7 +254,7 @@ service container with:
 
 ```bash
 admin/configure add replication-cron
-sudo docker compose up -d
+docker compose up -d
 ```
 
 By default, it replicates data every day at 3 am UTC.
@@ -263,13 +263,13 @@ To change that, see [advanced configuration](#advanced-configuration).
 You can view the replication log file while it is running with:
 
 ```bash
-sudo docker compose exec musicbrainz tail --follow mirror.log
+docker compose exec musicbrainz tail --follow mirror.log
 ```
 
 You can view the replication log file after it is done with:
 
 ```bash
-sudo docker compose exec musicbrainz tail mirror.log.1
+docker compose exec musicbrainz tail mirror.log.1
 ```
 
 ### Enable live indexing
@@ -282,7 +282,7 @@ Do not use it if you don't want to get your hands dirty.
 
    ```bash
    admin/configure rm replication-cron
-   sudo docker compose up -d
+   docker compose up -d
    ```
 
 2. Make indexer goes through [AMQP
@@ -290,7 +290,7 @@ Do not use it if you don't want to get your hands dirty.
    with:
 
    ```bash
-   sudo docker compose exec indexer python -m sir amqp_setup
+   docker compose exec indexer python -m sir amqp_setup
    admin/create-amqp-extension
    admin/setup-amqp-triggers install
    ```
@@ -302,14 +302,14 @@ Do not use it if you don't want to get your hands dirty.
 
    ```bash
    admin/configure add live-indexing-search
-   sudo docker compose up -d
+   docker compose up -d
    ```
 
 5. Reenable [replication cron job](#schedule-replication) if you disabled it at 1.
 
    ```bash
    admin/configure add replication-cron
-   sudo docker compose up -d
+   docker compose up -d
    ```
 
 ## Advanced configuration
@@ -337,13 +337,13 @@ convenient here is probably to edit the hidden file `.env`.
 You can then check values to be passed to containers using:
 
 ```bash
-sudo docker compose config
+docker compose config
 ```
 
 Finally, make Compose picks up configuration changes with:
 
 ```bash
-sudo docker compose up -d
+docker compose up -d
 ```
 
 #### Customize web server host:port
@@ -475,14 +475,14 @@ To publish ports of services `db`, `mq`, `redis` and `search`
 
 ```bash
 admin/configure add publishing-all-ports
-sudo docker compose up -d
+docker compose up -d
 ```
 
 If you are running a database only mirror, run this instead:
 
 ```bash
 admin/configure add publishing-db-port
-sudo docker compose up -d
+docker compose up -d
 ```
 
 #### Modify memory settings
@@ -514,7 +514,7 @@ Then enable it by running:
 
 ```bash
 admin/configure add local/compose/memory-settings.yml
-sudo docker compose up -d
+docker compose up -d
 ```
 
 ## Test setup
@@ -527,9 +527,9 @@ commands instead of following the above [installation](#installation):
 git clone https://github.com/metabrainz/musicbrainz-docker.git
 cd musicbrainz-docker
 admin/configure add musicbrainz-standalone
-sudo docker compose build
-sudo docker compose run --rm musicbrainz createdb.sh -sample -fetch
-sudo docker compose up -d
+docker compose build
+docker compose run --rm musicbrainz createdb.sh -sample -fetch
+docker compose up -d
 ```
 
 The two differences are:
@@ -561,9 +561,9 @@ cd musicbrainz-docker
 echo MUSICBRAINZ_DOCKER_HOST_IPADDRCOL=127.0.0.1: >> .env
 echo MUSICBRAINZ_SERVER_LOCAL_ROOT="$MUSICBRAINZ_SERVER_LOCAL_ROOT" >> .env
 admin/configure add musicbrainz-dev
-sudo docker compose build
-sudo docker compose run --rm musicbrainz createdb.sh -sample -fetch
-sudo docker compose up -d
+docker compose build
+docker compose run --rm musicbrainz createdb.sh -sample -fetch
+docker compose up -d
 ```
 
 The main differences are:
@@ -579,7 +579,7 @@ The main differences are:
 After changing code in `musicbrainz-server/`, it can be run as follows:
 
 ```bash
-sudo docker compose restart musicbrainz
+docker compose restart musicbrainz
 ```
 
 [Build search indexes](#set-up-search-indexes) and
@@ -606,8 +606,8 @@ This is very similar to the above but for Search Index Rebuilder (SIR):
    - `SIR_DEV_VERSION`
      (Default: `py313-stage1` which is informative only)
 2. Run `admin/configure add sir-dev`
-3. Run `sudo docker compose build indexer`
-4. Run `sudo docker compose up -d`
+3. Run `docker compose build indexer`
+4. Run `docker compose up -d`
 
 Notes:
 
@@ -629,7 +629,7 @@ version of `mb-solr` in `search` service for integration tests:
    build an image of `metabrainz/mb-solr` with a local tag reflecting
    the working tree status of your local clone of `mb-solr`.
 2. Set `MB_SOLR_VERSION` in `.env` to this local tag.
-3. Run `sudo docker compose up -d`
+3. Run `docker compose up -d`
 
 ## Helper scripts
 
@@ -668,11 +668,11 @@ There are two directories with helper scripts:
 If you need to recreate the database, you will need to enter the
 postgres password set in [postgres.env](default/postgres.env):
 
-* `sudo docker compose run --rm musicbrainz recreatedb.sh`
+* `docker compose run --rm musicbrainz recreatedb.sh`
 
 or to fetch new data dumps before recreating the database:
 
-* `sudo docker compose run --rm musicbrainz recreatedb.sh -fetch`
+* `docker compose run --rm musicbrainz recreatedb.sh -fetch`
 
 ### Recreate database with indexed search
 
@@ -680,26 +680,26 @@ If you need to recreate the database with indexed search,
 
 ```bash
 admin/configure rm replication-cron # if replication is enabled
-sudo docker compose stop
-sudo docker compose run --rm musicbrainz fetch-dump.sh both
+docker compose stop
+docker compose run --rm musicbrainz fetch-dump.sh both
 admin/purge-message-queues
-sudo docker compose run --rm search fetch-backup-archives
-sudo docker compose run --rm search load-backup-archives
-sudo docker compose run --rm musicbrainz recreatedb.sh
-sudo docker compose up -d
+docker compose run --rm search fetch-backup-archives
+docker compose run --rm search load-backup-archives
+docker compose run --rm musicbrainz recreatedb.sh
+docker compose up -d
 admin/setup-amqp-triggers install
 admin/configure add replication-cron
-sudo docker compose up -d
+docker compose up -d
 ```
 
  you will need to enter the
 postgres password set in [postgres.env](default/postgres.env):
 
-* `sudo docker compose run --rm musicbrainz recreatedb.sh`
+* `docker compose run --rm musicbrainz recreatedb.sh`
 
 or to fetch new data dumps before recreating the database:
 
-* `sudo docker compose run --rm musicbrainz recreatedb.sh -fetch`
+* `docker compose run --rm musicbrainz recreatedb.sh -fetch`
 
 ## Update
 
@@ -732,7 +732,7 @@ Thus it is recommended to do a regular cleanup as follows.
 the below command will also remove all unused images.
 
 ```bash
-sudo docker system prune --all
+docker system prune --all
 ```
 
 ## Removal
@@ -744,7 +744,7 @@ Before removing the directory where you cloned this repository,
 run the following command **from that directory**.
 
 ```bash
-sudo docker compose down --remove-orphans --rmi all --volumes
+docker compose down --remove-orphans --rmi all --volumes
 ```
 
 It will output what has been removed so that you can check it.
@@ -759,5 +759,5 @@ If you still don’t have a solution, please create an issue with versions info:
 ```bash
 echo MusicBrainz Docker: `git describe --always --broken --dirty --tags` && \
 echo Docker Compose: `docker compose version --short` && \
-sudo docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
+docker version -f 'Docker Client/Server: {{.Client.Version}}/{{.Server.Version}}'
 ```
