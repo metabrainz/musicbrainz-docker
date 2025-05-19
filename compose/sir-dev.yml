@@ -7,9 +7,9 @@ services:
     build:
       context: build/sir-dev
       args:
-        - PYTHON_VERSION=${SIR_DEV_PYTHON_VERSION:-2.7}
-        - BASE_IMAGE_DATE=${SIR_DEV_BASE_IMAGE_DATE:-20220421}
-        - SIR_VERSION=${SIR_DEV_VERSION:-py27-stage1}
+        - PYTHON_VERSION=${SIR_DEV_PYTHON_VERSION:-3.13}
+        - BASE_IMAGE_DATE=${SIR_DEV_BASE_IMAGE_DATE:-20250313}
+        - SIR_VERSION=${SIR_DEV_VERSION:-py313-stage1}
     env_file:
       - ./default/postgres.env
     volumes:

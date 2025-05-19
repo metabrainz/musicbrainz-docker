@@ -1,5 +1,5 @@
-ARG PYTHON_VERSION=2.7
-ARG BASE_IMAGE_DATE=20220421
+ARG PYTHON_VERSION=3.13
+ARG BASE_IMAGE_DATE=20250313
 FROM metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
 
 ARG PYTHON_VERSION
@@ -28,13 +28,14 @@ RUN apt-get update \
       libpq-dev \
       # required by lxml from mb-rngpy
       libxslt1-dev \
+      libz-dev \
     && rm -rf /var/lib/apt/lists/*
 
 ##################
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=3.0.1
+ARG SIR_VERSION=4.0.0
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003
