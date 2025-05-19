@@ -1,7 +1,5 @@
 # MusicBrainz mirror server with search and replication
 
-[![Build Status](https://travis-ci.org/metabrainz/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/metabrainz/musicbrainz-docker)
-
 This repo contains everything needed to run a musicbrainz mirror server with
 search and replication in docker.
 
