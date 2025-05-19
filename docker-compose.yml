@@ -1,5 +1,3 @@
-version: '3.1'
-
 # Description: Default compose file, with host port for musicbrainz
 
 volumes:
