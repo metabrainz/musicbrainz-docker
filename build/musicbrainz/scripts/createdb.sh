@@ -63,6 +63,7 @@ case "$IMPORT" in
             mbdump.tar.bz2
             mbdump-cdstubs.tar.bz2
             mbdump-cover-art-archive.tar.bz2
+            mbdump-event-art-archive.tar.bz2
             mbdump-derived.tar.bz2
             mbdump-stats.tar.bz2
             mbdump-wikidocs.tar.bz2
