@@ -47,7 +47,7 @@ search and replication in docker.
 
 * CPU: 16 threads (or 2 without indexed search), x86-64 architecture
 * RAM: 16 GB (or 4 without indexed search)
-* Disk Space: 350 GB (or 100 without indexed search)
+* Disk Space: 250 GB (or 100 without indexed search)
 
 ### Required software
 
@@ -87,11 +87,11 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Components version
 
-* Current MB Branch: [v-2025-05-05.0](build/musicbrainz/Dockerfile#L88)
-* Current DB_SCHEMA_SEQUENCE: [29](build/musicbrainz/Dockerfile#L125)
+* Current MB Branch: [v-2025-05-19.0-schema-change](build/musicbrainz/Dockerfile#L98)
+* Current DB_SCHEMA_SEQUENCE: [30](build/musicbrainz/Dockerfile#L134)
 * Postgres Version: [16](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
-* MB Solr search server: [4.0.0](docker-compose.yml#L88)
+* MB Solr search server: [3.4.2](docker-compose.yml#L88)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
 * Search Index Rebuilder: [3.0.1](build/sir/Dockerfile#L37)
 
@@ -190,12 +190,11 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
 * Or download pre-built search indexes based on the latest data dump:
 
   ```bash
-  sudo docker-compose up -d musicbrainz search
-  sudo docker-compose exec search fetch-backup-archives
-  sudo docker-compose exec search load-backup-archives
+  sudo docker-compose run --rm musicbrainz fetch-dump.sh search
+  sudo docker-compose run --rm search load-search-indexes.sh
   ```
 
-  (This option downloads 60GB of Zstandard-compressed MB Solr backup archives.)
+  (This option downloads 30GB of Zstandard-compressed archives from FTP.)
 
 :warning: Search indexes are not included in replication. You will have to
 rebuild search indexes regularly to keep it up-to-date. This can be done
