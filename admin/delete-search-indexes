@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME all
+   or: $SCRIPT_NAME CORE... (for example: $SCRIPT_NAME artist release)
+   or: $SCRIPT_NAME --help
+
+For each of MusicBrainz Solr cores/collections,
+delete all indexed documents from Solr server.
+
+Notes:
+  The Docker Compose service 'search' must be up.
+EOH
+)
+
+# Parse arguments
+
+if [ $# -eq 0 ]
+then
+  echo >&2 "$SCRIPT_NAME: missing argument"
+  echo >&2 "Try '$SCRIPT_NAME --help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+declare -A all_cores=(
+  [annotation]=1 [area]=1 [artist]=1 [cdstub]=1 [editor]=1 [event]=1
+  [instrument]=1 [label]=1 [place]=1 [recording]=1 [release]=1
+  [release-group]=1 [series]=1 [tag]=1 [url]=1 [work]=1
+)
+
+declare -a cores
+
+if [[ $# -eq 1 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -eq 1 && $1 == all ]]
+then
+  cores=( ${!all_cores[@]} )
+else
+  cores=()
+  while [ $# -gt 0 ]
+  do
+    if [ -z "${all_cores[$1]-}" ]
+    then
+      echo >&2 "$SCRIPT_NAME: unrecognized core '$1'"
+      echo >&2 "Try '$SCRIPT_NAME --help' for usage."
+      exit 64 # EX_USAGE
+    else
+      cores+=( $1 )
+      shift
+    fi
+  done
+fi
+
+# Check that required Docker Compose services are up
+
+service_containers="$($DOCKER_COMPOSE_CMD ps search 2>/dev/null)"
+if ! echo "$service_containers" | grep -qw 'running\|Up'
+then
+  echo >&2 "$SCRIPT_NAME: cannot delete indexed documents: " \
+           "the Docker Compose service 'search' is not up"
+  echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d search' from '$MB_DOCKER_ROOT'"
+  exit 69 # EX_UNAVAILABLE
+fi
+
+# For each collection/core, delete all indexed documents
+
+for core in "${cores[@]}"
+do
+  echo -n "Posting deletion query for '$core'... "
+  $DOCKER_COMPOSE_CMD exec search post -c "${core/$'\r'/}" \
+    -d '<delete><query>*:*</query></delete>' >/dev/null
+  echo "Done"
+done
+
+if [ "${1:-shift}" = 'all' ]
+then
+  echo "Successfully posted deletion queries for all collections."
+fi
+
+# vi: set et sts=2 sw=2 ts=2 :
