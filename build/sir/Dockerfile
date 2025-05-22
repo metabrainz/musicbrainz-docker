@@ -35,7 +35,7 @@ RUN apt-get update \
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=4.0.0
+ARG SIR_VERSION=4.0.1
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003
