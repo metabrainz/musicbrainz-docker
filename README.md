@@ -489,8 +489,6 @@ For example, to set 4GB to each of `db` and `search` services,
 create a file `local/compose/memory-settings.yml` as follows:
 
 ```yaml
-version: '3.1'
-
 # Description: Customize memory settings
 
 services:
