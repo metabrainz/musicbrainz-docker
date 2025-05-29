@@ -643,6 +643,11 @@ There are two directories with helper scripts:
   For more information, use the `--help` option:
 
   ```bash
+  admin/configure --help
+  admin/create-amqp-extension --help
+  admin/purge-message-queues --help
+  admin/set-replication-token --help
+  admin/setup-amqp-triggers --help
   ```
 
   See also:
