@@ -417,7 +417,7 @@ Notes:
 * After switching to another Postgres server:
   * If not transferring data, it is needed to create the database again.
   * For live indexing, the RabbitMQ server has to still be reachable from the Postgres server.
-* The helper scripts `check-search-indexes` and `create-amqp-extension` won’t work anymore.
+* The helper script `create-amqp-extension` won’t work anymore.
 * The service `db` will still be up even if unused.
 
 #### Customize backend RabbitMQ server
@@ -643,7 +643,6 @@ There are two directories with helper scripts:
   For more information, use the `--help` option:
 
   ```bash
-  admin/check-search-indexes --help
   ```
 
   See also:
