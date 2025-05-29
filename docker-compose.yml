@@ -1,5 +1,3 @@
-version: '3.1'
-
 # Description: Default compose file, with host port for musicbrainz
 
 volumes:
@@ -11,7 +9,7 @@ volumes:
     driver: local
   dbdump:
     driver: local
-  searchdump:
+  solrdump:
     driver: local
 
 services:
@@ -46,7 +44,7 @@ services:
       - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}${MUSICBRAINZ_WEB_SERVER_PORT:-5000}:5000"
     volumes:
       - dbdump:/media/dbdump
-      - searchdump:/media/searchdump
+      - solrdump:/var/cache/musicbrainz/solr-backups:ro
     restart: unless-stopped
     env_file:
       - ./default/postgres.env
@@ -83,8 +81,8 @@ services:
     build:
       context: build/solr
       args:
-        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-3.4.2}
-    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-3.4.2}
+        - MB_SOLR_VERSION=${MB_SOLR_VERSION:-4.1.0}
+    image: musicbrainz-docker_search:${MB_SOLR_VERSION:-4.1.0}
     logging:
       driver: "json-file"
       options:
@@ -94,11 +92,13 @@ services:
     environment:
       - SOLR_HEAP=2g
       - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
+    mem_swappiness: 1
     expose:
       - "8983"
     volumes:
-      - solrdata:/opt/solr/server/solr/data
-      - searchdump:/media/searchdump
+      - dbdump:/media/dbdump:ro
+      - solrdata:/var/solr
+      - solrdump:/var/cache/musicbrainz/solr-backups
 
   mq:
     build: build/rabbitmq
