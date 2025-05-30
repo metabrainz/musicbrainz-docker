@@ -166,6 +166,9 @@ only. For indexed search and replication, keep going!
 
 ### Set up search indexes
 
+:information_source: Search indexes are updated asynchronously,
+some delay can be experienced before getting updated results.
+
 Depending on your available ressources in CPU/RAM vs. bandwidth:
 
 * Either build search indexes manually from the installed database:
