@@ -150,7 +150,7 @@ tables, the server will generally fall back to slower queries in their place.
 If you wish to configure the materialized tables, you can run:
 
 ```bash
-docker compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
+docker compose run --rm musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
 ```
 
 ### Start website
@@ -165,6 +165,9 @@ At this point the local website will show data loaded from the dumps
 only. For indexed search and replication, keep going!
 
 ### Set up search indexes
+
+:information_source: Search indexes are updated asynchronously,
+some delay can be experienced before getting updated results.
 
 Depending on your available ressources in CPU/RAM vs. bandwidth:
 

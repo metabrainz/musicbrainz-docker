@@ -9,6 +9,7 @@
 - [Loadable library and perl binaries are mismatched](#loadable-library-and-perl-binaries-are-mismatched)
 - [ImportError: No module named](#importerror-no-module-named)
 - [Unknown error executing apt-key](#unknown-error-executing-apt-key)
+- [amqp.exceptions.AccessRefused](#amqpexceptionsaccessrefused)
 
 <!-- tocstop -->
 
@@ -135,4 +136,31 @@ and to preserve the permissions of the files copied through Docker.
 If it isn’t possible, for example with the Unraid operating system,
 run additional `chmod` commands in the Dockerfile; See comments to the
 issue [#263](https://github.com/metabrainz/musicbrainz-docker/pull/263).
+
+## amqp.exceptions.AccessRefused
+
+When running `sir amqp_setup` to prepare live indexing:
+
+```log
+amqp.exceptions.AccessRefused: (0, 0): (403) ACCESS_REFUSED - Login was refused using authentication mechanism AMQPLAIN. For details see the broker logfile.
+```
+
+The service `mq` is sometimes not creating the user `sir` as expected.
+
+
+Solution:
+
+Recreate the container `mq` as follows:
+
+```bash
+docker compose up --force-recreate -d mq
+```
+
+Check if it started with creating the user `sir`:
+
+```bash
+docker compose logs -t mq | grep 'Creating user .sir.'
+```
+
+If it doesn’t mention _creating user sir_, try recreating `mq` again.
 
