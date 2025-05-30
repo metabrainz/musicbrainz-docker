@@ -150,7 +150,7 @@ tables, the server will generally fall back to slower queries in their place.
 If you wish to configure the materialized tables, you can run:
 
 ```bash
-docker compose exec musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
+docker compose run --rm musicbrainz bash -c 'carton exec -- ./admin/BuildMaterializedTables --database=MAINTENANCE all'
 ```
 
 ### Start website
