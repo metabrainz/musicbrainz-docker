@@ -269,11 +269,7 @@ You can view the replication log file while it is running with:
 docker compose exec musicbrainz tail --follow mirror.log
 ```
 
-You can view the replication log file after it is done with:
-
-```bash
-docker compose exec musicbrainz tail mirror.log.1
-```
+The replication log file is sometimes renamed `mirror.log.1` after it is done.
 
 ### Enable live indexing
 
