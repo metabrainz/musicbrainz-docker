@@ -671,30 +671,34 @@ or to fetch new data dumps before recreating the database:
 
 ### Recreate database with indexed search
 
-If you need to recreate the database with indexed search,
+If you need to recreate the database with indexed search:
 
 ```bash
 admin/configure rm replication-cron # if replication is enabled
 docker compose stop
-docker compose run --rm musicbrainz fetch-dump.sh both
+docker compose run --rm musicbrainz fetch-dump.sh indexed
 admin/purge-message-queues
-docker compose run --rm search fetch-backup-archives
-docker compose run --rm search load-backup-archives
+docker compose up -d search
+docker compose exec search fetch-backup-archives
+docker compose exec search load-backup-archives
+# See the note no. 1 below
 docker compose run --rm musicbrainz recreatedb.sh
 docker compose up -d
 admin/setup-amqp-triggers install
 admin/configure add replication-cron
 docker compose up -d
+# See the note no. 2 below
 ```
 
- you will need to enter the
-postgres password set in [postgres.env](default/postgres.env):
+Notes:
+1. You will need to enter the postgres password set in
+   [postgres.env](default/postgres.env) when running the command
+   `recreatedb.sh`
+2. Once you are satisfied with the search results, you can drop the fetched archive files:
 
-* `docker compose run --rm musicbrainz recreatedb.sh`
-
-or to fetch new data dumps before recreating the database:
-
-* `docker compose run --rm musicbrainz recreatedb.sh -fetch`
+   ```bash
+   sudo docker-compose exec search remove-backup-archives
+   ```
 
 ## Update
 
