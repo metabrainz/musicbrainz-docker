@@ -85,7 +85,7 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 ## Components version
 
-* Current MB Branch: [v-2025-05-23.0-schema-change](build/musicbrainz/Dockerfile#L98)
+* Current MB Branch: [v-2025-06-23.0](build/musicbrainz/Dockerfile#L98)
 * Current DB_SCHEMA_SEQUENCE: [30](build/musicbrainz/Dockerfile#L134)
 * Postgres Version: [16](docker-compose.yml)
   (can be changed by setting the environment variable `POSTGRES_VERSION`)
