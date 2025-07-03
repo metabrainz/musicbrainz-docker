@@ -201,7 +201,7 @@ Depending on your available ressources in CPU/RAM vs. bandwidth:
   Once you are satisfied with the search results, you can drop the fetched archive files:
 
   ```bash
-  sudo docker-compose exec search remove-backup-archives
+  docker compose exec search remove-backup-archives
   ```
 
 :warning: Search indexes are not included in replication. You will have to
