@@ -1,0 +1,9 @@
+services:
+  artwork-redirect:
+    build:
+      context: ../artwork-redirect
+      dockerfile: ./docker/Dockerfile.dev
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./config.ini:/code/config.ini
