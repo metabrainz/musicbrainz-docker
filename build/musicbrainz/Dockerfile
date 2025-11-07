@@ -144,6 +144,8 @@ ENV BASH_ENV=/noninteractive.bash_env \
     MUSICBRAINZ_STANDALONE_SERVER=0 \
     MUSICBRAINZ_WEB_SERVER_HOST=localhost \
     MUSICBRAINZ_WEB_SERVER_PORT=5000 \
+    COVER_ART_ARCHIVE_DOWNLOAD_PREFIX='//coverartarchive.org' \
+    EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX='//eventartarchive.org' \
     # Needed for yarn to install production dependencies only
     NODE_ENV=production \
     PERL_CARTON_CPANFILE=/musicbrainz-server/cpanfile \

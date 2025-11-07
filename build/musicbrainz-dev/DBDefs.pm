@@ -399,7 +399,9 @@ sub DATASTORE_REDIS_ARGS {
 # sub COVER_ART_ARCHIVE_ACCESS_KEY { };
 # sub COVER_ART_ARCHIVE_SECRET_KEY { };
 # sub COVER_ART_ARCHIVE_UPLOAD_PREFIXER { shift; sprintf("//%s.s3.us.archive.org/", shift) };
-# sub COVER_ART_ARCHIVE_DOWNLOAD_PREFIX { "//coverartarchive.org" };
+
+sub COVER_ART_ARCHIVE_DOWNLOAD_PREFIX { $ENV{COVER_ART_ARCHIVE_DOWNLOAD_PREFIX} }
+sub EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX { $ENV{EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX} }
 
 # mapbox private access token must be set to display area/place map
 # sub MAPBOX_MAP_ID { 'mapbox.streets' }
