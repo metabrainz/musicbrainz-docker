@@ -92,6 +92,7 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 * MB Solr search server: [4.1.0](docker-compose.yml#L84)
   (can be changed by setting the environment variable `MB_SOLR_VERSION`)
 * Search Index Rebuilder: [4.0.1](build/sir/Dockerfile#L38)
+* Artwork Redirect service: [v-2025-07-07.0](build/artwork-redirect/Dockerfile#L12)
 
 ## Installation
 
@@ -310,6 +311,23 @@ Do not use it if you don't want to get your hands dirty.
    admin/configure add replication-cron
    docker compose up -d
    ```
+
+### Enable the artwork redirect service
+
+This is an optional step.
+
+If you make frequent requests to the
+[Cover Art Archive API](https://musicbrainz.org/doc/Cover_Art_Archive/API)
+or [Event Art Archive API](https://musicbrainz.org/doc/Event_Art_Archive/API),
+you may run a local instance of the
+[artwork-redirect](https://github.com/metabrainz/artwork-redirect) service:
+
+```bash
+admin/configure add artwork-server
+docker compose up -d
+```
+
+It's accessible at `http://localhost:8081` by default.
 
 ## Advanced configuration
 
