@@ -1,0 +1,6 @@
+services:
+  artwork-redirect:
+    build:
+      context: build/artwork-redirect
+    ports:
+      - "8081:8081"
