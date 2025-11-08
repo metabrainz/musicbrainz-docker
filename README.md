@@ -323,7 +323,7 @@ you may run a local instance of the
 [artwork-redirect](https://github.com/metabrainz/artwork-redirect) service:
 
 ```bash
-admin/configure add artwork-server
+admin/configure add artwork-redirect
 docker compose up -d
 ```
 
