@@ -327,7 +327,9 @@ admin/configure add artwork-redirect
 docker compose up -d
 ```
 
-It's accessible at `http://localhost:8081` by default.
+It's accessible at `http://localhost:8081` by default. The port can be 
+configured by setting the `ARTWORK_REDIRECT_PORT` Docker environment 
+variable.
 
 ## Advanced configuration
 
