@@ -7,5 +7,5 @@ services:
 
   musicbrainz:
     environment:
-      - COVER_ART_ARCHIVE_DOWNLOAD_PREFIX=http://artwork-redirect:8081
-      - EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX=http://artwork-redirect:8081
+      - COVER_ART_ARCHIVE_DOWNLOAD_PREFIX=http://${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}:$ARTWORK_REDIRECT_PORT
+      - EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX=http://${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}:$ARTWORK_REDIRECT_PORT
