@@ -473,7 +473,8 @@ admin/configure add publishing-all-ports
 docker compose up -d
 ```
 
-If you are running a database only mirror, run this instead:
+To publish the port of the service `db` only (additionally to `musicbrainz`) on the host, or if 
+you are running a database only mirror, run this instead:
 
 ```bash
 admin/configure add publishing-db-port
