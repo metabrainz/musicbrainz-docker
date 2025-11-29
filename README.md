@@ -454,6 +454,21 @@ The helper script [`admin/configure`](admin/configure) is able to:
 Try `admin/configure help` for more information.
 
 #### Publish ports of all services
+To publish ports of services `db`, `mq`, `redis` and `search`
+(additionally to `musicbrainz`) on the host, simply run:
+
+```bash
+admin/configure add publishing-all-ports
+docker compose up -d
+```
+
+To publish the port of just the service `db` (additionally to `musicbrainz`) on the host, or if 
+you are running a database only mirror, run this instead:
+
+```bash
+admin/configure add publishing-db-port
+docker compose up -d
+```
 
 :warning: The service `search` is currently running Solr 7 in
 standalone mode which is vulnerable to privilege escalation.
@@ -464,22 +479,6 @@ In general, Solr is strongly recommended to be accessible to your own clients on
 See [Solr Security](https://cwiki.apache.org/confluence/display/SOLR/SolrSecurity) for details.
 Similarly, other services have not been configured to be safely publicly accessible either.
 Take this warning in consideration when publishing their ports.
-
-To publish ports of services `db`, `mq`, `redis` and `search`
-(additionally to `musicbrainz`) on the host, simply run:
-
-```bash
-admin/configure add publishing-all-ports
-docker compose up -d
-```
-
-To publish the port of the service `db` only (additionally to `musicbrainz`) on the host, or if 
-you are running a database only mirror, run this instead:
-
-```bash
-admin/configure add publishing-db-port
-docker compose up -d
-```
 
 #### Modify memory settings
 
