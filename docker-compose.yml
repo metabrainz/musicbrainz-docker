@@ -117,7 +117,7 @@ services:
       - "5672"
 
   redis:
-    image: redis:3-alpine
+    image: valkey/valkey:8-alpine
     logging:
       driver: "json-file"
       options:
