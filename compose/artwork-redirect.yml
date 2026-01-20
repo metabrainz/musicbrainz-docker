@@ -4,6 +4,7 @@ services:
       context: build/artwork-redirect
     ports:
       - "${ARTWORK_REDIRECT_PORT:-8081}:8081"
+    restart: unless-stopped
 
   musicbrainz:
     environment:
