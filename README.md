@@ -438,7 +438,8 @@ Notes:
 ### Docker Compose overrides
 
 In Docker Compose, it is possible to override the base configuration using
-[multiple Compose files](https://docs.docker.com/compose/extends/#multiple-compose-files).
+[multiple Compose files](https://docs.docker.com/compose/extends/#multiple-compose-files). 
+It is also sometimes helpful to adjust the settings of Docker itself. 
 
 Some overrides are available under [`compose`](compose/) directory.
 Feel free to write your own overrides under [`local`](local/) directory.
@@ -511,6 +512,24 @@ Then enable it by running:
 admin/configure add local/compose/memory-settings.yml
 docker compose up -d
 ```
+
+#### Docker settings
+
+The amount of memory and other resources available to the Docker compose 
+is affected by the settings of the Docker host. Adjusting these settings
+may help your MusicBrainz server run better.
+
+If you are hosting the server in the 
+[Docker.desktop application](https://docs.docker.com/desktop/), the total
+amount of memory, CPU, storage, and other resources are controlled by
+[settings within Docker.desktop](https://docs.docker.com/desktop/settings-and-maintenance/settings/#advanced). 
+Increase these limits as follows:
+- In the main Docker.desktop window, push the Settings button (the gear icon in upper-right). A Settings dialogue appears.
+- In the left pane, click on the Resources entry. The right pane shows the Resources controls.
+- Move the sliders to adjust the overall limits. For intance, move the slider labelled, "Memory Limit", to allow more overall memory.
+  - As of November 2025 on macOS 14, 16 GB is necessary to run reindex entity by entity, and 22+ GB is required to completely reindex at once. 
+- Press the **Apply & restart** button in the lower-right corner of the Settings dialogue. The Docker compose restarts.
+- Close the Settings dialogue.
 
 ## Test setup
 
