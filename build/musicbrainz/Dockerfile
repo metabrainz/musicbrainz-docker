@@ -1,4 +1,4 @@
-ARG METABRAINZ_BASE_IMAGE_VERSION=jammy-1.0.1-v0.4
+ARG METABRAINZ_BASE_IMAGE_VERSION=noble-1.0.2-v0.1
 ARG METABRAINZ_BASE_IMAGE_VARIANT=
 ARG METABRAINZ_BASE_IMAGE_TAG=${METABRAINZ_BASE_IMAGE_VERSION}${METABRAINZ_BASE_IMAGE_VARIANT}
 FROM metabrainz/base-image:${METABRAINZ_BASE_IMAGE_TAG}
@@ -56,7 +56,6 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
         # Needed for Unicode::ICU::Collator
         pkg-config \
         postgresql-client-${POSTGRES_VERSION} \
-        python2-minimal \
         # Needed to decompress sample data
         xz-utils \
         # Needed for XML:LibXML
