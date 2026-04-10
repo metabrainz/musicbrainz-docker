@@ -50,7 +50,7 @@ services:
       - redis
 
   redis:
-    image: valkey/valkey:8-alpine
+    image: valkey/valkey:9-alpine
     logging:
       driver: "json-file"
       options:
