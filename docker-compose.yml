@@ -59,7 +59,7 @@ services:
       - db
       - mq
       - search
-      - redis
+      - valkey
 
   indexer:
     build: build/sir
@@ -116,7 +116,7 @@ services:
     expose:
       - "5672"
 
-  redis:
+  valkey:
     image: valkey/valkey:9-alpine
     logging:
       driver: "json-file"

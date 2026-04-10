@@ -425,15 +425,15 @@ Notes:
 * The helper script `purge-message-queues` won’t work anymore.
 * The service `mq` will still be up even if unused.
 
-#### Customize backend Redis server
+#### Customize backend Valkey server
 
-By default, the service `musicbrainz` is trying to connect to the host `redis`
-but the host can be customized using the `MUSICBRAINZ_REDIS_SERVER` environment variable.
+By default, the service `musicbrainz` is trying to connect to the host `valkey`
+but the host can be customized using the `MUSICBRAINZ_VALKEY_SERVER` environment variable.
 
 Notes:
-* After switching to another Redis server:
+* After switching to another Valkey server:
   - If not transferring data, MusicBrainz user sessions will be reset.
-* The service `redis` will still be running even if unused.
+* The service `valkey` will still be running even if unused.
 
 ### Docker Compose overrides
 
@@ -465,7 +465,7 @@ See [Solr Security](https://cwiki.apache.org/confluence/display/SOLR/SolrSecurit
 Similarly, other services have not been configured to be safely publicly accessible either.
 Take this warning in consideration when publishing their ports.
 
-To publish ports of services `db`, `mq`, `redis` and `search`
+To publish ports of services `db`, `mq`, `valkey` and `search`
 (additionally to `musicbrainz`) on the host, simply run:
 
 ```bash
