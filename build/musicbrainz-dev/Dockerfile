@@ -22,7 +22,7 @@ ARG CPANMINUS_VERSION=1.7047
 ARG CPANMINUS_SRC_SUM=963e63c6e1a8725ff2f624e9086396ae150db51dd0a337c3781d09a994af05a5
 
 COPY keyrings/* /etc/apt/keyrings/
-ARG NODE_MAJOR_VERSION=20
+ARG NODE_MAJOR_VERSION=24
 ARG POSTGRES_VERSION=16
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_${NODE_MAJOR_VERSION}.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
@@ -102,8 +102,8 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     cpanm local::lib && \
     rm -fr /root/.cpanm && \
     # Install ts (needed to run admin background task scripts locally)
-    curl -sSL --retry 5 https://git.joeyh.name/index.cgi/moreutils.git/plain/ts?h=0.69 -o /usr/local/bin/ts && \
-    echo '01b67f3d81e6205f01cc0ada87039293ebc56596955225300dd69ec1257124f5 */usr/local/bin/ts' | sha256sum --strict --check - && \
+    curl -sSL --retry 5 https://git.joeyh.name/index.cgi/moreutils.git/plain/ts?h=0.70 -o /usr/local/bin/ts && \
+    echo '1b15c99d334f89df193c1def89eea1ac6a7922ece5dc08fe438bb5550df9e2e3 */usr/local/bin/ts' | sha256sum --strict --check - && \
     chmod +x /usr/local/bin/ts && \
     # Install yarn from nodejs
     corepack enable
