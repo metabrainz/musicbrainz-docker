@@ -97,7 +97,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     apt-get purge --auto-remove -y \
         build-essential
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2026-02-12.0
+ARG MUSICBRAINZ_SERVER_VERSION=v-2026-04-27.0
 LABEL org.metabrainz.musicbrainz-server.version="${MUSICBRAINZ_SERVER_VERSION}"
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
