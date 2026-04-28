@@ -11,6 +11,6 @@ services:
     ports:
       - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}5672:5672"
       - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}15672:15672"
-  redis:
+  valkey:
     ports:
       - "${MUSICBRAINZ_DOCKER_HOST_IPADDRCOL:-}6379:6379"
