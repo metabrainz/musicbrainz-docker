@@ -18,6 +18,7 @@ RUN apt-get update && \
         libicu-dev \
         make \
         pkg-config \
+        sudo \
     && apt-get install --allow-downgrades --no-install-recommends -qy \
         --target-release "n=$(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg" \
         libpq5 \
