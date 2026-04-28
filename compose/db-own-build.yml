@@ -5,4 +5,4 @@ services:
     build:
       context: build/postgres
       args:
-        - POSTGRES_VERSION=${POSTGRES_VERSION:-16}
+        - POSTGRES_VERSION=${POSTGRES_VERSION:-18}
