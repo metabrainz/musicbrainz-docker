@@ -1,0 +1,14 @@
+volumes:
+  pgdata:
+    driver: local
+
+services:
+  db-upgrade:
+    # This should match the base image being upgraded from
+    # to avoid collation version mismatch warning spam during
+    # the pg_upgrade.
+    image: debian:bookworm-slim
+    command: /bin/sleep infinity
+    volumes:
+      - pgdata:/var/lib/postgresql-16/data
+      - pghome:/var/lib/postgresql

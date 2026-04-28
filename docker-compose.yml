@@ -3,7 +3,7 @@
 volumes:
   mqdata:
     driver: local
-  pgdata:
+  pghome:
     driver: local
   solrdata:
     driver: local
