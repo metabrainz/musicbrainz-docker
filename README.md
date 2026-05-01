@@ -676,6 +676,8 @@ If you need to recreate the database with indexed search:
 ```bash
 admin/configure rm replication-cron # if replication is enabled
 docker compose stop
+docker compose rm search
+docker volume rm 'musicbrainz-docker_solrdata' # assuming the default
 docker compose run --rm musicbrainz fetch-dump.sh indexed
 admin/purge-message-queues
 docker compose up -d search
