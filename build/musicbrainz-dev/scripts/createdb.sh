@@ -13,6 +13,7 @@ Usage: $0 [-wget-opts <options list>] [-sample] [-fetch] [MUSICBRAINZ_BASE_DOWNL
 Options:
   -fetch      Fetch latest dump from MusicBrainz download server
   -sample     Load sample data instead of full data
+  -clean      Initialize an empty database
   -wget-opts  Pass additional space-separated options list (should be
               a single argument, escape spaces if necessary) to wget
 
@@ -37,6 +38,9 @@ while [ $# -gt 0 ]; do
             ;;
         -fetch  )
             FETCH_DUMPS="$1"
+            ;;
+        -clean )
+            IMPORT="clean"
             ;;
         -*      )
             echo "$0: unrecognized option '$1'"
@@ -77,6 +81,9 @@ case "$IMPORT" in
         DUMP_FILES=(
             mbdump-sample.tar.xz
         );;
+    clean       )
+        DUMP_FILES=()
+        ;;
 esac
 
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
@@ -87,24 +94,35 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
     fetch-dump.sh "${FETCH_OPTIONS[@]}"
 fi
 
-for F in "${DUMP_FILES[@]}"; do
-    if ! [[ -a "/media/dbdump/$F" ]]; then
-        echo "$0: The dump '$F' is missing"
-        exit 1
-    fi
-done
-
-echo "found existing dumps"
 dockerize -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s sleep 0
 
 update-perl.sh
 
-mkdir -p $TMP_DIR
-cd /media/dbdump
+INITDB_OPTIONS=("--echo")
+MBIMPORT_OPTIONS=()
 
-INITDB_OPTIONS='--echo --import'
-if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
-    INITDB_OPTIONS="--createdb $INITDB_OPTIONS"
+if [[ "${#DUMP_FILES[@]}" -gt 0 ]]; then
+    for F in "${DUMP_FILES[@]}"; do
+        if ! [[ -a "/media/dbdump/$F" ]]; then
+            echo "$0: The dump '$F' is missing"
+            exit 1
+        fi
+    done
+
+    echo "found existing dumps"
+
+    mkdir -p "$TMP_DIR"
+    cd /media/dbdump
+
+    INITDB_OPTIONS+=("--import")
+    MBIMPORT_OPTIONS+=("--skip-editor" "--tmp-dir" "$TMP_DIR" "${DUMP_FILES[@]}")
+else
+    INITDB_OPTIONS+=("--clean")
 fi
+
+if ! /musicbrainz-server/script/database_exists MAINTENANCE; then
+    INITDB_OPTIONS+=("--createdb")
+fi
+
 # shellcheck disable=SC2086
-/musicbrainz-server/admin/InitDb.pl $INITDB_OPTIONS -- --skip-editor --tmp-dir $TMP_DIR "${DUMP_FILES[@]}"
+/musicbrainz-server/admin/InitDb.pl "${INITDB_OPTIONS[@]}" -- "${MBIMPORT_OPTIONS[@]}"
