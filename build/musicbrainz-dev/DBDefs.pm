@@ -272,24 +272,32 @@ sub SEARCH_ENGINE             { "SOLR" }
 # in the webservice (Catalyst::Authentication::Credential::HTTP).
 sub PLUGIN_CACHE_OPTIONS {
     my $self = shift;
+    my $host = $ENV{MUSICBRAINZ_VALKEY_SERVER} // $ENV{MUSICBRAINZ_REDIS_SERVER};
     return {
+        # TODO: Use `MusicBrainz::Server::CacheWrapper::Valkey` after
+        # the schema change 31 release. (Both class names will be
+        # supported initially.)
         class => 'MusicBrainz::Server::CacheWrapper::Redis',
-        server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
+        server => "$host:6379",
         namespace => $self->CACHE_NAMESPACE . 'Catalyst:',
     };
 }
 
-# The caching options here relate to object caching in Redis - such as for
+# The caching options here relate to object caching in Valkey - such as for
 # artists, releases, etc. in order to speed up queries. See below if you want
 # to disable caching.
 sub CACHE_MANAGER_OPTIONS {
     my $self = shift;
+    my $host = $ENV{MUSICBRAINZ_VALKEY_SERVER} // $ENV{MUSICBRAINZ_REDIS_SERVER};
     my %CACHE_MANAGER_OPTIONS = (
         profiles => {
             external => {
+                # TODO: Use `MusicBrainz::Server::CacheWrapper::Valkey` after
+                # the schema change 31 release. (Both class names will be
+                # supported initially.)
                 class => 'MusicBrainz::Server::CacheWrapper::Redis',
                 options => {
-                    server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
+                    server => "$host:6379",
                     namespace => $self->CACHE_NAMESPACE,
                 },
             },
@@ -300,7 +308,7 @@ sub CACHE_MANAGER_OPTIONS {
     return \%CACHE_MANAGER_OPTIONS
 }
 
-# Sets the TTL for entities stored in Redis, in seconds. A value of 0
+# Sets the TTL for entities stored in Valkey, in seconds. A value of 0
 # indicates that no expiration is set.
 sub ENTITY_CACHE_TTL { 3600 }
 
@@ -309,26 +317,29 @@ sub ENTITY_CACHE_TTL { 3600 }
 ################################################################################
 
 # The session store holds user login sessions. Session::Store::MusicBrainz
-# uses DATASTORE_REDIS_ARGS to connect to and store sessions in Redis.
+# uses DATASTORE_REDIS_ARGS to connect to and store sessions in Valkey.
 
 # sub SESSION_STORE { "Session::Store::MusicBrainz" }
 # sub SESSION_STORE_ARGS { return {} }
 # sub SESSION_EXPIRE { return 36000; } # 10 hours
 
-# Redis by default has 16 numbered databases available, of which DB 0
+# Valkey by default has 16 numbered databases available, of which DB 0
 # is the default.  Here you can configure which of these databases are
 # used by musicbrainz-server.
 #
 # test_database will be completely erased on each test run, so make
 # sure it doesn't point at any production data you may have in your
-# redis server.
+# Valkey server.
 
+# TODO: Rename to `DATASTORE_VALKEY_ARGS` after the schema change 31 release.
+# (Both subroutine names will be supported initially.)
 sub DATASTORE_REDIS_ARGS {
     my $self = shift;
+    my $host = $ENV{MUSICBRAINZ_VALKEY_SERVER} // $ENV{MUSICBRAINZ_REDIS_SERVER};
     return {
         database => 0,
         namespace => $self->CACHE_NAMESPACE,
-        server => "$ENV{MUSICBRAINZ_REDIS_SERVER}:6379",
+        server => "$host:6379",
         test_database => 1,
     };
 }

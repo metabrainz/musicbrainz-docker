@@ -2,6 +2,8 @@
 
 set -e -u
 
+MUSICBRAINZ_VALKEY_SERVER="${MUSICBRAINZ_VALKEY_SERVER:-${MUSICBRAINZ_REDIS_SERVER:-valkey}}"
+
 if ! grep -q -s \
   "//${MUSICBRAINZ_WEB_SERVER_HOST}:${MUSICBRAINZ_WEB_SERVER_PORT}" \
   /musicbrainz-server/root/static/build/runtime.js.map
@@ -9,7 +11,7 @@ then
   carton exec -- /musicbrainz-server/script/compile_resources.sh
 fi
 
-dockerize -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s -wait "tcp://${MUSICBRAINZ_RABBITMQ_SERVER}:5672" -timeout 60s -wait "tcp://${MUSICBRAINZ_REDIS_SERVER}:6379" -timeout 60s carton exec -- start_mb_renderer.pl
+dockerize -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s -wait "tcp://${MUSICBRAINZ_RABBITMQ_SERVER}:5672" -timeout 60s -wait "tcp://${MUSICBRAINZ_VALKEY_SERVER}:6379" -timeout 60s carton exec -- start_mb_renderer.pl
 
 if [ -f /crons.conf -a -s /crons.conf ]
 then

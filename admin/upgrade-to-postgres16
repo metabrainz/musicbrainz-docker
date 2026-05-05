@@ -28,7 +28,7 @@ $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
     -f admin/lib/upgrade-to-postgres16/pg-12-stopped.yml \
     up -d
-$DOCKER_COMPOSE_CMD stop indexer search mq musicbrainz redis
+$DOCKER_COMPOSE_CMD stop indexer search mq musicbrainz valkey
 
 $DOCKER_COMPOSE_CMD exec db apt-get update
 $DOCKER_COMPOSE_CMD exec db apt-get install \
