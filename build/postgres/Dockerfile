@@ -29,13 +29,3 @@ RUN apt-get update && \
 # Compile en_US.UTF-8 locale specification
 RUN echo en_US.UTF-8 UTF-8 >> /etc/locale.gen \
     && locale-gen
-
-# There is no tag v0.4.2 (or 0.5.0) yet
-ARG PG_AMQP_GIT_REF="51497ac687f16989adff7729a303f9258706f663"
-# hadolint ignore=DL3003
-RUN git clone https://github.com/mwiencek/pg_amqp.git /tmp/pg_amqp \
-    && cd /tmp/pg_amqp \
-    && git checkout "$PG_AMQP_GIT_REF" \
-    && make PG_CPPFLAGS=-Wno-error=implicit-int \
-    && make install \
-    && rm -R /tmp/*

@@ -23,11 +23,31 @@ then
   exit 64 # EX_USAGE
 fi
 
+cd "$MB_DOCKER_ROOT"
+
+get_container_mounts() {
+    $DOCKER_CMD inspect "$1" --format '{{ range .Mounts }}{{ .Name }}{{ println }}{{ end }}'
+}
+
+if ! is_service_running db
+then
+    echo >&2 "$SCRIPT_NAME: " \
+             "the Docker Compose service 'db' is not up."
+    echo >&2 "Before running this script, make sure you're on the last " \
+             "pre-schema-change release (v-2026-04-27.0) and run " \
+             "'$DOCKER_COMPOSE_CMD up --build -d db' from '$MB_DOCKER_ROOT'."
+    exit 69 # EX_UNAVAILABLE
+fi
+
 CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -P pager=off -c 'SHOW server_version_num')
 if echo "$CURRENT_PG_VERSION" | grep -v '^16'; then
     echo "Error: Current postgres version should be < 18, not $CURRENT_PG_VERSION"
     exit 1
 fi
+
+echo "$(date) : Uninstalling the AMQP extension..."
+$DOCKER_COMPOSE_CMD exec db \
+    psql -U musicbrainz -d musicbrainz_db -c 'DROP EXTENSION IF EXISTS amqp CASCADE;'
 
 $DOCKER_COMPOSE_CMD down
 $DOCKER_COMPOSE_CMD \
@@ -44,11 +64,7 @@ DB_UPGRADE_CONTAINER_ID=$(
         -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
         ps -q db-upgrade
 )
-LEGACY_PGDATA_VOLUME_NAME=$(
-    $DOCKER_CMD inspect "$DB_UPGRADE_CONTAINER_ID" \
-        --format '{{ range .Mounts }}{{ .Name }}{{ println }}{{ end }}' \
-        | grep 'pgdata$'
-)
+LEGACY_PGDATA_VOLUME_NAME=$(get_container_mounts "$DB_UPGRADE_CONTAINER_ID" | grep 'pgdata$')
 
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \

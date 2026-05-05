@@ -1,12 +1,9 @@
 # Description: Make sir watches queue for reindex messages
 
 services:
-  db:
-    depends_on:
-      - mq
   indexer:
     command:
       - python
       - -m
       - sir
-      - amqp_watch
+      - live

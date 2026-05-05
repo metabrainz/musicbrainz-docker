@@ -13,7 +13,6 @@ pip install \
 
 dockerize \
   -wait "tcp://${MUSICBRAINZ_POSTGRES_SERVER}:5432" -timeout 60s \
-  -wait "tcp://${MUSICBRAINZ_RABBITMQ_SERVER}:5672" -timeout 60s \
   -wait tcp://search:8983 -timeout 60s \
   sleep 0
 

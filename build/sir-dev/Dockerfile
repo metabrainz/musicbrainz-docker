@@ -53,8 +53,7 @@ RUN echo Requirements will be installed at run time from entrypoint. \
 
 WORKDIR /code
 
-ENV MUSICBRAINZ_RABBITMQ_SERVER=mq \
-    MUSICBRAINZ_POSTGRES_SERVER=db \
+ENV MUSICBRAINZ_POSTGRES_SERVER=db \
     MUSICBRAINZ_POSTGRES_READONLY_SERVER=db \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr
 

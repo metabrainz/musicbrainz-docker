@@ -15,7 +15,6 @@ PGDATA_OLD="$PGHOME"/16/docker
 PGDATA_NEW="$PGHOME"/18/docker
 PGBIN_OLD=/usr/lib/postgresql/16/bin
 PGBIN_NEW=/usr/lib/postgresql/18/bin
-PGAMQP_DIR=/tmp/pg_amqp
 
 # Setup postgres user/group identically to the official postgres image:
 # https://github.com/docker-library/postgres/blob/6edb0a8/18/trixie/Dockerfile#L10-L16
@@ -81,14 +80,6 @@ sudo -u postgres $PGBIN_NEW/initdb \
     --locale en_US.UTF-8 \
     --username musicbrainz
 
-echo "$(date) : Installing pg_amqp in the new cluster"
-PG_AMQP_GIT_REF="51497ac687f16989adff7729a303f9258706f663"
-git clone https://github.com/mwiencek/pg_amqp.git "$PGAMQP_DIR"
-cd "$PGAMQP_DIR"
-git -c advice.detachedHead=false checkout "$PG_AMQP_GIT_REF"
-make PG_CONFIG=$PGBIN_NEW/pg_config PG_CPPFLAGS=-Wno-error=implicit-int \
-    > make.log 2>&1 || { cat make.log >&2; exit 1; }
-make install
 cd "$PGHOME"
 
 echo "$(date) : Running the upgrade"

@@ -15,5 +15,4 @@ services:
       - ${SIR_DEV_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
     depends_on:
       - db
-      - mq
       - search

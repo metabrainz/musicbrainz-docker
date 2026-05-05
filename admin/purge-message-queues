@@ -8,7 +8,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
 HELP=$(cat <<EOH
 Usage: $SCRIPT_NAME [--help]
 
-Purge message queues for search index rebuilder in RabbitMQ.
+Purge message queues for search index rebuilder.
 EOH
 )
 
@@ -23,48 +23,25 @@ then
   exit 64 # EX_USAGE
 fi
 
-# Check whether Docker Compose service running RabbitMQ is up
+# Check whether the `db` service is up.
 
-was_mq_up='no'
-if is_service_running mq
+was_db_up='no'
+if is_service_running db
 then
-  was_mq_up='yes'
+  was_db_up='yes'
 else
-  $DOCKER_COMPOSE_CMD up -d mq
-  sleep 30
+  $DOCKER_COMPOSE_CMD up -d db
+  $DOCKER_COMPOSE_CMD exec db pg_isready -U musicbrainz
 fi
 
-# Check message queues vhost access, queues creation, messages count
+echo 'DELETE FROM sir.pending_data;' | \
+  sudo docker compose exec -T db psql -U musicbrainz -d musicbrainz_db
 
-queues=$($DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -u sir -p sir -V /search-index-rebuilder list queues)
-if [[ $queues =~ 'Access refused' ]]
+# Stop PostgreSQL if it was not initially up
+
+if [[ $was_db_up == 'no' ]]
 then
-  echo "$queues"
-  echo "$SCRIPT_NAME: missing permissions"
-  echo "Try '$DOCKER_COMPOSE_CMD up -d --force-recreate mq' from '$MB_DOCKER_ROOT'"
-  exit 67 # EX_NOUSER
-elif [[ $queues =~ 'No items' ]]
-then
-  echo There is no message queue to be purged for search index rebuilder.
-  exit 0 # EX_OK
-else
-  echo "Current count of messages for search index rebuilder:"
-  echo "$queues"
-fi
-
-# For each queue, delete all messages
-
-for q in $($DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -f bash -u sir -p sir -V /search-index-rebuilder list queues name | strings)
-do
-	echo -n "$q ... "
-	$DOCKER_COMPOSE_CMD exec mq rabbitmqadmin -f bash -u sir -p sir -V /search-index-rebuilder purge queue name="$q"
-done
-
-# Stop RabbitMQ if it was not initially up
-
-if [[ $was_mq_up == 'no' ]]
-then
-  $DOCKER_COMPOSE_CMD stop mq
+  $DOCKER_COMPOSE_CMD stop db
 fi
 
 # vi: set et sts=2 sw=2 ts=2 :

@@ -10,7 +10,6 @@ Usage: $SCRIPT_NAME
    or: $SCRIPT_NAME --help
 
 Build a new image for the db service
-from the source code repository of pg_amqp (AMQP Support for Postgres)
 and push it as metabrainz/musicbrainz-docker-db:<tag>
 where tag is based on Postgres major version and a build sequence number.
 
