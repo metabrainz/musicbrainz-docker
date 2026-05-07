@@ -16,8 +16,8 @@ RUN curl -sSLO --retry 5 https://github.com/jwilder/dockerize/releases/download/
     tar -C /usr/local/bin -xzvf dockerize-linux-$TARGETARCH-$DOCKERIZE_VERSION.tar.gz && \
     rm -f dockerize-linux-$TARGETARCH-$DOCKERIZE_VERSION.tar.gz
 
-ARG PERL_VERSION=5.38.2
-ARG PERL_SRC_SUM=a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e
+ARG PERL_VERSION=5.42.2
+ARG PERL_SRC_SUM=9384e8deb75b7b1695e5637971b752281aaecd025a3d5d4734d33c1d0adfee47
 
 ARG CPANMINUS_VERSION=1.7048
 ARG CPANMINUS_SRC_SUM=59b60907ab9fa4f72ca2004fbe6054911439ae9a906890b4d842a87b25f20f3c
@@ -64,7 +64,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     rm -rf /var/lib/apt/lists/* && \
     # Install perl (in a more recent version than available with apt)
     cd /usr/src && \
-    curl -sSLO --retry 5 https://cpan.metacpan.org/authors/id/P/PE/PEVANS/perl-$PERL_VERSION.tar.gz && \
+    curl -sSLO --retry 5 https://www.cpan.org/src/5.0/perl-$PERL_VERSION.tar.gz && \
     echo "$PERL_SRC_SUM *perl-$PERL_VERSION.tar.gz" | sha256sum --strict --check - && \
     tar -xzf perl-$PERL_VERSION.tar.gz && \
     cd perl-$PERL_VERSION && \
