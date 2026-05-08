@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e -o pipefail -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME [--help]
+
+Upgrade database from Postgres 16 to Postgres 18.
+EOH
+)
+
+if [[ $# -ne 0 && $1 =~ -*h(elp)? ]]
+then
+  echo "$HELP"
+  exit 0 # EX_OK
+elif [[ $# -ne 0 ]]
+then
+  echo >&2 "$SCRIPT_NAME: unrecognized argument: $1"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -P pager=off -c 'SHOW server_version_num')
+if echo "$CURRENT_PG_VERSION" | grep -v '^16'; then
+    echo "Error: Current postgres version should be < 18, not $CURRENT_PG_VERSION"
+    exit 1
+fi
+
+$DOCKER_COMPOSE_CMD down
+$DOCKER_COMPOSE_CMD \
+    -f docker-compose.yml \
+    -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
+    up -d db-upgrade
+
+$DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/do-pg_upgrade.sh db-upgrade:/tmp/
+$DOCKER_COMPOSE_CMD exec db-upgrade /bin/bash /tmp/do-pg_upgrade.sh
+
+DB_UPGRADE_CONTAINER_ID=$(
+    $DOCKER_COMPOSE_CMD \
+        -f docker-compose.yml \
+        -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
+        ps -q db-upgrade
+)
+LEGACY_PGDATA_VOLUME_NAME=$(
+    $DOCKER_CMD inspect "$DB_UPGRADE_CONTAINER_ID" \
+        --format '{{ range .Mounts }}{{ .Name }}{{ println }}{{ end }}' \
+        | grep 'pgdata$'
+)
+
+$DOCKER_COMPOSE_CMD \
+    -f docker-compose.yml \
+    -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
+    down
+$DOCKER_CMD volume rm "$LEGACY_PGDATA_VOLUME_NAME"
+$DOCKER_COMPOSE_CMD up --build -d db
+
+echo "$(date) : Reindexing the new cluster"
+echo 'NOTE: "collation version mismatch" warnings are expected'
+
+$DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/reindex.sh db:/tmp/
+$DOCKER_COMPOSE_CMD exec db sudo -u postgres pg_isready -t 60
+$DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/reindex.sh
+$DOCKER_COMPOSE_CMD exec db rm /tmp/reindex.sh
+
+$DOCKER_COMPOSE_CMD up --build -d
+
+echo 'Upgrade complete!'

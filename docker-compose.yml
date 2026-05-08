@@ -3,7 +3,7 @@
 volumes:
   mqdata:
     driver: local
-  pgdata:
+  pghome:
     driver: local
   solrdata:
     driver: local
@@ -16,7 +16,7 @@ services:
   db:
     build:
       context: build/postgres-prebuilt
-    image: musicbrainz-docker_db:${POSTGRES_VERSION:-16}
+    image: musicbrainz-docker_db:${POSTGRES_VERSION:-18}
     logging:
       driver: "json-file"
       options:
@@ -28,7 +28,7 @@ services:
       - ./default/postgres.env
     shm_size: "2GB"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pghome:/var/lib/postgresql
     expose:
       - "5432"
 
