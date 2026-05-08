@@ -97,7 +97,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     apt-get purge --auto-remove -y \
         build-essential
 
-ARG MUSICBRAINZ_SERVER_VERSION=v-2026-04-27.0
+ARG MUSICBRAINZ_SERVER_VERSION=v-2026-05-11.0-schema-change
 LABEL org.metabrainz.musicbrainz-server.version="${MUSICBRAINZ_SERVER_VERSION}"
 RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server
 
@@ -133,7 +133,7 @@ ARG POSTGRES_PASSWORD=doesntmatteraslongasyoudontcompiletests
 ENV BASH_ENV=/noninteractive.bash_env \
     MUSICBRAINZ_BASE_DOWNLOAD_URL=https://data.metabrainz.org/pub/musicbrainz \
     MUSICBRAINZ_CATALYST_DEBUG=0 \
-    MUSICBRAINZ_DB_SCHEMA_SEQUENCE=30 \
+    MUSICBRAINZ_DB_SCHEMA_SEQUENCE=31 \
     MUSICBRAINZ_DEVELOPMENT_SERVER=0 \
     MUSICBRAINZ_POSTGRES_SERVER=db \
     MUSICBRAINZ_POSTGRES_READONLY_SERVER=db \
