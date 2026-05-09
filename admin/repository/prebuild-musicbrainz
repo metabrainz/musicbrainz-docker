@@ -24,6 +24,9 @@ Prerequisites:
     The build sequence must be incremented, if image tag exists already
     (for example when only files under build/musicbrainz/ have changed), in:
         build/musicbrainz-prebuilt/Dockerfile
+
+    For multi-platform builds, you may need to set up QEMU emulation:
+    https://docs.docker.com/build/building/multi-platform/#qemu
 EOH
 )
 
