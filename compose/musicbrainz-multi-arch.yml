@@ -1,0 +1,9 @@
+# Description: Build multi arch version of the docker image
+
+services:
+  musicbrainz:
+    build:
+      context: build/musicbrainz
+      platforms:
+        - linux/arm64
+        - linux/amd64
