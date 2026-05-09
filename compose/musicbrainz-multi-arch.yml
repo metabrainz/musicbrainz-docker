@@ -2,7 +2,6 @@
 
 services:
   musicbrainz:
-    image: ${DEST_IMAGE_TAG}
     build:
       context: build/musicbrainz
       platforms:

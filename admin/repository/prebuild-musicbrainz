@@ -86,8 +86,7 @@ echo Building...
 DOCKER_BAKE_OPTS='-f docker-compose.yml -f compose/musicbrainz-own-build.yml -f compose/musicbrainz-multi-arch.yml'
 
 # shellcheck disable=SC2086 # intentional word splitting of options
-export DEST_IMAGE_TAG
-$DOCKER_CMD buildx bake $DOCKER_BAKE_OPTS --push musicbrainz
+$DOCKER_CMD buildx bake $DOCKER_BAKE_OPTS --set musicbrainz.tags="$DEST_IMAGE_TAG" --push musicbrainz
 
 echo Tagging...
 
