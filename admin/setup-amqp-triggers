@@ -66,7 +66,7 @@ remove_temp_sql_scripts_from_container() {
 
 case "$1" in
   clean     )
-    if ! $DOCKER_COMPOSE_CMD ps musicbrainz | grep -qw 'running\|Up'
+    if ! is_service_running musicbrainz
     then
       echo >&2 "$SCRIPT_NAME: cannot clean: " \
                "the Docker Compose service 'musicbrainz' is not up"
@@ -82,7 +82,7 @@ case "$1" in
   install   )
     for service in indexer musicbrainz
     do
-      if ! $DOCKER_COMPOSE_CMD ps "$service" | grep -qw 'running\|Up'
+      if ! is_service_running "$service"
       then
         echo >&2 "$SCRIPT_NAME: cannot install: " \
                  "the Docker Compose service '$service' is not up"
@@ -101,7 +101,7 @@ case "$1" in
   uninstall )
     for service in indexer musicbrainz
     do
-      if ! $DOCKER_COMPOSE_CMD ps "$service" | grep -qw 'running\|Up'
+      if ! is_service_running "$service"
       then
         echo >&2 "$SCRIPT_NAME: cannot uninstall: " \
                  "the Docker Compose service '$service' is not up"
