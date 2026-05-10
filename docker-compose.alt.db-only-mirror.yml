@@ -22,7 +22,7 @@ services:
       - ./default/postgres.env
     shm_size: "2GB"
     volumes:
-      - pghome:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql
     expose:
       - "5432"
 

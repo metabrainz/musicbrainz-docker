@@ -10,5 +10,4 @@ services:
     image: debian:bookworm-slim
     command: /bin/sleep infinity
     volumes:
-      - pgdata:/var/lib/postgresql-16/data
-      - pghome:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql

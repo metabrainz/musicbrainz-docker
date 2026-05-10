@@ -25,10 +25,6 @@ fi
 
 cd "$MB_DOCKER_ROOT"
 
-get_container_mounts() {
-    $DOCKER_CMD inspect "$1" --format '{{ range .Mounts }}{{ .Name }}{{ println }}{{ end }}'
-}
-
 if ! is_service_running db
 then
     echo >&2 "$SCRIPT_NAME: " \
@@ -58,19 +54,10 @@ $DOCKER_COMPOSE_CMD \
 $DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/do-pg_upgrade.sh db-upgrade:/tmp/
 $DOCKER_COMPOSE_CMD exec db-upgrade /bin/bash /tmp/do-pg_upgrade.sh
 
-DB_UPGRADE_CONTAINER_ID=$(
-    $DOCKER_COMPOSE_CMD \
-        -f docker-compose.yml \
-        -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
-        ps -q db-upgrade
-)
-LEGACY_PGDATA_VOLUME_NAME=$(get_container_mounts "$DB_UPGRADE_CONTAINER_ID" | grep 'pgdata$')
-
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
     -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
     down
-$DOCKER_CMD volume rm "$LEGACY_PGDATA_VOLUME_NAME"
 $DOCKER_COMPOSE_CMD up --build -d db
 
 echo "$(date) : Refreshing collation versions for all databases..."

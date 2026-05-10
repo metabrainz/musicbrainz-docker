@@ -1,7 +1,7 @@
 # Description: Default compose file, with host port for musicbrainz
 
 volumes:
-  pghome:
+  pgdata:
     driver: local
   solrdata:
     driver: local
@@ -26,7 +26,7 @@ services:
       - ./default/postgres.env
     shm_size: "2GB"
     volumes:
-      - pghome:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql
     expose:
       - "5432"
 
