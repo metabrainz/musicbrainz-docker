@@ -60,11 +60,16 @@ $DOCKER_COMPOSE_CMD \
     down
 $DOCKER_COMPOSE_CMD up --build -d db
 
+while ! $DOCKER_COMPOSE_CMD exec db sudo -u postgres pg_isready -t 30
+do
+    echo "$(date) : Waiting for the new cluster to be ready..."
+    sleep 5
+done
+
 echo "$(date) : Refreshing collation versions for all databases..."
 echo 'NOTE: "collation version mismatch" warnings are expected'
 
 $DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/refresh_collations.sh db:/tmp/
-$DOCKER_COMPOSE_CMD exec db sudo -u postgres pg_isready -t 60
 $DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/refresh_collations.sh
 $DOCKER_COMPOSE_CMD exec db rm /tmp/refresh_collations.sh
 
