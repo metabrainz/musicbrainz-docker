@@ -6,7 +6,7 @@ DATABASES=$(
     psql \
         -U musicbrainz \
         -d template1 \
-        -c 'SELECT datname FROM pg_database WHERE datallowconn' \
+        -c 'SELECT quote_ident(datname) FROM pg_database WHERE datallowconn' \
         -Atq
 )
 
