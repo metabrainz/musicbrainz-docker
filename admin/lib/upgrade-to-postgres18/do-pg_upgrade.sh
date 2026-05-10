@@ -126,8 +126,5 @@ if [[ -f update_extensions.sql ]]; then
     rm update_extensions.sql
 fi
 
-echo "$(date) : Vaccuuming the new cluster"
-sudo -u postgres $PGBIN_NEW/vacuumdb -U musicbrainz --all --analyze-in-stages
-
 echo "$(date) : Stopping the new cluster"
 sudo -u postgres $PGBIN_NEW/pg_ctl -D "$PGDATA_NEW" stop -w
