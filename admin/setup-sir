@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+# shellcheck source=admin/lib/common.inc.bash
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.inc.bash"
+
+HELP=$(cat <<EOH
+Usage: $SCRIPT_NAME <install|uninstall|help>
+
+Commands:
+  install     Create the sir schema and any database triggers required for search indexing.
+  uninstall   Drop the sir schema and any database triggers created for search indexing.
+  help        Print this help message.
+EOH
+)
+
+if [ $# -ne 1 ]
+then
+  echo >&2 "$SCRIPT_NAME: wrong number of arguments"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+  exit 64 # EX_USAGE
+fi
+
+check_services_up() {
+  for service in indexer musicbrainz
+  do
+    if ! is_service_running "$service"
+    then
+      echo >&2 "$SCRIPT_NAME: " \
+                "the Docker Compose service '$service' is not up"
+      echo >&2 "Try '$DOCKER_COMPOSE_CMD up -d $service' from '$MB_DOCKER_ROOT'"
+      exit 69 # EX_UNAVAILABLE
+    fi
+  done
+}
+
+is_standalone_server() {
+  $DOCKER_COMPOSE_CMD exec musicbrainz sh -c '[ "$MUSICBRAINZ_STANDALONE_SERVER" = "1" ]'
+}
+
+case "$1" in
+  install   )
+    check_services_up
+    echo "Installing the 'sir' schema ..."
+    $DOCKER_COMPOSE_CMD exec indexer python -m sir setup
+    if is_standalone_server
+    then
+        echo 'Installing triggers required for search indexing on standalone servers...'
+        $DOCKER_COMPOSE_CMD exec musicbrainz create-replication-triggers.sh
+        $DOCKER_COMPOSE_CMD exec indexer python -m sir setup_standalone_only
+    fi
+    ;;
+  uninstall )
+    check_services_up
+    if is_standalone_server
+    then
+        echo 'Uninstalling triggers created for search indexing on standalone servers...'
+        $DOCKER_COMPOSE_CMD exec musicbrainz drop-replication-triggers.sh
+        $DOCKER_COMPOSE_CMD exec indexer python -m sir drop_standalone_only
+    fi
+    echo "Uninstalling the 'sir' schema ..."
+    $DOCKER_COMPOSE_CMD exec indexer python -m sir drop
+    ;;
+  help|-h|--help)
+    echo "$HELP"
+    exit 0 # EX_OK
+    ;;
+  *         )
+    echo >&2 "$SCRIPT_NAME: unrecognized command '$1'"
+  echo >&2 "Try '$SCRIPT_NAME help' for usage."
+    exit 64 # EX_USAGE
+    ;;
+esac
+
+echo "Done."
+
+# vi: set et sts=2 sw=2 ts=2 :

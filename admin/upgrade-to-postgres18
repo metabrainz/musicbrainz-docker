@@ -23,11 +23,29 @@ then
   exit 64 # EX_USAGE
 fi
 
+cd "$MB_DOCKER_ROOT"
+
+if ! is_service_running db
+then
+    echo >&2 "$SCRIPT_NAME: " \
+             "the Docker Compose service 'db' is not up."
+    echo >&2 "Before running this script, make sure you're on the last " \
+             "pre-schema-change release (v-2026-04-27.0) and run " \
+             "'$DOCKER_COMPOSE_CMD up --build -d db' from '$MB_DOCKER_ROOT'."
+    exit 69 # EX_UNAVAILABLE
+fi
+
 CURRENT_PG_VERSION=$($DOCKER_COMPOSE_CMD exec db psql -U musicbrainz -d musicbrainz_db -tAq -P pager=off -c 'SHOW server_version_num')
 if echo "$CURRENT_PG_VERSION" | grep -v '^16'; then
     echo "Error: Current postgres version should be < 18, not $CURRENT_PG_VERSION"
     exit 1
 fi
+
+keep_sudo_alive
+
+echo "$(date) : Uninstalling the AMQP extension..."
+$DOCKER_COMPOSE_CMD exec db \
+    psql -U musicbrainz -d musicbrainz_db -c 'DROP EXTENSION IF EXISTS amqp CASCADE;'
 
 $DOCKER_COMPOSE_CMD down
 $DOCKER_COMPOSE_CMD \
@@ -38,32 +56,24 @@ $DOCKER_COMPOSE_CMD \
 $DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/do-pg_upgrade.sh db-upgrade:/tmp/
 $DOCKER_COMPOSE_CMD exec db-upgrade /bin/bash /tmp/do-pg_upgrade.sh
 
-DB_UPGRADE_CONTAINER_ID=$(
-    $DOCKER_COMPOSE_CMD \
-        -f docker-compose.yml \
-        -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
-        ps -q db-upgrade
-)
-LEGACY_PGDATA_VOLUME_NAME=$(
-    $DOCKER_CMD inspect "$DB_UPGRADE_CONTAINER_ID" \
-        --format '{{ range .Mounts }}{{ .Name }}{{ println }}{{ end }}' \
-        | grep 'pgdata$'
-)
-
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
     -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
     down
-$DOCKER_CMD volume rm "$LEGACY_PGDATA_VOLUME_NAME"
 $DOCKER_COMPOSE_CMD up --build -d db
 
-echo "$(date) : Reindexing the new cluster"
+while ! $DOCKER_COMPOSE_CMD exec db sudo -u postgres pg_isready -t 30
+do
+    echo "$(date) : Waiting for the new cluster to be ready..."
+    sleep 5
+done
+
+echo "$(date) : Refreshing collation versions for all databases..."
 echo 'NOTE: "collation version mismatch" warnings are expected'
 
-$DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/reindex.sh db:/tmp/
-$DOCKER_COMPOSE_CMD exec db sudo -u postgres pg_isready -t 60
-$DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/reindex.sh
-$DOCKER_COMPOSE_CMD exec db rm /tmp/reindex.sh
+$DOCKER_COMPOSE_CMD cp admin/lib/upgrade-to-postgres18/refresh_collations.sh db:/tmp/
+$DOCKER_COMPOSE_CMD exec db /bin/bash /tmp/refresh_collations.sh
+$DOCKER_COMPOSE_CMD exec db rm /tmp/refresh_collations.sh
 
 $DOCKER_COMPOSE_CMD up --build -d
 

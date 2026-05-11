@@ -284,14 +284,10 @@ Do not use it if you don't want to get your hands dirty.
    docker compose up -d
    ```
 
-2. Make indexer goes through [AMQP
-   Setup](https://sir.readthedocs.io/en/latest/setup/index.html#amqp-setup)
-   with:
+2. Set up the database schema for sir indexing with:
 
    ```bash
-   docker compose exec indexer python -m sir amqp_setup
-   admin/create-amqp-extension
-   admin/setup-amqp-triggers install
+   admin/setup-sir install
    ```
 
 3. [Build search indexes](#set-up-search-indexes) if they either have not been
@@ -409,21 +405,7 @@ be customized using the `MUSICBRAINZ_POSTGRES_SERVER` and `MUSICBRAINZ_POSTGRES_
 Notes:
 * After switching to another Postgres server:
   * If not transferring data, it is needed to create the database again.
-  * For live indexing, the RabbitMQ server has to still be reachable from the Postgres server.
-* The helper script `create-amqp-extension` won’t work anymore.
 * The service `db` will still be up even if unused.
-
-#### Customize backend RabbitMQ server
-
-By default, the services `db`, `indexer` and `musicbrainz` are trying to connect to the host `mq`
-but the host can be customized using the `MUSICBRAINZ_RABBITMQ_SERVER` environment variable.
-
-Notes:
-* After switching to another RabbitMQ server:
-  - Live indexing requires to go through AMQP Setup again.
-  - If not transferring data, it might be needed to build search indexes again.
-* The helper script `purge-message-queues` won’t work anymore.
-* The service `mq` will still be up even if unused.
 
 #### Customize backend Valkey server
 
@@ -465,7 +447,7 @@ See [Solr Security](https://cwiki.apache.org/confluence/display/SOLR/SolrSecurit
 Similarly, other services have not been configured to be safely publicly accessible either.
 Take this warning in consideration when publishing their ports.
 
-To publish ports of services `db`, `mq`, `valkey` and `search`
+To publish ports of services `db`, `valkey` and `search`
 (additionally to `musicbrainz`) on the host, simply run:
 
 ```bash
@@ -494,7 +476,7 @@ create a file `local/compose/memory-settings.yml` as follows:
 
 services:
   db:
-    command: postgres -c "shared_buffers=4GB" -c "shared_preload_libraries=pg_amqp.so"
+    command: postgres -c "shared_buffers=4GB"
   search:
     environment:
       - SOLR_HEAP=4g
@@ -635,18 +617,16 @@ There are two directories with helper scripts:
 
   ```bash
   admin/configure --help
-  admin/create-amqp-extension --help
+  admin/setup-sir --help
   admin/purge-message-queues --help
   admin/set-replication-token --help
-  admin/setup-amqp-triggers --help
   ```
 
   See also:
   - [Docker Compose overrides](#docker-compose-overrides) for more
     information about `admin/configure`.
   - [Enable live indexing](#enable-live-indexing) for more information
-    about `admin/create-amqp-extension`
-    and `admin/setup-amqp-triggers`.
+    about `admin/setup-sir`.
   - [Enable replication](#enable-replication) for more information
     about `admin/set-replication-token`.
 
@@ -684,7 +664,7 @@ docker compose exec search load-backup-archives
 # See the note no. 1 below
 docker compose run --rm musicbrainz recreatedb.sh
 docker compose up -d
-admin/setup-amqp-triggers install
+admin/setup-sir install
 admin/configure add replication-cron
 docker compose up -d
 # See the note no. 2 below

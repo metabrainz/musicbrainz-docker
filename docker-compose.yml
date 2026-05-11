@@ -1,9 +1,7 @@
 # Description: Default compose file, with host port for musicbrainz
 
 volumes:
-  mqdata:
-    driver: local
-  pghome:
+  pgdata:
     driver: local
   solrdata:
     driver: local
@@ -23,12 +21,12 @@ services:
         max-size: "10m"
         max-file: "10"
     restart: unless-stopped
-    command: postgres -c "shared_buffers=2048MB" -c "shared_preload_libraries=pg_amqp.so"
+    command: postgres -c "shared_buffers=2048MB"
     env_file:
       - ./default/postgres.env
     shm_size: "2GB"
     volumes:
-      - pghome:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql
     expose:
       - "5432"
 
@@ -57,7 +55,6 @@ services:
       - MUSICBRAINZ_WEB_SERVER_PORT=${MUSICBRAINZ_WEB_SERVER_PORT:-5000}
     depends_on:
       - db
-      - mq
       - search
       - valkey
 
@@ -72,9 +69,9 @@ services:
         max-file: "10"
     volumes:
       - ${SIR_CONFIG_PATH:-./default/indexer.ini}:/code/config.ini
+    restart: unless-stopped
     depends_on:
       - db
-      - mq
       - search
 
   search:
@@ -99,22 +96,6 @@ services:
       - dbdump:/media/dbdump:ro
       - solrdata:/var/solr
       - solrdump:/var/cache/musicbrainz/solr-backups
-
-  mq:
-    build: build/rabbitmq
-    hostname: "mq"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "10"
-    restart: unless-stopped
-    ulimits:
-      nofile: 65536
-    volumes:
-      - mqdata:/var/lib/rabbitmq
-    expose:
-      - "5672"
 
   valkey:
     image: valkey/valkey:9-alpine

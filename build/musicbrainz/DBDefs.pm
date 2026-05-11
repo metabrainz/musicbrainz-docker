@@ -261,10 +261,7 @@ sub PLUGIN_CACHE_OPTIONS {
     my $self = shift;
     my $host = $ENV{MUSICBRAINZ_VALKEY_SERVER} // $ENV{MUSICBRAINZ_REDIS_SERVER};
     return {
-        # TODO: Use `MusicBrainz::Server::CacheWrapper::Valkey` after
-        # the schema change 31 release. (Both class names will be
-        # supported initially.)
-        class => 'MusicBrainz::Server::CacheWrapper::Redis',
+        class => 'MusicBrainz::Server::CacheWrapper::Valkey',
         server => "$host:6379",
         namespace => $self->CACHE_NAMESPACE . 'Catalyst:',
     };
@@ -279,10 +276,7 @@ sub CACHE_MANAGER_OPTIONS {
     my %CACHE_MANAGER_OPTIONS = (
         profiles => {
             external => {
-                # TODO: Use `MusicBrainz::Server::CacheWrapper::Valkey` after
-                # the schema change 31 release. (Both class names will be
-                # supported initially.)
-                class => 'MusicBrainz::Server::CacheWrapper::Redis',
+                class => 'MusicBrainz::Server::CacheWrapper::Valkey',
                 options => {
                     server => "$host:6379",
                     namespace => $self->CACHE_NAMESPACE,
@@ -304,7 +298,7 @@ sub ENTITY_CACHE_TTL { 3600 }
 ################################################################################
 
 # The session store holds user login sessions. Session::Store::MusicBrainz
-# uses DATASTORE_REDIS_ARGS to connect to and store sessions in Valkey.
+# uses DATASTORE_VALKEY_ARGS to connect to and store sessions in Valkey.
 
 # sub SESSION_STORE { "Session::Store::MusicBrainz" }
 # sub SESSION_STORE_ARGS { return {} }
@@ -318,9 +312,7 @@ sub ENTITY_CACHE_TTL { 3600 }
 # sure it doesn't point at any production data you may have in your
 # Valkey server.
 
-# TODO: Rename to `DATASTORE_VALKEY_ARGS` after the schema change 31 release.
-# (Both subroutine names will be supported initially.)
-sub DATASTORE_REDIS_ARGS {
+sub DATASTORE_VALKEY_ARGS {
     my $self = shift;
     my $host = $ENV{MUSICBRAINZ_VALKEY_SERVER} // $ENV{MUSICBRAINZ_REDIS_SERVER};
     return {

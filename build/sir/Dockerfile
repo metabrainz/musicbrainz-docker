@@ -35,11 +35,11 @@ RUN apt-get update \
 # Installing sir #
 ##################
 
-ARG SIR_VERSION=4.0.1
+ARG SIR_VERSION=5.0.0-rc.3 SIR_BRANCH="v${SIR_VERSION}"
 LABEL org.metabrainz.sir.version="${SIR_VERSION}"
 
 # hadolint ignore=DL3003
-RUN git clone --depth=1 --branch "v${SIR_VERSION}" https://github.com/metabrainz/sir.git /code \
+RUN git clone --depth=1 --branch "$SIR_BRANCH" https://github.com/metabrainz/sir.git /code \
     && cd /code \
     && pip install -r requirements.txt \
     && rm -f /code/config.ini \
@@ -47,11 +47,9 @@ RUN git clone --depth=1 --branch "v${SIR_VERSION}" https://github.com/metabrainz
 
 WORKDIR /code
 
-ENV MUSICBRAINZ_RABBITMQ_SERVER=mq \
-    MUSICBRAINZ_POSTGRES_SERVER=db \
+ENV MUSICBRAINZ_POSTGRES_SERVER=db \
     MUSICBRAINZ_POSTGRES_READONLY_SERVER=db \
     MUSICBRAINZ_SEARCH_SERVER=search:8983/solr
 
 ENV POSTGRES_USER=musicbrainz
 ENV POSTGRES_PASSWORD=musicbrainz
-

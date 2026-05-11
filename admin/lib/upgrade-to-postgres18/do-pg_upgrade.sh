@@ -7,21 +7,29 @@ shopt -s dotglob extglob nullglob
 # `pgdata:/var/lib/postgresql/data`. To align with changes in the
 # official postgres base image (which also simplifies future upgrades),
 # the postgres *home directory* is now the volume root, i.e.,
-# `pghome:/var/lib/postgresql`.
+# `pgdata:/var/lib/postgresql`.
 
-LEGACY_PGDATA=/var/lib/postgresql-16/data
 PGHOME=/var/lib/postgresql
 PGDATA_OLD="$PGHOME"/16/docker
 PGDATA_NEW="$PGHOME"/18/docker
 PGBIN_OLD=/usr/lib/postgresql/16/bin
 PGBIN_NEW=/usr/lib/postgresql/18/bin
-PGAMQP_DIR=/tmp/pg_amqp
+
+cd "$PGHOME"
+mkdir -p 16/docker
+chmod 700 16 16/docker
+mv -- !(16) 16/docker/
+
+mkdir -p 18/docker
+chmod 700 18 18/docker
 
 # Setup postgres user/group identically to the official postgres image:
 # https://github.com/docker-library/postgres/blob/6edb0a8/18/trixie/Dockerfile#L10-L16
 echo "$(date) : Adding 'postgres' user and group"
 groupadd -r postgres --gid=999
 useradd -r -g postgres --uid=999 --home-dir=/var/lib/postgresql --shell=/bin/bash postgres
+
+echo "$(date) : Ensuring 'postgres' ownership of $PGHOME"
 chown -R postgres:postgres "$PGHOME"
 
 echo "$(date) : Installing upgrade dependencies"
@@ -63,12 +71,6 @@ apt-get install \
     postgresql-server-dev-16 \
     postgresql-server-dev-18
 
-echo "$(date) : Moving the old cluster to $PGDATA_OLD"
-cd "$PGHOME"
-sudo -u postgres mkdir -p 16/docker
-chmod 700 16 16/docker
-mv "$LEGACY_PGDATA"/* 16/docker/
-
 # Data checksums are now enabled by default in v18, so we have to enable them
 # in the old cluster before running `pg_upgrade`.
 echo "$(date) : Enabling checksums in the old cluster"
@@ -80,16 +82,6 @@ sudo -u postgres $PGBIN_NEW/initdb \
     --encoding UTF8 \
     --locale en_US.UTF-8 \
     --username musicbrainz
-
-echo "$(date) : Installing pg_amqp in the new cluster"
-PG_AMQP_GIT_REF="51497ac687f16989adff7729a303f9258706f663"
-git clone https://github.com/mwiencek/pg_amqp.git "$PGAMQP_DIR"
-cd "$PGAMQP_DIR"
-git -c advice.detachedHead=false checkout "$PG_AMQP_GIT_REF"
-make PG_CONFIG=$PGBIN_NEW/pg_config PG_CPPFLAGS=-Wno-error=implicit-int \
-    > make.log 2>&1 || { cat make.log >&2; exit 1; }
-make install
-cd "$PGHOME"
 
 echo "$(date) : Running the upgrade"
 sudo -E -u postgres $PGBIN_NEW/pg_upgrade \
@@ -125,9 +117,6 @@ if [[ -f update_extensions.sql ]]; then
     $PGBIN_NEW/psql -U musicbrainz -d template1 -tA -P pager=off -f update_extensions.sql
     rm update_extensions.sql
 fi
-
-echo "$(date) : Vaccuuming the new cluster"
-sudo -u postgres $PGBIN_NEW/vacuumdb -U musicbrainz --all --analyze-in-stages
 
 echo "$(date) : Stopping the new cluster"
 sudo -u postgres $PGBIN_NEW/pg_ctl -D "$PGDATA_NEW" stop -w

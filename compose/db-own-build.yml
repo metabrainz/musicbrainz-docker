@@ -1,4 +1,4 @@
-# Description: Build own image of Postgres with AMQP support for release
+# Description: Build own image of Postgres for release
 
 services:
   db:
