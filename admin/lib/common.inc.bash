@@ -50,4 +50,10 @@ is_service_running() {
   test -n "$($DOCKER_COMPOSE_CMD ps --status running -q "$1" 2>/dev/null)";
 }
 
+keep_sudo_alive() {
+  # Taken from https://gist.github.com/cowboy/3118588
+  # Keep-alive: update existing sudo time stamp if set, otherwise do nothing.
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+}
+
 # vi: set et sts=2 sw=2 ts=2 :

@@ -41,6 +41,8 @@ if echo "$CURRENT_PG_VERSION" | grep -v '^16'; then
     exit 1
 fi
 
+keep_sudo_alive
+
 echo "$(date) : Uninstalling the AMQP extension..."
 $DOCKER_COMPOSE_CMD exec db \
     psql -U musicbrainz -d musicbrainz_db -c 'DROP EXTENSION IF EXISTS amqp CASCADE;'
