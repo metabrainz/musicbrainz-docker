@@ -106,7 +106,9 @@ echo "$(date) : Updating the new cluster configuration"
 # https://github.com/docker-library/postgres/blob/2353f03/18/trixie/Dockerfile#L179-L184
 sed -ri "s|^#?(listen_addresses)\s*=\s*\S+.*|\1 = '*'|" "$PGDATA_NEW"/postgresql.conf
 
-# Allow password authentication.
+# Allow password authentication. Note: scram-sha-256 became the default in
+# v14, so older setups may have passwords stored with md5 encryption still.
+echo 'host all all all md5' >> "$PGDATA_NEW"/pg_hba.conf
 echo 'host all all all scram-sha-256' >> "$PGDATA_NEW"/pg_hba.conf
 
 echo "$(date) : Starting the new cluster"

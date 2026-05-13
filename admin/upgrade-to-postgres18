@@ -47,7 +47,7 @@ echo "$(date) : Uninstalling the AMQP extension..."
 $DOCKER_COMPOSE_CMD exec db \
     psql -U musicbrainz -d musicbrainz_db -c 'DROP EXTENSION IF EXISTS amqp CASCADE;'
 
-$DOCKER_COMPOSE_CMD down
+$DOCKER_COMPOSE_CMD down --remove-orphans
 $DOCKER_COMPOSE_CMD \
     -f docker-compose.yml \
     -f admin/lib/upgrade-to-postgres18/db-upgrade.yml \
