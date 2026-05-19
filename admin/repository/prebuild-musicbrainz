@@ -91,17 +91,6 @@ COMPOSE_FILES='-f docker-compose.yml -f compose/musicbrainz-own-build.yml -f com
 # shellcheck disable=SC2086 # intentional word splitting of options
 $DOCKER_CMD buildx bake $COMPOSE_FILES --set musicbrainz.tags="$DEST_IMAGE_TAG" --push musicbrainz
 
-echo Tagging...
-
-# shellcheck disable=SC2086 # intentional word splitting of options
-LOCAL_IMAGE_TAG=$($DOCKER_COMPOSE_CMD $COMPOSE_FILES config --images | grep -o '[^ ]*musicbrainz$')
-
-$DOCKER_CMD tag "$LOCAL_IMAGE_TAG" "$DEST_IMAGE_TAG"
-
-echo Pushing...
-
-$DOCKER_CMD push "$DEST_IMAGE_TAG"
-
 echo Done.
 
 # vi: set et sts=2 sw=2 ts=2 :
