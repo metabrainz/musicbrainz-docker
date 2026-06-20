@@ -1,0 +1,12 @@
+services:
+  artwork-redirect:
+    build:
+      context: build/artwork-redirect
+    ports:
+      - "${ARTWORK_REDIRECT_PORT:-8081}:8081"
+    restart: unless-stopped
+
+  musicbrainz:
+    environment:
+      - COVER_ART_ARCHIVE_DOWNLOAD_PREFIX=http://${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}:$ARTWORK_REDIRECT_PORT
+      - EVENT_ART_ARCHIVE_DOWNLOAD_PREFIX=http://${MUSICBRAINZ_WEB_SERVER_HOST:-localhost}:$ARTWORK_REDIRECT_PORT
