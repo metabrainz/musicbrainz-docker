@@ -244,7 +244,7 @@ docker compose up -d
 Run replication script once to catch up with latest database updates:
 
 ```bash
-bash -c 'docker compose exec musicbrainz replication.sh &' && \
+bash -c 'docker compose exec -T musicbrainz replication.sh &' && \
 docker compose exec musicbrainz /usr/bin/tail -f mirror.log
 ```
 
