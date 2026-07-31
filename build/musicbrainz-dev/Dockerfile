@@ -101,10 +101,6 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesourc
     # Install local::lib (needed to persistently update Perl modules)
     cpanm local::lib && \
     rm -fr /root/.cpanm && \
-    # Install ts (needed to run admin background task scripts locally)
-    curl -sSL --retry 5 https://git.joeyh.name/index.cgi/moreutils.git/plain/ts?h=0.70 -o /usr/local/bin/ts && \
-    echo '1b15c99d334f89df193c1def89eea1ac6a7922ece5dc08fe438bb5550df9e2e3 */usr/local/bin/ts' | sha256sum --strict --check - && \
-    chmod +x /usr/local/bin/ts && \
     # Install yarn from nodejs
     corepack enable
 
