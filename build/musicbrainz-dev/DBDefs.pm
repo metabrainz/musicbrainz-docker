@@ -239,6 +239,10 @@ sub SEARCH_ENGINE             { "SOLR" }
 # users to edit user permissions.
 # sub DB_STAGING_TESTING_FEATURES { my $self = shift; $self->DB_STAGING_SERVER }
 
+# Enable local account registration and login, bypassing OAuth login with
+# MetaBrainz.
+sub LOCAL_ACCOUNTS_ENABLED { 1 }
+
 # SSL_REDIRECTS_ENABLED should be set to 1 on production.  It enables
 # the "RequireSSL" attribute on Catalyst actions, which will redirect
 # users to the SSL version of a Catalyst action (and redirect back to
@@ -314,8 +318,7 @@ sub ENTITY_CACHE_TTL { 3600 }
 # uses DATASTORE_VALKEY_ARGS to connect to and store sessions in Valkey.
 
 # sub SESSION_STORE { "Session::Store::MusicBrainz" }
-# sub SESSION_STORE_ARGS { return {} }
-# sub SESSION_EXPIRE { return 36000; } # 10 hours
+# sub SESSION_EXPIRE { return 3600 * 3; } # 3 hours
 
 # Valkey by default has 16 numbered databases available, of which DB 0
 # is the default.  Here you can configure which of these databases are
@@ -337,18 +340,6 @@ sub DATASTORE_VALKEY_ARGS {
         test_database => 1,
     };
 }
-
-################################################################################
-# Session cookies
-################################################################################
-
-# How long (in seconds) a web/rdf session can go "idle" before being timed out
-# sub WEB_SESSION_SECONDS_TO_LIVE { 3600 * 3 }
-
-# The cookie name to use
-# sub SESSION_COOKIE { "AF_SID" }
-# The domain into which the session cookie is written
-# sub SESSION_DOMAIN { undef }
 
 ################################################################################
 # Other Settings
