@@ -104,7 +104,7 @@ RUN git clone --depth=1 --branch $MUSICBRAINZ_SERVER_VERSION https://github.com/
 WORKDIR /musicbrainz-server
 
 RUN eval "$(perl -Mlocal::lib)" && \
-    cpanm Carton && \
+    cpanm --notest Carton && \
     carton install --deployment && \
     cpanm --notest \
         Catalyst::Plugin::StackTrace \
