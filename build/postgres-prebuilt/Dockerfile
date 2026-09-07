@@ -1,3 +1,3 @@
 ARG POSTGRES_VERSION=18
 ARG DB_BUILD_SEQUENCE=0
-FROM metabrainz/musicbrainz-docker-db:${POSTGRES_VERSION}-build${DB_BUILD_SEQUENCE}
+FROM docker.io/metabrainz/musicbrainz-docker-db:${POSTGRES_VERSION}-build${DB_BUILD_SEQUENCE}

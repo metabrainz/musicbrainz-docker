@@ -1,10 +1,10 @@
 ARG POSTGRES_VERSION=18
 ARG POSTGRES_IMAGE_VARIANT=trixie
 ARG POSTGRES_IMAGE_TAG=${POSTGRES_VERSION}-${POSTGRES_IMAGE_VARIANT}
-FROM postgres:${POSTGRES_IMAGE_TAG}
+FROM docker.io/library/postgres:${POSTGRES_IMAGE_TAG}
 
 ARG POSTGRES_VERSION
-LABEL org.metabrainz.based-on-image="postgres:${POSTGRES_IMAGE_TAG}"
+LABEL org.metabrainz.based-on-image="docker.io/library/postgres:${POSTGRES_IMAGE_TAG}"
 
 ARG DEBIAN_FRONTEND=noninteractive
 

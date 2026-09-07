@@ -1,11 +1,11 @@
 ARG PYTHON_VERSION=3.13
 ARG BASE_IMAGE_DATE=20260216
-FROM metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
+FROM docker.io/metabrainz/python:$PYTHON_VERSION-$BASE_IMAGE_DATE
 
 ARG PYTHON_VERSION
 ARG BASE_IMAGE_DATE
 
-LABEL org.metabrainz.based-on-image="metabrainz/python:${PYTHON_VERSION}-${BASE_IMAGE_DATE}"
+LABEL org.metabrainz.based-on-image="docker.io/metabrainz/python:${PYTHON_VERSION}-${BASE_IMAGE_DATE}"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
