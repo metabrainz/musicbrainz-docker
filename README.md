@@ -53,9 +53,10 @@ search and replication in docker.
 * Git
 * GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
   (On macOS, use [Homebrew](https://brew.sh/).)
-* Linux or macOS
-  (Windows is not documented yet, it is recommended to use Ubuntu via VirtualBox
-  instead.)
+* Linux (on which this repository is tested) preferably,
+  macOS (slower, see below memory setup),
+  or Windows (much slower, either by running everything in Ubuntu via VirtualBox,
+  or by running Docker Desktop for Windows and the rest in Ubuntu via WSL2).
 
 If you use Docker Desktop on macOS you may need to increase the amount of memory
 available to containers from the default of 2GB:
