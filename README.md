@@ -1,7 +1,7 @@
 # MusicBrainz mirror server with search and replication
 
 This repo contains everything needed to run a musicbrainz mirror server with
-search and replication in docker.
+search and replication in docker (or podman).
 
 ## Table of contents
 
@@ -10,6 +10,7 @@ search and replication in docker.
 * [Prerequisites](#prerequisites)
   - [Recommended hardware/VM](#recommended-hardwarevm)
   - [Required software](#required-software)
+  - [Using Podman instead of Docker](#using-podman-instead-of-docker)
   - [External documentation](#external-documentation)
 * [Components version](#components-version)
 * [Installation](#installation)
@@ -50,6 +51,7 @@ search and replication in docker.
 ### Required software
 
 * Docker Compose 2 (or higher), see [how to install Docker Compose](https://docs.docker.com/compose/install/)
+  (or Podman, see [using Podman instead of Docker](#using-podman-instead-of-docker))
 * Git
 * GNU Bash 4 (or higher) utilities, for [admin helper scripts](admin/) only
   (On macOS, use [Homebrew](https://brew.sh/).)
@@ -74,6 +76,27 @@ If you use [UFW](https://help.ubuntu.com/community/UFW) to manage your firewall:
 
 * [ufw-docker](https://github.com/chaifeng/ufw-docker) or any other way to fix
   the Docker and UFW security flaw.
+
+### Using Podman instead of Docker
+
+[Podman](https://podman.io/) is supported as an alternative to Docker,
+including rootless. Every `docker`/`docker compose` command documented below
+can be run with `podman`/`podman compose` instead.
+
+Requirements are Podman 4.7 (or higher) and `docker-compose`:
+
+```bash
+sudo apt-get install podman git  # Debian/Ubuntu
+sudo pacman -S podman git        # Arch Linux
+```
+
+The [admin helper scripts](admin/) use `podman` automatically if `docker` is
+not installed. Otherwise, point them at Podman by exporting `DOCKER_CMD` in
+your shell:
+
+```bash
+export DOCKER_CMD='podman'
+```
 
 ### External documentation
 

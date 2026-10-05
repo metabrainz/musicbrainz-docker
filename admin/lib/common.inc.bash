@@ -16,6 +16,14 @@ cd "$MB_DOCKER_ROOT" || {
 
 # Set Docker/Compose commands
 
+if [ -z ${DOCKER_CMD:+smt} ] \
+  && ! command -v docker >/dev/null \
+  && command -v podman >/dev/null
+then
+  # Podman needs no group/sudo check
+  DOCKER_CMD='podman'
+fi
+
 if [ -z ${DOCKER_CMD:+smt} ]
 then
   case "$OSTYPE" in

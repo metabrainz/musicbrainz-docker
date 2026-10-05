@@ -98,7 +98,7 @@ services:
       - solrdump:/var/cache/musicbrainz/solr-backups
 
   valkey:
-    image: valkey/valkey:9-alpine
+    image: docker.io/valkey/valkey:9-alpine
     logging:
       driver: "json-file"
       options:
