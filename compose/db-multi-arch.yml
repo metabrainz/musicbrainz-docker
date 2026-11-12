@@ -1,0 +1,9 @@
+# Description: Build multi arch version of the docker image
+
+services:
+  db:
+    build:
+      context: build/postgres
+      platforms:
+        - linux/arm64
+        - linux/amd64
